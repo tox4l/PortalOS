@@ -1,0 +1,407 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum ClientStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum ProjectStatus {
+  DRAFT
+  ACTIVE
+  IN_REVIEW
+  COMPLETE
+  ARCHIVED
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  IN_REVIEW
+  DONE
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum DeliverableStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum BriefStatus {
+  DRAFT
+  SENT
+  APPROVED
+}
+
+enum NotificationType {
+  COMMENT
+  APPROVAL
+  MENTION
+  TASK_ASSIGNED
+  DELIVERABLE_UPLOADED
+}
+
+enum ActivityEventType {
+  COMMENT_POSTED
+  APPROVAL_GIVEN
+  DELIVERABLE_UPLOADED
+  TASK_MOVED
+  BRIEF_SENT
+}
+
+model Agency {
+  id                   String             @id @default(cuid())
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  name                 String
+  slug                 String             @unique
+  logoUrl              String?            @map("logo_url")
+  brandColor           String             @default("#D4607A") @map("brand_color")
+  brandFont            String             @default("Cormorant Garamond") @map("brand_font")
+  customDomain         String?            @unique @map("custom_domain")
+  demoMode             Boolean            @default(false) @map("demo_mode")
+  users                User[]
+  clients              Client[]
+  clientUsers          ClientUser[]
+  projects             Project[]
+  notifications        Notification[]
+  activityEvents       ActivityEvent[]
+
+  @@index([slug])
+  @@index([customDomain])
+  @@map("agencies")
+}
+
+model User {
+  id              String          @id @default(cuid())
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  email           String?         @unique
+  name            String?
+  image           String?         @map("avatar_url")
+  role            UserRole        @default(MEMBER)
+  agencyId        String?         @map("agency_id")
+  emailVerified   DateTime?       @map("email_verified")
+  lastSeenAt      DateTime?       @map("last_seen_at")
+  demoLocked      Boolean         @default(false) @map("demo_locked")
+  agency          Agency?         @relation(fields: [agencyId], references: [id], onDelete: SetNull)
+  accounts        Account[]
+  sessions        Session[]
+  createdProjects Project[]       @relation("ProjectCreator")
+  assignedTasks   Task[]          @relation("TaskAssignee")
+  uploadedFiles   Deliverable[]   @relation("DeliverableUploader")
+  comments        Comment[]       @relation("UserComments")
+  notifications   Notification[]
+  activityEvents  ActivityEvent[] @relation("UserActivityEvents")
+
+  @@index([agencyId])
+  @@index([email])
+  @@map("users")
+}
+
+model Account {
+  id                String   @id @default(cuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  userId            String   @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String   @map("provider_account_id")
+  refresh_token     String?  @db.Text
+  access_token      String?  @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?  @db.Text
+  session_state     String?
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model VerificationToken {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Client {
+  id             String          @id @default(cuid())
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  companyName    String          @map("company_name")
+  contactName    String          @map("contact_name")
+  contactEmail   String          @map("contact_email")
+  logoUrl        String?         @map("logo_url")
+  portalSlug     String          @unique @map("portal_slug")
+  welcomeMessage String          @default("Welcome to your project portal.") @map("welcome_message")
+  status         ClientStatus    @default(ACTIVE)
+  agencyId       String          @map("agency_id")
+  agency         Agency          @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  clientUsers    ClientUser[]
+  projects       Project[]
+  notifications  Notification[]
+  activityEvents ActivityEvent[]
+
+  @@index([agencyId])
+  @@index([portalSlug])
+  @@index([status])
+  @@map("clients")
+}
+
+model ClientUser {
+  id             String          @id @default(cuid())
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  email          String
+  name           String
+  clientId       String          @map("client_id")
+  agencyId       String          @map("agency_id")
+  lastLoginAt    DateTime?       @map("last_login_at")
+  demoLocked     Boolean         @default(false) @map("demo_locked")
+  client         Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  agency         Agency          @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  approvals      Deliverable[]   @relation("DeliverableApprover")
+  comments       Comment[]       @relation("ClientUserComments")
+  notifications  Notification[]
+  activityEvents ActivityEvent[] @relation("ClientUserActivityEvents")
+
+  @@unique([clientId, email])
+  @@index([agencyId])
+  @@index([clientId])
+  @@index([email])
+  @@map("client_users")
+}
+
+model Project {
+  id             String          @id @default(cuid())
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  name           String
+  description    String?         @db.Text
+  status         ProjectStatus   @default(DRAFT)
+  dueDate        DateTime?       @map("due_date")
+  coverImageUrl  String?         @map("cover_image_url")
+  agencyId       String          @map("agency_id")
+  clientId       String          @map("client_id")
+  createdById    String          @map("created_by")
+  agency         Agency          @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  client         Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdBy      User            @relation("ProjectCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  tasks          Task[]
+  deliverables   Deliverable[]
+  comments       Comment[]
+  brief          Brief?
+  notifications  Notification[]
+  activityEvents ActivityEvent[]
+
+  @@index([agencyId])
+  @@index([clientId])
+  @@index([createdById])
+  @@index([status])
+  @@index([dueDate])
+  @@map("projects")
+}
+
+model Task {
+  id          String       @id @default(cuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  title       String
+  description String?      @db.Text
+  status      TaskStatus   @default(TODO)
+  priority    TaskPriority @default(MEDIUM)
+  dueDate     DateTime?    @map("due_date")
+  position    Float        @default(0)
+  projectId   String       @map("project_id")
+  assigneeId  String?      @map("assignee_id")
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignee    User?        @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+
+  @@index([projectId])
+  @@index([assigneeId])
+  @@index([status])
+  @@index([priority])
+  @@index([dueDate])
+  @@map("tasks")
+}
+
+model Deliverable {
+  id           String            @id @default(cuid())
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  title        String
+  description  String?           @db.Text
+  fileUrl      String            @map("file_url")
+  fileName     String            @map("file_name")
+  fileSize     Int               @map("file_size")
+  fileType     String            @map("file_type")
+  version      Int               @default(1)
+  status       DeliverableStatus @default(DRAFT)
+  projectId    String            @map("project_id")
+  uploadedById String            @map("uploaded_by")
+  approvedById String?           @map("approved_by")
+  approvedAt   DateTime?         @map("approved_at")
+  project      Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  uploadedBy   User              @relation("DeliverableUploader", fields: [uploadedById], references: [id], onDelete: Restrict)
+  approvedBy   ClientUser?       @relation("DeliverableApprover", fields: [approvedById], references: [id], onDelete: SetNull)
+  comments     Comment[]
+
+  @@index([projectId])
+  @@index([uploadedById])
+  @@index([approvedById])
+  @@index([status])
+  @@map("deliverables")
+}
+
+model Comment {
+  id                 String       @id @default(cuid())
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  body               String       @db.Text
+  projectId          String       @map("project_id")
+  deliverableId      String?      @map("deliverable_id")
+  authorUserId       String?      @map("author_user_id")
+  authorClientUserId String?      @map("author_client_user_id")
+  parentId           String?      @map("parent_id")
+  isInternal         Boolean      @default(false) @map("is_internal")
+  project            Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  deliverable        Deliverable? @relation(fields: [deliverableId], references: [id], onDelete: Cascade)
+  authorUser         User?        @relation("UserComments", fields: [authorUserId], references: [id], onDelete: SetNull)
+  authorClientUser   ClientUser?  @relation("ClientUserComments", fields: [authorClientUserId], references: [id], onDelete: SetNull)
+  parent             Comment?     @relation("CommentThread", fields: [parentId], references: [id], onDelete: Cascade)
+  replies            Comment[]    @relation("CommentThread")
+
+  @@index([projectId])
+  @@index([deliverableId])
+  @@index([authorUserId])
+  @@index([authorClientUserId])
+  @@index([parentId])
+  @@index([isInternal])
+  @@map("comments")
+}
+
+model Brief {
+  id            String      @id @default(cuid())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  title         String
+  content       Json
+  status        BriefStatus @default(DRAFT)
+  projectId     String      @unique @map("project_id")
+  generatedByAi Boolean     @default(false) @map("generated_by_ai")
+  project       Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@map("briefs")
+}
+
+model Notification {
+  id           String           @id @default(cuid())
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  type         NotificationType
+  title        String
+  body         String           @db.Text
+  read         Boolean          @default(false)
+  link         String
+  userId       String?          @map("user_id")
+  clientUserId String?          @map("client_user_id")
+  agencyId     String?          @map("agency_id")
+  clientId     String?          @map("client_id")
+  projectId    String?          @map("project_id")
+  user         User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clientUser   ClientUser?      @relation(fields: [clientUserId], references: [id], onDelete: Cascade)
+  agency       Agency?          @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  client       Client?          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  project      Project?         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([clientUserId])
+  @@index([agencyId])
+  @@index([clientId])
+  @@index([projectId])
+  @@index([read])
+  @@index([type])
+  @@map("notifications")
+}
+
+model ActivityEvent {
+  id                String            @id @default(cuid())
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  type              ActivityEventType
+  title             String
+  body              String            @db.Text
+  link              String
+  agencyId          String            @map("agency_id")
+  clientId          String?           @map("client_id")
+  projectId         String?           @map("project_id")
+  actorUserId       String?           @map("actor_user_id")
+  actorClientUserId String?           @map("actor_client_user_id")
+  agency            Agency            @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  client            Client?           @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  project           Project?          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  actorUser         User?             @relation("UserActivityEvents", fields: [actorUserId], references: [id], onDelete: SetNull)
+  actorClientUser   ClientUser?       @relation("ClientUserActivityEvents", fields: [actorClientUserId], references: [id], onDelete: SetNull)
+
+  @@index([agencyId])
+  @@index([clientId])
+  @@index([projectId])
+  @@index([actorUserId])
+  @@index([actorClientUserId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("activity_events")
+}
+
+model DemoResetLog {
+  id             String   @id @default(cuid())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  resetAt        DateTime @default(now()) @map("reset_at")
+  recordsDeleted Int      @default(0) @map("records_deleted")
+
+  @@index([resetAt])
+  @@map("demo_reset_logs")
+}

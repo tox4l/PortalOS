@@ -1,0 +1,1330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<portalos_transformation_prompt version="2.0" priority="CRITICAL">
+
+  <preamble>
+    <read_first>
+      Read BUILD_LOG.md completely before touching a single file.
+      The app is at Phase 7 — deploy ready — but has critical design, UX, and functional failures
+      that must be resolved before this product is presentable to any client.
+      This prompt is a COMPLETE OVERHAUL instruction. Treat every section as mandatory.
+      Update BUILD_LOG.md after every single task. No exceptions.
+    </read_first>
+
+    <context>
+      The current build looks and feels like AI-generated slop. The design system was
+      theoretically defined correctly but implemented poorly. The result is a flat, grey,
+      lifeless interface that no agency principal in Qatar would pay QAR 2,500/month for.
+      This prompt fixes that — permanently. The standard is: a 10,000 USD bespoke website.
+      Every screen. No exceptions.
+    </context>
+
+    <skills_activation order="sequential">
+      <skill>gpt-taste — activate first. This is your inner critic. Every decision passes through it.</skill>
+      <skill>design-taste-frontend — translate taste into precise frontend code decisions.</skill>
+      <skill>high-end-visual-design — the visual quality floor everything must clear.</skill>
+      <skill>minimalist-ui — restraint filter. When in doubt, remove. Apply after building each screen.</skill>
+      <skill>stitch-design-taste — cross-component cohesion. Nothing feels disconnected.</skill>
+      <skill>image-to-code — close the gap between the mental image and the actual rendered output.</skill>
+      <skill>full-output-enforcement — every file ships complete. No truncation. No placeholders.</skill>
+      <skill>redesign-existing-projects — apply to every screen you revisit. Rebuild, never patch.</skill>
+    </skills_activation>
+  </preamble>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 1: DESIGN FOUNDATION OVERHAUL                        -->
+  <!-- ============================================================ -->
+  <section id="1" title="DESIGN FOUNDATION — JET BLACK AND GOLD">
+
+    <mandate>
+      The current implementation is grey, warm-toned, and flat. It does not read as luxury.
+      The new standard is: jet black with surgical gold lines. Sharp edges. Hard contrast.
+      No warmth in the backgrounds. No softness. Think HSBC Private Bank meets a Formula 1
+      pit wall interface. Precision. Authority. Premium.
+    </mandate>
+
+    <palette_overhaul>
+      <instruction>
+        Replace globals.css entirely. The new palette below is absolute and final.
+        Remove every trace of the warm washi palette, blossom tones, and soft greys.
+      </instruction>
+
+      <css><![CDATA[
+/* ── PortalOS Design System v3 — Jet Black & Gold ── */
+
+:root {
+  /* BACKGROUNDS — true blacks with micro-contrast steps */
+  --bg-void:        #000000;   /* absolute black — outermost shell, hero backgrounds */
+  --bg-base:        #080808;   /* main app surface — 1 step above void */
+  --bg-surface:     #0F0F0F;   /* cards, sidebar, panels */
+  --bg-elevated:    #161616;   /* modals, dropdowns, popovers */
+  --bg-sunken:      #050505;   /* inputs, inset wells, code blocks */
+  --bg-overlay:     rgba(0, 0, 0, 0.85);  /* modal backdrop */
+
+  /* INK — crisp, cold white hierarchy */
+  --ink-primary:    #FFFFFF;   /* pure white — headlines only */
+  --ink-secondary:  #B0B0B0;   /* body text, descriptions */
+  --ink-tertiary:   #555555;   /* labels, captions, placeholders */
+  --ink-ghost:      #222222;   /* barely visible decorative text */
+
+  /* GOLD — the only accent color. Use surgically. */
+  --gold-dim:       rgba(212, 175, 55, 0.06);   /* gold wash on surfaces */
+  --gold-glow:      rgba(212, 175, 55, 0.12);   /* hover background tint */
+  --gold-muted:     #6B5620;   /* inactive gold, decorative lines */
+  --gold-base:      #9A7928;   /* secondary gold text, borders at rest */
+  --gold-mid:       #C9A84C;   /* active states, numbers, amounts */
+  --gold-core:      #D4AF37;   /* PRIMARY — buttons, active nav, focus */
+  --gold-bright:    #E8CB6A;   /* hover on gold elements */
+  --gold-light:     #F5E4A8;   /* hero display, maximum brightness gold */
+
+  /* SEMANTIC — keep them tight, don't contaminate the palette */
+  --success-bg:     rgba(20, 80, 40, 0.30);
+  --success-text:   #4ADE80;
+  --success-border: rgba(74, 222, 128, 0.25);
+
+  --warning-bg:     rgba(212, 175, 55, 0.12);
+  --warning-text:   var(--gold-bright);
+  --warning-border: rgba(212, 175, 55, 0.30);
+
+  --danger-bg:      rgba(180, 20, 20, 0.25);
+  --danger-text:    #F87171;
+  --danger-border:  rgba(248, 113, 113, 0.25);
+
+  --neutral-bg:     rgba(255, 255, 255, 0.03);
+  --neutral-text:   var(--ink-tertiary);
+  --neutral-border: var(--border-hairline);
+
+  /* BORDERS — the gold lines that define the luxury feel */
+  --border-hairline:  rgba(255, 255, 255, 0.04);  /* barely there, card edges */
+  --border-subtle:    rgba(255, 255, 255, 0.08);  /* hover reveal */
+  --border-visible:   rgba(255, 255, 255, 0.14);  /* focused / selected */
+  --border-gold-dim:  rgba(212, 175, 55, 0.20);   /* resting gold border */
+  --border-gold:      rgba(212, 175, 55, 0.45);   /* active gold border */
+  --border-gold-hot:  rgba(212, 175, 55, 0.75);   /* focused input, selected card */
+
+  /* SHADOWS — deep blacks, no grey undertone */
+  --shadow-xs:  0 1px 3px rgba(0, 0, 0, 0.60);
+  --shadow-sm:  0 2px 8px rgba(0, 0, 0, 0.70),
+                0 1px 2px rgba(0, 0, 0, 0.50);
+  --shadow-md:  0 4px 20px rgba(0, 0, 0, 0.80),
+                0 2px 6px  rgba(0, 0, 0, 0.60);
+  --shadow-lg:  0 8px 40px rgba(0, 0, 0, 0.90),
+                0 4px 12px rgba(0, 0, 0, 0.70);
+  --shadow-xl:  0 20px 80px rgba(0, 0, 0, 0.95),
+                0 8px 24px  rgba(0, 0, 0, 0.80);
+
+  /* GOLD GLOW — earned, not decorative */
+  --glow-gold-xs:  0 0 8px  rgba(212, 175, 55, 0.20);
+  --glow-gold-sm:  0 2px 16px rgba(212, 175, 55, 0.30),
+                   0 0 6px   rgba(212, 175, 55, 0.15);
+  --glow-gold-md:  0 4px 30px rgba(212, 175, 55, 0.40),
+                   0 0 12px  rgba(212, 175, 55, 0.20);
+  --glow-gold-lg:  0 8px 60px rgba(212, 175, 55, 0.50),
+                   0 0 24px  rgba(212, 175, 55, 0.25);
+
+  /* INSET GLOW — selected card state */
+  --inset-gold: inset 0 0 0 1px rgba(212, 175, 55, 0.40),
+                inset 0 1px 0   rgba(212, 175, 55, 0.10);
+  --inset-gold-hot: inset 0 0 0 1px rgba(212, 175, 55, 0.75),
+                    inset 0 1px 0   rgba(212, 175, 55, 0.20);
+
+  /* TYPOGRAPHY */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+
+  /* RADII — sharp. Nothing bubbly. */
+  --radius-sm:   4px;
+  --radius-md:   6px;
+  --radius-lg:   8px;
+  --radius-xl:   10px;
+  --radius-pill: 999px;
+
+  /* TRANSITIONS */
+  --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:    cubic-bezier(0.4, 0, 1, 1);
+  --ease-circ:  cubic-bezier(0.0, 0.0, 0.2, 1);
+  --t-fast:     120ms;
+  --t-base:     200ms;
+  --t-slow:     350ms;
+  --t-xslow:    600ms;
+}
+
+/* ── LIGHT MODE — platinum, still premium ── */
+[data-theme="light"] {
+  --bg-void:       #E8E6E0;
+  --bg-base:       #F2F0EA;
+  --bg-surface:    #FAFAF8;
+  --bg-elevated:   #FFFFFF;
+  --bg-sunken:     #E0DED8;
+  --ink-primary:   #0A0A0A;
+  --ink-secondary: #4A4845;
+  --ink-tertiary:  #8A8785;
+  --border-hairline: rgba(0,0,0,0.06);
+  --border-subtle:   rgba(0,0,0,0.10);
+  --border-visible:  rgba(0,0,0,0.18);
+  --gold-core:     #B8960A;
+  --gold-mid:      #A07820;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.06);
+}
+
+/* ── DEPTH LAYERS — reference guide ──
+  Layer 0: --bg-void     absolute black / hero
+  Layer 1: --bg-base     main app shell
+  Layer 2: --bg-surface  sidebar, cards, panels
+  Layer 3: --bg-elevated modals, dropdowns
+  Layer 4: #1E1E1E        context menus, tooltips
+*/
+
+/* ── GLOBAL RESETS ── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body {
+  background: var(--bg-void);
+  color: var(--ink-secondary);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* ── NOISE TEXTURE — matte surface feel ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.018;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+}
+
+/* ── GOLD LINE RULE ── 
+   The signature element. A 1px solid gold border on any element
+   that should communicate: this matters.
+*/
+.gold-border   { border: 1px solid var(--border-gold-dim); }
+.gold-border-active { border: 1px solid var(--border-gold); box-shadow: var(--inset-gold); }
+.gold-border-hot    { border: 1px solid var(--border-gold-hot); box-shadow: var(--inset-gold-hot), var(--glow-gold-sm); }
+
+/* ── CARDS ── */
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  border-top-color: rgba(255,255,255,0.08);   /* top edge catches light */
+  border-radius: var(--radius-xl);
+  transition: border-color var(--t-base) var(--ease-out),
+              box-shadow   var(--t-base) var(--ease-out),
+              transform    var(--t-base) var(--ease-out);
+}
+.card:hover {
+  border-color: var(--border-subtle);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.card--gold {
+  border-color: var(--border-gold-dim);
+  box-shadow: var(--inset-gold), var(--shadow-sm);
+  background: linear-gradient(135deg, var(--gold-dim) 0%, transparent 60%);
+}
+.card--gold:hover {
+  border-color: var(--border-gold);
+  box-shadow: var(--inset-gold), var(--shadow-md), var(--glow-gold-xs);
+}
+
+/* ── SKELETON SHIMMER ── */
+@keyframes shimmer {
+  0%   { background-position: -800px 0; }
+  100% { background-position:  800px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg,
+    var(--bg-surface) 25%,
+    var(--bg-elevated) 50%,
+    var(--bg-surface) 75%
+  );
+  background-size: 1600px 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+  border-radius: var(--radius-md);
+}
+
+/* ── SCROLL REVEAL ── */
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes reveal-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.reveal { opacity: 0; }
+.reveal.in-view {
+  animation: reveal-up var(--t-xslow) var(--ease-out) forwards;
+}
+.reveal-fade.in-view {
+  animation: reveal-fade var(--t-xslow) var(--ease-out) forwards;
+}
+
+/* ── GOLD LINE SEPARATOR ── */
+.gold-rule {
+  width: 48px;
+  height: 1px;
+  background: var(--gold-core);
+  margin: 0 auto;
+  opacity: 0.8;
+}
+.gold-rule--left { margin: 0; }
+      ]]></css>
+    </palette_overhaul>
+
+    <typography>
+      <rule>Playfair Display for ALL headings and display text. Import weights 400 and 600.</rule>
+      <rule>DM Sans for ALL body, labels, buttons, and UI text. Import weights 400 and 500.</rule>
+      <rule>JetBrains Mono for ALL numbers, amounts, IDs, invoice figures. Weight 400 only.</rule>
+      <rule>Heading hierarchy:
+        Display 56px/300lh/-0.02em tracking | H1 40px/1.12lh/-0.015em | H2 28px/1.22lh/-0.01em |
+        H3 20px/1.3lh | Body 15px/1.7lh | Label 11px/500w/0.08em-tracking/UPPERCASE | Mono 14px
+      </rule>
+      <rule>Ink: headings = --ink-primary (pure white). Body = --ink-secondary. Labels = --ink-tertiary.</rule>
+      <rule>Key figures (totals, amounts, plan badges) = --gold-mid in JetBrains Mono.</rule>
+      <rule>font-feature-settings: "kern" 1, "liga" 1, "onum" 1 on all Playfair text.</rule>
+    </typography>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 2: LANDING PAGE — CAPTIVATING, NOT CORPORATE          -->
+  <!-- ============================================================ -->
+  <section id="2" title="LANDING PAGE TRANSFORMATION">
+
+    <mandate>
+      The landing page must be the single most impressive thing a prospect sees.
+      It is NOT a feature list. It is an experience. The product's professionalism
+      lives inside the app — the landing page sells the feeling, the aspiration,
+      and the demo. Every scroll should reveal something that makes the visitor lean forward.
+    </mandate>
+
+    <dependencies>
+      <install>npm install @react-three/fiber @react-three/drei three</install>
+      <install>npm install gsap @gsap/react</install>
+      <install>npm install lenis</install>
+      <install>npm install @radix-ui/react-accordion</install>
+      <note>Use dynamic imports with SSR disabled for all Three.js components.</note>
+    </dependencies>
+
+    <sections>
+
+      <hero>
+        <description>
+          Full viewport, absolute black (#000000), no gradients, no illustrations at start.
+          Smooth scroll library (Lenis) initialized globally.
+          Center-aligned layout.
+        </description>
+        <elements>
+          <element name="eyebrow">
+            "Velocity AI — PortalOS" in 11px DM Sans, uppercase, 0.12em tracking, --gold-core color.
+            A 32px 1px solid --gold-muted horizontal line on each side of the text.
+            Fades in at 0ms delay.
+          </element>
+          <element name="headline">
+            Playfair Display, 72px desktop / 40px mobile, weight 400, --ink-primary.
+            Two lines max: "The Agency Platform" / "Your Clients Will Brag About."
+            Each word animates in with a staggered clip-path reveal:
+            from `clip-path: inset(0 100% 0 0)` to `clip-path: inset(0 0% 0 0)`, 600ms, ease-out.
+            Stagger: 40ms per word.
+          </element>
+          <element name="gold_rule">
+            The 48px / 1px gold horizontal line. Animates width from 0 to 48px after headline.
+            Appears BETWEEN headline and subheadline.
+          </element>
+          <element name="subheadline">
+            DM Sans, 18px, --ink-secondary, max 16 words.
+            "Replace the email chains, Drive folders, and chasing clients — with one beautiful portal."
+            Fade in 400ms after headline completes.
+          </element>
+          <element name="cta_group">
+            Two buttons side by side:
+            Primary: "Try Agency View →" — gold button, dark text, --glow-gold-sm shadow.
+            Secondary: "Try Client View →" — ghost button, white border.
+            Below: "No credit card. No setup. Just click." in 11px --ink-tertiary.
+            Animate up from y:16 after subheadline.
+          </element>
+          <element name="3d_scene">
+            A Three.js scene rendered below the CTA group.
+            Content: A slowly rotating 3D representation of the PortalOS interface —
+            three floating glass-dark panels representing Agency View, Client Portal, and Invoice.
+            Each panel is a flat box geometry with a dark material and gold wireframe edges.
+            They orbit a central point slowly (0.003 rad/frame).
+            Ambient light: dim. Point light: warm gold (#D4AF37) at position (2, 3, 2), intensity 1.2.
+            On scroll: panels spread apart with GSAP ScrollTrigger (scrub: 1).
+            Render with @react-three/fiber, dynamic import, SSR disabled.
+            Canvas: width 100%, height 480px. Background: transparent (shows --bg-void behind).
+          </element>
+          <element name="scroll_indicator">
+            Bottom of hero: "SCROLL" in 10px DM Sans uppercase, --ink-tertiary, letter-spacing 0.2em.
+            A 40px animated line below it pulsing down: translateY(0→8px), 1.4s ease-in-out infinite.
+            Gold color. Disappears after first scroll.
+          </element>
+        </elements>
+      </hero>
+
+      <social_proof_bar>
+        <description>
+          Full-width dark strip (--bg-surface) with 1px gold border top and bottom.
+          Infinite horizontal marquee: fictional agency names as SVG wordmarks.
+          Speed: 40px/s. Pause on hover. Clone the list for seamless loop.
+          Label above: "Trusted by creative agencies across the Gulf."
+        </description>
+      </social_proof_bar>
+
+      <problem_section>
+        <description>
+          Section label: "──── THE PROBLEM" in gold.
+          Headline: "Your clients deserve better than scattered Google Drive links."
+          Three problem cards in a horizontal row. Each card:
+          — --bg-surface background, 1px --border-hairline border, top-edge highlight.
+          — A Lucide icon (24px, --gold-muted) top left.
+          — Headline in Playfair Display H3.
+          — Body in 15px DM Sans.
+          — A thin 1px --gold-muted left border accent at the left edge of the card.
+          Scroll reveal: cards stagger in (left card 0ms, center 100ms, right 200ms).
+        </description>
+        <problems>
+          <p icon="MessageSquareX">Approvals over email. No record. No accountability.</p>
+          <p icon="FolderX">Assets scattered across 5 tools. Nobody knows which is final.</p>
+          <p icon="Receipt">Invoices sent via WhatsApp PDF. Chased manually. Paid late.</p>
+        </problems>
+      </problem_section>
+
+      <features_section>
+        <description>
+          Alternating layout (image left / text right, then flip).
+          Each feature: a dark browser mockup (built in HTML/CSS, not an image) on one side,
+          headline + 3 bullet points + CTA link on the other.
+          The mockup glows faintly gold on scroll entry (--glow-gold-xs added via IntersectionObserver class toggle).
+          Features: Kanban Board, AI Brief Generator, Client Approval Portal, Invoicing.
+          GSAP ScrollTrigger: on scroll, the mockup slides in from its direction (left or right) 
+          while the text fades up. Scrub: false. Trigger: 80% viewport.
+        </description>
+      </features_section>
+
+      <demo_cta_section>
+        <description>
+          Full-width dark section, --bg-surface background.
+          Centered layout. Above the headline: a 3D rotating gold cube (Three.js, 60px, slow rotation).
+          Headline: "Experience it. Right now. No signup."
+          Two large demo cards side by side:
+          
+          Agency View card:
+          — --bg-elevated, 1px --border-gold-dim, hover → --border-gold with --glow-gold-xs.
+          — Icon: LayoutDashboard (Lucide, 32px, --gold-core).
+          — Title: "Agency View" (Playfair H2).
+          — Description: "Dashboard, Kanban, AI Briefs, Invoicing — everything the team touches."
+          — Button: "Enter Agency View →" (gold primary).
+          — Routes to /demo/agency.
+          
+          Client View card:
+          — Same card style.
+          — Icon: Globe (32px, --gold-core).
+          — Title: "Client Portal."
+          — Description: "The branded experience your clients see. Approvals, files, invoices."
+          — Button: "Enter Client Portal →" (ghost, gold border).
+          — Routes to /demo/client.
+
+          Both cards float with a subtle CSS animation (keyframes: translateY 0→-6px→0, 4s ease-in-out infinite).
+          Client card has a 600ms delay on the float, so they move independently.
+        </description>
+      </demo_cta_section>
+
+      <testimonials>
+        <description>
+          Dark section, 3 cards in a row.
+          Each card: --bg-surface, 1px --border-hairline.
+          Behind quote text: Playfair Display `"` at 96px, 6% opacity, --gold-core.
+          Star rating: 5 SVG stars, --gold-core color, 14px.
+          Quote text: 16px DM Sans italic --ink-secondary.
+          Attribution: Avatar initials (--bg-elevated, --ink-primary) + Name (Playfair 500) + Agency + Role.
+          Cards reveal with clip-path: inset(0 0 100% 0) → inset(0 0 0% 0) on scroll.
+        </description>
+      </testimonials>
+
+      <pricing>
+        <description>
+          Three cards. Recommended (Pro) card:
+          — 1px --border-gold, --inset-gold, --glow-gold-sm background glow.
+          — "Most Popular" badge in --gold-core background with #000 text.
+          — Price in JetBrains Mono, --gold-core, 40px.
+          Other cards: flat --bg-surface.
+          Monthly/Annual toggle: custom pill toggle. Annual shows "Save 20%" badge in --success-text.
+        </description>
+      </pricing>
+
+      <faq>
+        <description>
+          Radix UI Accordion. Each item:
+          — 1px --border-hairline bottom border as divider.
+          — Question: 16px DM Sans, --ink-primary, weight 500.
+          — Answer: 15px DM Sans, --ink-secondary.
+          — Icon: ChevronDown (Lucide), rotates 180° on open, --gold-core color.
+          — Open state: question color becomes --gold-mid.
+        </description>
+      </faq>
+
+      <final_cta>
+        <description>
+          --bg-void section. A single 1px --gold-muted horizontal line top and bottom.
+          Centered: gold-rule, headline in Playfair 40px, subtext, two CTA buttons.
+          No background imagery. No gradients. Just the black, the gold line, and the text.
+          This restraint is intentional and powerful.
+        </description>
+      </final_cta>
+
+      <footer>
+        <description>
+          --bg-void. Separated by 1px --border-hairline only.
+          Logo left. Nav links center. Social icons right (Twitter/X, LinkedIn, Instagram).
+          Social icons: Lucide icons, --ink-tertiary, hover → --gold-core, 200ms transition.
+          Bottom strip: "© 2026 Velocity AI. All rights reserved." | "Privacy" | "Terms"
+          All in 12px DM Sans, --ink-tertiary.
+        </description>
+      </footer>
+
+    </sections>
+
+    <scroll_behavior>
+      <instruction>
+        Install Lenis for smooth scroll. Initialize in a client component wrapper at root layout.
+        Use GSAP ScrollTrigger for the 3D scene and feature mockups.
+        Use IntersectionObserver for all .reveal elements (add .in-view class when 20% visible).
+        The stagger script: after DOM ready, query all [data-reveal] elements,
+        set their animation-delay based on data-delay attribute (in ms).
+      </instruction>
+    </scroll_behavior>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 3: AGENCY APP — INTERIOR TRANSFORMATION              -->
+  <!-- ============================================================ -->
+  <section id="3" title="AGENCY APP INTERIOR">
+
+    <sidebar_overhaul>
+      <instruction>
+        The sidebar must feel architectural, not generic.
+        Background: --bg-surface. Left edge: 1px solid --border-hairline.
+        Right edge of sidebar: 1px solid rgba(212,175,55,0.08) — a barely-visible gold line
+        separating sidebar from content. This is the first gold line the eye hits when
+        looking at the app. It should feel intentional.
+
+        Logo area: PortalOS wordmark in Playfair Display, --ink-primary, 18px weight 600.
+        A 1px --gold-muted horizontal line below the logo area.
+
+        Nav items:
+        — Default: 13px DM Sans, --ink-tertiary, 40px height, 8px border-radius, 16px side padding.
+        — Hover: background rgba(255,255,255,0.04), --ink-secondary, 200ms.
+        — ACTIVE: background var(--gold-dim), --ink-primary, left border 2px solid --gold-core, 
+          text in --gold-mid, icon color --gold-core.
+        
+        Icon set: REPLACE all Lucide icons in the sidebar navigation with Phosphor Icons
+        (npm install @phosphor-icons/react). Use the Duotone weight for active items,
+        Regular weight for inactive. Phosphor icons are significantly more distinctive
+        than Lucide for navigation.
+
+        Notification bell: badge in --gold-core background, #000 text, count.
+        Agency identity block at bottom: card with top-edge highlight, gold border on hover.
+      </instruction>
+    </sidebar_overhaul>
+
+    <icons_overhaul>
+      <instruction>
+        The current Lucide-only icon set looks generic everywhere.
+        Implement a two-library icon strategy:
+        
+        — Navigation and structural UI: Phosphor Icons (Duotone weight, --gold-core color when active).
+          npm install @phosphor-icons/react
+        
+        — Status and semantic icons: Lucide React (kept for inline status badges and data).
+        
+        — Feature icons (empty states, feature cards, onboarding): Custom SVG inline icons.
+          Each empty state gets a bespoke single-path SVG illustration drawn in --gold-muted.
+          These must look hand-crafted, not clip-art. Examples:
+          Empty projects: a single geometric diamond outline, 48px.
+          Empty comments: a minimal chat bubble with one dot, 48px.
+          Empty deliverables: a minimalist file with one corner folded, 48px.
+          Empty invoices: a minimal receipt with a gold checkmark, 48px.
+
+        Replace ALL navigation icons in agency-shell.tsx with Phosphor equivalents:
+        Dashboard → HouseSimple (Phosphor)
+        Clients → Buildings (Phosphor)
+        Projects → SquaresFour (Phosphor)
+        Invoices → Invoice (Phosphor)
+        Settings → GearSix (Phosphor)
+        Notifications → Bell (Phosphor)
+        User → UserCircle (Phosphor)
+      </instruction>
+    </icons_overhaul>
+
+    <dashboard_overhaul>
+      <instruction>
+        The dashboard must feel like a war room. Every metric has weight.
+
+        Stat cards: 4 cards top row.
+        — --bg-surface background, 1px --border-hairline border, top-edge highlight.
+        — Number: JetBrains Mono, 36px, --gold-mid color.
+        — Label: 11px DM Sans uppercase, --ink-tertiary, 0.08em tracking.
+        — Trend chip: tiny pill badge (+ or - percentage vs last 30 days).
+        — Numbers count up from 0 on mount (framer-motion useMotionValue + useSpring, 800ms).
+        — On hover: card lifts 3px, border becomes --border-gold-dim, --glow-gold-xs appears.
+
+        Activity feed: real-time, Ably powered.
+        — Each entry: avatar initials (--bg-elevated, 32px, 6px radius) | action text | timestamp.
+        — New entries slide in from top with opacity 0→1 + translateY(-8px→0), 300ms.
+        — "Just now" timestamps pulse gold once on entry.
+
+        Pending approvals widget:
+        — Title in Playfair H3.
+        — Each row: client logo | deliverable name | "Waiting X days" in --danger-text if >3 days.
+        — "Send Reminder" button: ghost, 32px height, on hover border becomes --border-gold-dim.
+        — If 0 pending: empty state with the custom SVG, not a blank area.
+      </instruction>
+    </dashboard_overhaul>
+
+    <project_workspace_overhaul>
+      <instruction>
+        The project workspace is the heart of the app. It must feel premium and purposeful.
+
+        PROJECT HEADER:
+        — Full-width. --bg-surface. 1px --border-hairline bottom.
+        — Project name: Playfair Display, 32px, --ink-primary. Inline editable on click.
+        — Client badge: pill with client logo (16px) + name. --bg-elevated, 1px --border-subtle.
+        — Status dropdown: custom, not native select. Options styled with semantic colors.
+        — Due date: calendar icon (Phosphor) + date. Color changes: 
+          >7 days: --ink-tertiary | 3-7 days: --warning-text | <3 days: --danger-text.
+        — Team avatars: stacked, 32px, 6px radius, --bg-elevated. "+N more" chip if >4.
+        — Right side: "⋮" menu (Phosphor DotsThreeVertical) → Archive, Duplicate, Export.
+
+        TAB NAVIGATION:
+        — 5 tabs: Board | Brief | Deliverables | Comments | Invoice.
+        — Active tab: --ink-primary, 1px solid --gold-core bottom border (not a background fill).
+        — Inactive: --ink-tertiary, hover → --ink-secondary.
+        — Tab bar has 1px --border-hairline bottom border full width.
+        — Tab transition: active border slides from previous to current tab (CSS transition on left/width).
+
+        KANBAN BOARD (Board tab):
+        — Column headers: status name in 11px DM Sans uppercase, dot indicator (color-coded), task count chip.
+        — Column background: --bg-sunken with 1px --border-hairline sides. Not a card — a trough.
+        — Task cards: --bg-surface, 1px --border-hairline, 8px radius. On hover: gold border appears, lifts 2px.
+        — While dragging: card gets --border-gold, --glow-gold-sm, scale(1.02), --shadow-xl.
+        — Priority indicator: 3px left border (not a dot):
+          URGENT: --danger-text | HIGH: --warning-text | MEDIUM: --gold-muted | LOW: --ink-ghost
+        — Add task inline: bottom of each column, "+" button, 11px DM Sans uppercase, --ink-tertiary.
+          Expands into an inline input on click (no modal for quick adds).
+        — Filter bar: assignee avatars (click to filter), priority pills. Active filter gets gold border.
+
+        DELIVERABLES TAB — OVERHAUL:
+        — Upload zone: dashed border (--border-gold-dim dashed), dark center, gold icon.
+          On drag-over: border becomes solid --border-gold-hot, background becomes --gold-dim.
+        — Each deliverable: full-width row, --bg-surface, 1px --border-hairline bottom.
+          Left: file type icon (custom SVG per type, not generic Lucide File).
+          Center: filename (--ink-primary), size + uploaded by + date (--ink-tertiary 12px).
+          Right: status badge + "Request Approval" button + version chip + "⋮" menu.
+        — Version history: clicking the version chip opens a popover showing all versions
+          with timestamps and uploader.
+        — Status badges follow the canonical badge system.
+        — "Request Approval" button: gold primary, 32px height. Triggers action AND 
+          shows a success toast: "Approval request sent to [client name]."
+          THIS BUTTON MUST WORK. Wire it to the deliverables server action.
+          After clicking: button changes to "Approval Pending" (disabled, --warning-text color).
+
+        COMMENTS TAB:
+        — Comment input pinned to bottom of tab panel.
+        — "Internal only" toggle: a gold pill toggle (DM Sans 11px, uppercase). 
+          When ON: input background becomes rgba(212,175,55,0.04), left border 2px --gold-core.
+          Internal comments have a gold lock icon (Phosphor Lock, 12px) before the avatar.
+          Client users NEVER see internal comments.
+        — Each comment: avatar | name + role + timestamp | body | reaction row.
+          Reactions: a "+" button that opens a tiny emoji picker (6 options max).
+        — New comment entry: fade in from opacity:0 + translateY(-4px), 200ms. Real-time via Ably.
+        — Thread replies: indented 24px, with a 1px --border-hairline left thread line.
+
+        INVOICE TAB:
+        — Invoice number: JetBrains Mono, --gold-mid, 13px. Auto-generated format: INV-2026-001.
+        — Line items table: proper table element.
+          Headers: 11px DM Sans uppercase, --ink-tertiary, 0.08em tracking.
+          Cells: 15px DM Sans, --ink-secondary.
+          Amounts: JetBrains Mono, --ink-primary, right-aligned.
+        — Subtotal / Tax / TOTAL row:
+          TOTAL: JetBrains Mono, 24px, --gold-mid, with a 1px --border-gold-dim top rule.
+        — Action buttons row: "Save Draft" (ghost) | "Send to Client" (gold primary) | "Mark Paid" | "Void".
+        — Status state machine: only show relevant buttons for current status.
+          Paid status: show the amount in --success-text with a checkmark, no action buttons.
+      </instruction>
+    </project_workspace_overhaul>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 4: NOTIFICATION SYSTEM — BUILD FROM SCRATCH          -->
+  <!-- ============================================================ -->
+  <section id="4" title="NOTIFICATION INBOX — AGENCY AND CLIENT">
+
+    <mandate>
+      Both the agency side and client portal need a full notification inbox.
+      This is not optional. It is a core UX feature that makes the product feel alive.
+    </mandate>
+
+    <agency_notifications>
+      <bell_behavior>
+        — Bell icon (Phosphor Bell) in the header. Shows a gold badge with unread count.
+        — Clicking the bell opens a full-height slide-in panel from the RIGHT side of the screen.
+          Width: 380px. Background: --bg-elevated. 1px --border-hairline left border.
+          Animated: slides in from translateX(380px) to translateX(0), 250ms --ease-out.
+          A backdrop overlay (rgba(0,0,0,0.40)) covers the rest of the app, click to close.
+      </bell_behavior>
+
+      <inbox_panel>
+        <header>
+          "Notifications" in Playfair H2, --ink-primary.
+          Unread count chip in --gold-core background.
+          "Mark all read" button (ghost, right-aligned).
+          1px --border-hairline bottom divider.
+          Close button (Phosphor X, 20px) top-right.
+        </header>
+        <filter_tabs>
+          All | Unread | Approvals | Comments | Invoices
+          Tab styles: same as main workspace tabs but smaller (12px).
+        </filter_tabs>
+        <notification_items>
+          Each notification item:
+          — Full width, 72px min-height, --bg-surface on hover, 200ms.
+          — Unread: 3px left border --gold-core + slightly lighter background.
+          — Read: no border, no background change.
+          — Left: type icon in a 36px circle (--bg-elevated). Icon color: --gold-mid.
+          — Center: title (14px DM Sans weight 500, --ink-primary) + body preview (13px, --ink-tertiary, 1 line clamped).
+          — Right: relative timestamp (12px, --ink-tertiary) + unread dot (6px, --gold-core).
+          — Clicking: marks as read (dot disappears, left border fades out), navigates to the relevant resource.
+          — 1px --border-hairline bottom divider between items.
+        </notification_items>
+        <empty_state>
+          Phosphor Bell icon (48px, --ink-ghost) + "You're all caught up." in Playfair H3 + 
+          "New activity will appear here in real time." in 14px DM Sans --ink-tertiary.
+        </empty_state>
+        <real_time>
+          Subscribe to Ably channel `notifications:agency:[agencyId]`.
+          On new notification event: prepend to list with slide-down animation + increment badge count.
+          The bell icon briefly pulses (scale 1→1.2→1, 300ms) when a new notification arrives.
+        </real_time>
+      </inbox_panel>
+
+      <notification_types>
+        <type icon="ChatCircle"      color="--gold-mid"     label="Comment">New comment on [Project]</type>
+        <type icon="CheckSquare"     color="--success-text" label="Approval">Client approved [Deliverable]</type>
+        <type icon="XSquare"         color="--danger-text"  label="Rejected">Client requested changes on [Deliverable]</type>
+        <type icon="Invoice"         color="--gold-mid"     label="Invoice">Invoice INV-2026-001 was paid</type>
+        <type icon="Warning"         color="--warning-text" label="Overdue">Invoice overdue — [Client Name]</type>
+        <type icon="UserPlus"        color="--gold-mid"     label="Team">Sarah joined your agency</type>
+        <type icon="Envelope"        color="--gold-mid"     label="Brief">Brief sent to client</type>
+        <type icon="FolderOpen"      color="--gold-mid"     label="Upload">New file uploaded to [Project]</type>
+      </notification_types>
+    </agency_notifications>
+
+    <client_notifications>
+      <instruction>
+        The client portal gets its own notification bell in the portal header.
+        Same slide-in panel pattern, but scoped to client-relevant events only:
+        — New deliverable uploaded for your review
+        — Brief sent for your review
+        — Invoice sent — payment due [date]
+        — Agency left a comment on [Project]
+        — Your approval was recorded ✓
+
+        Client notification bell badge: same gold style.
+        Ably channel: `notifications:client:[clientId]`.
+        All notifications deep-link to the relevant portal screen.
+      </instruction>
+    </client_notifications>
+
+    <server_implementation>
+      <instruction>
+        Create actions/notifications.ts with:
+        — createNotification(type, title, body, link, recipientId, recipientType) server action.
+        — markAsRead(notificationId) server action.
+        — markAllAsRead(agencyId | clientId) server action.
+        — getNotifications(recipientId, recipientType, filter?) — returns typed notification list.
+
+        Wire createNotification into:
+        — actions/comments.ts — on comment create → notify relevant parties.
+        — actions/deliverables.ts — on requestApproval → notify client.
+        — actions/deliverables.ts — on approve/reject → notify agency.
+        — actions/invoices.ts — on send → notify client. On status change → notify agency.
+        — actions/briefs.ts — on send-to-client → notify client.
+
+        Also publish an Ably event to the recipient's notification channel on every createNotification call.
+      </instruction>
+    </server_implementation>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 5: CLIENT PORTAL — COMPLETE REBUILD                  -->
+  <!-- ============================================================ -->
+  <section id="5" title="CLIENT PORTAL REBUILD">
+
+    <mandate>
+      The client portal is what clients experience. It must be the most polished screen in the product.
+      The client has no interest in PM jargon. They want: clarity, beauty, and ease.
+      Every button must be visible. Every action must be obvious.
+      The approval button MUST work. This is a P0 bug.
+    </mandate>
+
+    <portal_home>
+      <instruction>
+        Header: agency logo (from agency branding settings) + agency name in Playfair Display.
+        1px --border-gold-dim bottom border on header. The header brand color is pulled from
+        agency.brand_color and applied as the gold accent override for this portal:
+        :root { --gold-core: [agency.brand_color]; } — THIS FIXES THE BRAND COLORS BUG.
+
+        Hero greeting card: --bg-surface, --inset-gold, full width.
+        "Welcome back, [Client Company Name]." in Playfair Display 36px.
+        Subtext: "Here's where your projects stand today." in 16px DM Sans --ink-secondary.
+
+        Outstanding invoice banner: shown if any invoices are unpaid.
+        Background: --warning-bg. Border: 1px solid --warning-border.
+        Amount in JetBrains Mono --gold-bright. "Pay Now →" button gold primary.
+        THIS BANNER MUST BE VISIBLE AND FUNCTIONAL.
+
+        Projects grid: 2-column grid on desktop. Each project card:
+        — --bg-surface, 1px --border-hairline, top-edge highlight, 10px radius.
+        — Hover: --border-gold-dim, lifts 2px, --glow-gold-xs.
+        — Project name: Playfair H3. Client name: 12px DM Sans --ink-tertiary.
+        — Progress bar: thin 4px bar. Gold fill for completion percentage.
+        — Pending items count chip: "3 items need your attention" in --warning-text if any pending.
+        — "View Project →" link at bottom right, gold colored, hover underline.
+
+        Nav: Projects | Invoices | [Notification Bell] | [Sign Out]
+        Nav links: DM Sans 14px, --ink-tertiary, hover → --ink-primary.
+        Active: --ink-primary, 1px --border-gold-dim bottom.
+      </instruction>
+    </portal_home>
+
+    <client_project_view>
+      <mandate>
+        THIS IS THE MOST CRITICAL FIX. The current view is dull and non-functional.
+        The client project view must have every action visible, every button working,
+        and the layout must feel premium without agency-internal complexity.
+      </mandate>
+
+      <tabs>Board is hidden from clients. They see: Brief | Deliverables | Comments | Invoice</tabs>
+
+      <brief_tab>
+        <instruction>
+          Show the brief as a beautifully formatted read-only document.
+          NOT a raw JSON dump. Parse the TipTap JSON and render proper HTML.
+          H1-H3 in Playfair Display. Body in DM Sans.
+          Status banner at top: "Draft" / "Awaiting Your Review" / "Approved ✓"
+          "Approve Brief" button (gold primary, full width on mobile) if status = SENT.
+          THIS BUTTON MUST WORK — wire to a client-side brief approval action.
+        </instruction>
+      </brief_tab>
+
+      <deliverables_tab>
+        <instruction>
+          THIS IS WHERE THE APPROVAL BUTTON FIX IS REQUIRED.
+
+          Each deliverable gets a full card:
+          — --bg-surface, 1px --border-hairline, 12px radius.
+          — File preview: image → actual thumbnail. PDF → first-page render or PDF icon.
+            Video → poster frame. Other → large file type icon.
+          — File name (Playfair H3) + size + upload date.
+          — Status badge (large, prominent, 14px DM Sans).
+          — VERSION BADGE: "v2" chip if multiple versions exist.
+
+          ACTION BUTTONS — ALWAYS VISIBLE, NEVER HIDDEN:
+          Two prominent buttons at the bottom of each deliverable card:
+          
+          [✓ Approve]                    [Request Changes]
+          Gold primary button.            Ghost button, --danger-text border on hover.
+          
+          "Approve" onClick:
+          1. Opens confirmation modal: "Are you sure you want to approve [filename]?"
+             Modal has: Cancel (ghost) + "Yes, Approve" (gold primary).
+          2. On confirm: calls approveDeliverable server action.
+          3. Shows success toast: "Approved ✓ — [agency name] has been notified."
+          4. Status badge updates to "Approved" without page reload (optimistic update).
+          5. Triggers createNotification for agency users.
+          6. Button changes to "Approved ✓" (disabled, --success-text, checkmark icon).
+
+          "Request Changes" onClick:
+          1. Opens modal with textarea: "Describe the changes needed..." (required).
+          2. "Send Feedback" gold primary button. Disabled until textarea has content.
+          3. On submit: calls rejectDeliverable server action with feedback text.
+          4. Shows toast: "Feedback sent. The agency will be in touch."
+          5. Status updates to "Changes Requested". Button changes to "Changes Requested" (disabled).
+
+          FIX THE APPROVAL ACTION:
+          In actions/deliverables.ts, ensure approveDeliverable:
+          — Accepts deliverableId and clientUserId.
+          — Updates deliverable status to APPROVED, sets approvedBy and approvedAt.
+          — Creates a notification for all agency users.
+          — Publishes Ably event to project channel.
+          — Revalidates the portal project path.
+
+          FIX rejectDeliverable similarly.
+        </instruction>
+      </deliverables_tab>
+
+      <comments_tab>
+        <instruction>
+          Client sees only external comments (is_internal = false).
+          Comment input at bottom: clean, simple.
+          "Leave a comment..." placeholder.
+          "Send" button: gold primary, 36px height.
+          Comments display: avatar (initials in --bg-elevated) | name | timestamp | body.
+          New comments appear in real time via Ably.
+          Thread replies indented with 1px --border-hairline left line.
+        </instruction>
+      </comments_tab>
+
+      <invoice_tab>
+        <instruction>
+          Show invoice as a beautifully formatted document.
+          Agency logo top right. "INVOICE" in Playfair 40px, --gold-mid, top left.
+          Invoice number in JetBrains Mono below the title.
+          Agency details + client details in two columns.
+          Line items table: proper HTML table, alternating row shading
+          (--bg-surface / --bg-elevated). Amounts in JetBrains Mono.
+          TOTAL line: Playfair Display 24px, --gold-mid, heavy gold line above it.
+          Due date: large and prominent. Color: overdue → --danger-text.
+
+          "Pay Now" button: gold primary, FULL WIDTH on mobile, large (48px height).
+          Links to Stripe Checkout. THIS BUTTON MUST ALWAYS BE VISIBLE if invoice is unpaid.
+          "Download PDF" button: ghost, secondary. Generates PDF via @react-pdf/renderer.
+
+          If invoice is paid: show a large "PAID ✓" stamp in --success-text, Playfair 40px,
+          rotated -15 degrees, with a 2px --success-text border around it.
+          Paid date in JetBrains Mono below.
+        </instruction>
+      </invoice_tab>
+    </client_project_view>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 6: BRANDING SYSTEM FIX                               -->
+  <!-- ============================================================ -->
+  <section id="6" title="BRAND COLOR SYSTEM FIX">
+
+    <bug_description>
+      When an agency sets their brand color in Settings > Branding,
+      the color does not apply to the client portal. This is a P0 bug.
+    </bug_description>
+
+    <fix>
+      <instruction>
+        In the portal layout (app/(client)/portal/[clientSlug]/layout.tsx):
+        1. Fetch the agency record by clientSlug → client.agency_id → agency.brand_color.
+        2. Inject a style tag into the layout head:
+           `style={{ '--gold-core': agency.brand_color } as React.CSSProperties}`
+           applied to the root div of the portal layout.
+        3. This overrides --gold-core for the entire portal with the agency's brand color.
+        4. All gold-accented elements (active nav, buttons, borders, badges) automatically
+           take the agency's brand color.
+
+        Also fix the branding settings page:
+        — The color picker must update in real time.
+        — The live preview card in the settings page must use the picked color as --gold-core.
+        — On save: updateAgencyBranding server action updates agency.brand_color in DB.
+        — After save: revalidate all portal paths for this agency.
+        — Show a success toast: "Brand color updated. Client portals updated immediately."
+      </instruction>
+    </fix>
+
+    <portal_load_fix>
+      <instruction>
+        The mock portal fails to load after setup. Debug and fix:
+        1. In middleware.ts: verify the subdomain rewrite handles localhost correctly in dev mode.
+           In dev, [agency-slug].localhost:3000 should rewrite to /portal/[agency-slug].
+        2. In the portal layout: add a notFound() call if the clientSlug resolves to no agency.
+        3. Ensure the dev bypass mock data includes a valid clientSlug that matches
+           the demo route /portal/northstar-brand.
+        4. Add an explicit route for /portal as a redirect to /demo/client in dev mode.
+        5. Test: GET /portal/northstar-brand returns 200 with full portal HTML.
+      </instruction>
+    </portal_load_fix>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 7: ANIMATIONS — 3D AND MOTION OVERHAUL               -->
+  <!-- ============================================================ -->
+  <section id="7" title="ANIMATIONS AND 3D OVERHAUL">
+
+    <install>
+      <package>npm install @react-three/fiber @react-three/drei three @types/three</package>
+      <package>npm install gsap @gsap/react</package>
+      <package>npm install lenis</package>
+      <package>npm install framer-motion (already installed — verify)</package>
+    </install>
+
+    <global_scroll>
+      <instruction>
+        Create components/shared/smooth-scroll-provider.tsx — a client component that
+        initializes Lenis smooth scroll on mount and exposes it via context.
+        Wrap the root layout in this provider.
+        All anchor links must work with Lenis scrollTo.
+      </instruction>
+    </global_scroll>
+
+    <landing_3d_hero>
+      <instruction>
+        Three.js scene in the hero (already specced in Section 2).
+        Three floating panels representing the product.
+        Panel material: MeshStandardMaterial, color: #0F0F0F, roughness: 0.9, metalness: 0.1.
+        Panel wireframe: separate EdgesGeometry with LineBasicMaterial, color: #D4AF37, opacity: 0.4.
+        Gold point light at (2, 3, 2), intensity 1.5.
+        Ambient light intensity: 0.2.
+        Panels auto-rotate on Y axis (0.002 rad/frame) and slightly on X (0.0005).
+        On scroll: GSAP ScrollTrigger maps scroll progress to panel spread:
+          start → panels close together (x: -1, 0, 1)
+          middle → panels spread (x: -3, 0, 3) + slight Y rotation
+          end → panels fade out (opacity → 0)
+      </instruction>
+    </landing_3d_hero>
+
+    <floating_demo_cards>
+      <instruction>
+        The two demo cards on the landing page float independently.
+        Use CSS keyframe animation, NOT JavaScript (better performance):
+        
+        @keyframes float-a {
+          0%, 100% { transform: translateY(0px); }
+          50%       { transform: translateY(-10px); }
+        }
+        @keyframes float-b {
+          0%, 100% { transform: translateY(-6px); }
+          50%       { transform: translateY(4px); }
+        }
+        
+        Agency card: animation: float-a 4s ease-in-out infinite.
+        Client card: animation: float-b 4.8s ease-in-out 0.6s infinite.
+        
+        On hover: animation-play-state: paused. Card lifts to its current float position.
+      </instruction>
+    </floating_demo_cards>
+
+    <scroll_reveal_system>
+      <instruction>
+        Create hooks/use-reveal.ts — an IntersectionObserver hook that adds class 'in-view'
+        to elements when they enter the viewport (threshold: 0.15).
+        
+        Apply globally to all [data-reveal] elements via a useEffect in the root layout.
+        
+        For staggered children, read data-delay attribute (ms):
+        element.style.animationDelay = element.dataset.delay + 'ms';
+        
+        CSS already defined in globals.css (Section 1).
+        
+        Apply to: feature sections, testimonial cards, pricing cards, FAQ items,
+        problem cards, stat cards on dashboard.
+      </instruction>
+    </scroll_reveal_system>
+
+    <kanban_3d_drag>
+      <instruction>
+        When a task card is being dragged:
+        — Apply CSS transform: perspective(800px) rotateX(2deg) rotateY(-1deg) scale(1.04)
+        — This gives the card a subtle 3D tilt as if it's been lifted off a table.
+        — Add via DragOverlay in kanban-board.tsx: the overlay card gets a 'is-dragging' class.
+        — Shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 20px rgba(212,175,55,0.25).
+        — This is a CSS-only 3D effect, no Three.js needed here.
+      </instruction>
+    </kanban_3d_drag>
+
+    <page_transitions>
+      <instruction>
+        Wrap the agency app layout content area with a Framer Motion component:
+        
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+        key={pathname} (use usePathname())
+        
+        This gives a clean, fast, premium feel to every navigation action.
+        250ms is fast enough to not feel slow but noticeable enough to feel polished.
+      </instruction>
+    </page_transitions>
+
+    <modal_animations>
+      <instruction>
+        All modals and dialogs:
+        — Backdrop: fade in, opacity 0→0.85, 200ms.
+        — Panel: scale 0.95→1.00 + opacity 0→1, 200ms, ease-out.
+        — On close: reverse, 150ms.
+        Use Framer Motion AnimatePresence in all Dialog components.
+      </instruction>
+    </modal_animations>
+
+    <notification_panel_animation>
+      <instruction>
+        The notification slide-in panel:
+        — Slides from translateX(400px) to translateX(0), 280ms, ease-out.
+        — Backdrop fades in simultaneously.
+        — On close: slides back to translateX(400px), 200ms.
+        Use Framer Motion AnimatePresence + motion.div.
+      </instruction>
+    </notification_panel_animation>
+
+    <micro_interactions>
+      <instruction>
+        Every interactive element must respond to user input immediately.
+        
+        Buttons: scale(0.97) on mousedown, back to scale(1) on mouseup. 120ms ease.
+        
+        Input fields: on focus, the border animates from --border-hairline to --border-gold-hot.
+        The gold glow (--glow-gold-xs) appears simultaneously. 200ms ease.
+        
+        Nav items: a 2px --gold-core left border slides in from height 0% to 100% on active.
+        
+        Badge count on notification bell: when a new notification arrives,
+        the badge does a quick scale(1→1.3→1) pop in 300ms.
+        
+        Cards on hover: translateY(-2px) + border brightens. Both 200ms. GPU-composited only
+        (transform and border-color, never width/height changes).
+        
+        Toggle switches: smooth translate of the thumb, 200ms. Gold background when on.
+        
+        Approval button after click: button content transitions from text to a checkmark icon
+        with a 200ms crossfade. Background transitions from --gold-core to --success-bg.
+      </instruction>
+    </micro_interactions>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 8: UI COMPONENT LIBRARY UPGRADES                     -->
+  <!-- ============================================================ -->
+  <section id="8" title="COMPONENT UPGRADES">
+
+    <toast_system>
+      <instruction>
+        Install: npm install sonner
+        Replace any existing toast implementation with Sonner.
+        Configure in root layout: Toaster with dark theme, position bottom-right.
+        Custom styles:
+          Background: --bg-elevated
+          Border: 1px solid --border-hairline
+          Border-top: 1px solid rgba(255,255,255,0.10)
+          Text: --ink-primary
+          Success icon: --success-text
+          Error icon: --danger-text
+          Action button: --gold-core text, ghost style
+
+        Toast calls (ensure all server actions trigger these):
+        — Approval success: toast.success("Approved ✓", { description: "Agency notified." })
+        — Rejection sent: toast.success("Feedback sent", { description: "Changes requested." })
+        — Save success: toast.success("Saved")
+        — Error: toast.error("Something went wrong", { description: error.message })
+        — Reminder sent: toast.success("Reminder sent to [client name]")
+      </instruction>
+    </toast_system>
+
+    <command_palette>
+      <instruction>
+        Install: npm install cmdk
+        Create components/agency/command-palette.tsx.
+        Triggered by Cmd+K (or Ctrl+K).
+        Shows: recent projects, clients, quick actions (new project, new client, new invoice).
+        Search filters results in real time.
+        Style: --bg-elevated, 1px --border-gold-dim border, --shadow-xl.
+        Search input: 18px DM Sans, --ink-primary, no border.
+        Result items: Phosphor icon + label + type badge.
+        Active result: --gold-dim background, --ink-primary text.
+        Keyboard navigation: ArrowUp/Down to move, Enter to select, Escape to close.
+      </instruction>
+    </command_palette>
+
+    <select_component>
+      <instruction>
+        Replace ALL native HTML select elements with a custom Radix UI Select component.
+        Style to match the design system:
+        — Trigger: same style as Input, with ChevronDown (Phosphor) icon.
+        — Content: --bg-elevated, 1px --border-subtle, --shadow-lg, 8px radius.
+        — Items: 14px DM Sans, --ink-secondary, 36px height, 8px side padding.
+          Hover: --neutral-bg background, --ink-primary text.
+          Selected: --gold-dim background, --gold-mid text, Check icon (Phosphor) right-aligned.
+        This fixes the dull native select elements throughout the app.
+      </instruction>
+    </select_component>
+
+    <avatar_component>
+      <instruction>
+        Create components/ui/avatar.tsx.
+        Props: name (string), size (sm/md/lg), src (optional image URL).
+        If src: show image, object-cover, full border-radius.
+        If no src: show initials (first letter of each word, max 2).
+        Background: --bg-elevated. Text: --ink-primary. Border: 1px solid --border-subtle.
+        Sizes: sm=24px/10px text, md=32px/13px text, lg=40px/16px text.
+        Stacked avatars: margin-left -8px on each, hover spreads them apart.
+      </instruction>
+    </avatar_component>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 9: BANNED PATTERNS — STRICT ENFORCEMENT              -->
+  <!-- ============================================================ -->
+  <section id="9" title="WHAT NEVER TO DO">
+
+    <banned_colors>
+      <ban>#6366F1 #8B5CF6 #3B82F6 — the AI-SaaS trinity. Never.</ban>
+      <ban>rgba backgrounds with any blue, purple, or pink undertone</ban>
+      <ban>Warm beige/washi/paper tones — the old palette is gone</ban>
+      <ban>#FFD700 — cheap gold. Only --gold-core (#D4AF37) and its scale</ban>
+      <ban>Any neon: #00FF88 #FF00FF #00FFFF</ban>
+      <ban>Multi-color gradients as backgrounds or button fills</ban>
+      <ban>Glassmorphism with colored panel backgrounds</ban>
+      <ban>Pure #FFFFFF text — use --ink-primary</ban>
+      <ban>Pure #000000 as a card or surface color — use the void/base/surface scale</ban>
+    </banned_colors>
+
+    <banned_patterns>
+      <ban>Gradient text (bg-clip-text) — anywhere</ban>
+      <ban>Pulsing notification dots (animate-ping)</ban>
+      <ban>animate-bounce — ever</ban>
+      <ban>Colored icon backgrounds (red for dashboard, green for money) in sidebar</ban>
+      <ban>Bento grid on landing page</ban>
+      <ban>Floating 3D Spline embed — our own Three.js scenes only</ban>
+      <ban>Arrow-tip tooltip bubbles — flat tooltip, 6px radius, no arrow</ban>
+      <ban>border-radius above 12px on rectangular containers</ban>
+      <ban>Progress bars with gradient fills — solid gold only</ban>
+      <ban>FAB in any corner</ban>
+      <ban>Star emoji ratings — SVG stars only</ban>
+      <ban>Tailwind shadow-2xl — use --shadow-* CSS variables</ban>
+      <ban>White text on gold button — always dark (#000000) text on gold background</ban>
+      <ban>Any font other than Playfair Display, DM Sans, or JetBrains Mono</ban>
+      <ban>Inter or Geist for headings</ban>
+      <ban>Placeholder comments in code: "// ... rest of implementation"</ban>
+      <ban>Truncated file output — every file ships complete (full-output-enforcement)</ban>
+    </banned_patterns>
+
+    <self_audit>
+      Before shipping any screen, answer YES to all:
+      [ ] Does this look like it cost $10,000 to design?
+      [ ] Are the borders sharp and deliberate?
+      [ ] Is gold used in 3 or fewer places on this screen?
+      [ ] Are all action buttons fully functional?
+      [ ] Do animations feel physical and earned, not decorative?
+      [ ] Would a luxury brand art director approve this layout?
+      [ ] Does every empty state have a custom illustration, never a blank area?
+      [ ] Is the notification system wired and live?
+      [ ] Does the approval button work end-to-end?
+      If any answer is NO — rebuild that element before moving on.
+    </self_audit>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 10: BUILD ORDER FOR THIS OVERHAUL                    -->
+  <!-- ============================================================ -->
+  <section id="10" title="OVERHAUL BUILD ORDER">
+
+    <instruction>
+      Update BUILD_LOG.md at the START and END of every task below.
+      Do not skip tasks. Do not reorder without documenting in BUILD_LOG.md.
+    </instruction>
+
+    <phase id="A" name="Foundation fixes — must be first">
+      <task>A.1 Replace globals.css with new Obsidian v3 palette (Section 1)</task>
+      <task>A.2 Install all new packages: @phosphor-icons/react, @react-three/fiber, @react-three/drei, three, @types/three, gsap, @gsap/react, lenis, sonner, cmdk</task>
+      <task>A.3 Fix brand color injection in portal layout (Section 6)</task>
+      <task>A.4 Fix portal load bug — middleware subdomain rewrite (Section 6)</task>
+      <task>A.5 Fix approval server action end-to-end (Section 5)</task>
+    </phase>
+
+    <phase id="B" name="Agency app interior">
+      <task>B.1 Sidebar overhaul — Phosphor icons, gold active state, gold separator line</task>
+      <task>B.2 Dashboard overhaul — stat cards, count-up, activity feed</task>
+      <task>B.3 Project workspace header and tab navigation overhaul</task>
+      <task>B.4 Kanban board overhaul — 3D drag, priority borders, inline add</task>
+      <task>B.5 Deliverables tab overhaul — working approval buttons, version history</task>
+      <task>B.6 Comments tab overhaul — internal toggle, threading, reactions</task>
+      <task>B.7 Invoice tab overhaul — formatted table, large total, Stripe pay</task>
+      <task>B.8 Replace all native select elements with Radix Select</task>
+    </phase>
+
+    <phase id="C" name="Notification system">
+      <task>C.1 Build notification server actions and DB integration</task>
+      <task>C.2 Wire createNotification into all relevant actions</task>
+      <task>C.3 Build agency notification panel (slide-in drawer)</task>
+      <task>C.4 Build client notification panel</task>
+      <task>C.5 Wire Ably real-time to both notification panels</task>
+    </phase>
+
+    <phase id="D" name="Client portal rebuild">
+      <task>D.1 Portal home — branded header, greeting card, projects grid</task>
+      <task>D.2 Client project view — all 4 tabs rebuilt per Section 5</task>
+      <task>D.3 Approval flow — both approve and request-changes fully working</task>
+      <task>D.4 Invoice view — formatted document, Pay Now button, paid stamp</task>
+    </phase>
+
+    <phase id="E" name="Landing page">
+      <task>E.1 Lenis smooth scroll provider — root layout</task>
+      <task>E.2 Scroll reveal system — IntersectionObserver hook</task>
+      <task>E.3 Hero section — headline animation, gold rule, CTA buttons</task>
+      <task>E.4 Three.js floating panels scene — dynamic import, SSR disabled</task>
+      <task>E.5 Social proof marquee, problem section, features alternating</task>
+      <task>E.6 Demo CTA section — floating cards, agency/client view buttons</task>
+      <task>E.7 Testimonials, pricing, FAQ, final CTA, footer</task>
+    </phase>
+
+    <phase id="F" name="Polish and micro-interactions">
+      <task>F.1 Sonner toast system — replace all existing toasts</task>
+      <task>F.2 Command palette (Cmd+K)</task>
+      <task>F.3 Page transitions — Framer Motion AnimatePresence</task>
+      <task>F.4 Modal animations — scale + fade</task>
+      <task>F.5 Kanban 3D drag tilt effect</task>
+      <task>F.6 Float animations on demo cards</task>
+      <task>F.7 All micro-interactions — button press, input focus, badge pop</task>
+      <task>F.8 Avatar component — replace all initials with the canonical component</task>
+      <task>F.9 Custom SVG empty state illustrations — one per empty context</task>
+    </phase>
+
+    <phase id="G" name="Verify and ship">
+      <task>G.1 npx tsc --noEmit — zero errors required</task>
+      <task>G.2 npx next lint — zero warnings required</task>
+      <task>G.3 npx next build — clean build required</task>
+      <task>G.4 End-to-end test: demo/agency → create project → upload deliverable → demo/client → approve → invoice pay</task>
+      <task>G.5 Notification test: trigger a comment → verify bell badge updates in real time on both sides</task>
+      <task>G.6 UPDATE BUILD_LOG.md to OVERHAUL COMPLETE</task>
+    </phase>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 11: HANDOFF PROTOCOL                                  -->
+  <!-- ============================================================ -->
+  <section id="11" title="HANDOFF PROTOCOL">
+    <instruction>
+      If you reach your context limit before completing this overhaul:
+
+      1. Immediately update BUILD_LOG.md:
+         — Set "Active task" to the exact task ID (e.g. "D.3 — approval flow modal")
+         — Check off all completed tasks
+         — Note any partially-completed files
+
+      2. Create HANDOFF_NOTE.md at project root:
+         — What was completed in this session
+         — Exact file and function name where you stopped
+         — What the next session should do first
+         — Any gotchas or half-finished logic to watch for
+
+      3. Run: git add . and git commit -m "WIP: overhaul [phase] — handoff"
+
+      The next model's FIRST action is to read BUILD_LOG.md and HANDOFF_NOTE.md.
+      It does not start from the beginning. It picks up exactly where you stopped.
+    </instruction>
+  </section>
+
+  <closing>
+    <standard>
+      The standard for every screen is this:
+      A creative agency principal in Doha, Qatar — who runs a QAR 3M/year business —
+      opens this app on their laptop in front of a client.
+      They feel proud. Not embarrassed.
+      The client asks: "Did you build this yourself?"
+      The principal says: "Yes."
+      And means it.
+      Build to that standard.
+    </standard>
+  </closing>
+
+</portalos_transformation_prompt>

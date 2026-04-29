@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>PortalOS</title>
+  <rect width="64" height="64" rx="14" fill="#FDFAF7"/>
+  <rect x="12" y="12" width="40" height="40" rx="10" fill="#F7F3EE" stroke="#5A4632" stroke-opacity="0.18"/>
+  <path d="M22 42V20h13.5c4.9 0 8.5 3.2 8.5 7.7 0 4.6-3.6 7.8-8.5 7.8H28v6.5h-6Zm6-12h7.1c1.7 0 2.9-.9 2.9-2.3 0-1.5-1.2-2.4-2.9-2.4H28V30Z" fill="#1A1410"/>
+  <circle cx="46" cy="18" r="4" fill="#D4607A"/>
+</svg>
