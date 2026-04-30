@@ -14,7 +14,7 @@ export default function NotFound() {
           The page you&apos;re looking for doesn&apos;t exist or has been moved.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <a
+          <Link
             className="inline-flex min-h-[44px] items-center gap-2 rounded-[8px] border border-transparent bg-[var(--gold-core)] px-4 text-[14px] font-medium text-[#0A0A0B] no-underline transition-colors hover:bg-[var(--gold-bright)]"
             href="/"
           >
@@ -22,13 +22,13 @@ export default function NotFound() {
               <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
             Back to home
-          </a>
-          <a
+          </Link>
+          <Link
             className="inline-flex min-h-[44px] items-center gap-2 rounded-[8px] border border-[var(--border-subtle)] bg-transparent px-4 text-[14px] font-medium text-[var(--ink-primary)] no-underline transition-colors hover:border-[var(--border-visible)] hover:bg-[rgba(255,255,255,0.04)]"
             href="/app/dashboard"
           >
             Dashboard
-          </a>
+          </Link>
         </div>
       </div>
     </div>

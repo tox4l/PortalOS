@@ -1,12 +1,15 @@
 "use client";
 
+import Link from "next/link";
+
 export default function ErrorPage({
-  error,
+  error: _error,
   reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  void _error;
   return (
     <div className="flex min-h-[100dvh] items-center justify-center bg-[var(--bg-void)] px-4">
       <div className="mx-auto max-w-[480px] text-center">
@@ -31,7 +34,7 @@ export default function ErrorPage({
             </svg>
             Try again
           </button>
-          <a
+          <Link
             className="inline-flex min-h-[44px] items-center gap-2 rounded-[8px] border border-[var(--border-subtle)] bg-transparent px-4 text-[14px] font-medium text-[var(--ink-primary)] no-underline transition-colors hover:border-[var(--border-visible)] hover:bg-[rgba(255,255,255,0.04)]"
             href="/"
           >
@@ -39,7 +42,7 @@ export default function ErrorPage({
               <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
             Back to home
-          </a>
+          </Link>
         </div>
       </div>
     </div>
