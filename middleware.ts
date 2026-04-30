@@ -10,6 +10,8 @@ const APP_HOSTS = new Set([
   "www.portalos.app"
 ]);
 
+const PREVIEW_DOMAINS = [".vercel.app"];
+
 function isStaticRequest(pathname: string): boolean {
   return (
     pathname.startsWith("/_next") ||
@@ -25,6 +27,10 @@ function getAgencySlugFromHost(host: string): string | null {
   const normalizedHost = lowerHost.split(":")[0];
 
   if (APP_HOSTS.has(lowerHost) || APP_HOSTS.has(normalizedHost)) {
+    return null;
+  }
+
+  if (PREVIEW_DOMAINS.some((domain) => normalizedHost.endsWith(domain))) {
     return null;
   }
 
