@@ -39,34 +39,38 @@ export default async function PortalLayout({
     );
   }
 
-  const client = await prisma.client.findUnique({
-    where: { portalSlug: clientSlug },
-    select: {
-      companyName: true,
-      portalSlug: true,
-      agency: {
-        select: {
-          name: true,
-          brandColor: true
+  try {
+    const client = await prisma.client.findUnique({
+      where: { portalSlug: clientSlug },
+      select: {
+        companyName: true,
+        portalSlug: true,
+        agency: {
+          select: {
+            name: true,
+            brandColor: true
+          }
         }
       }
-    }
-  });
+    });
 
-  if (!client?.agency) {
+    if (!client?.agency) {
+      notFound();
+    }
+
+    return (
+      <PortalShell
+        agencyBrandColor={client.agency.brandColor}
+        agencyName={client.agency.name}
+        clientName={client.companyName}
+        initialNotifications={notifications}
+        notificationChannel={notificationChannel}
+        portalSlug={client.portalSlug}
+      >
+        {children}
+      </PortalShell>
+    );
+  } catch {
     notFound();
   }
-
-  return (
-    <PortalShell
-      agencyBrandColor={client.agency.brandColor}
-      agencyName={client.agency.name}
-      clientName={client.companyName}
-      initialNotifications={notifications}
-      notificationChannel={notificationChannel}
-      portalSlug={client.portalSlug}
-    >
-      {children}
-    </PortalShell>
-  );
 }

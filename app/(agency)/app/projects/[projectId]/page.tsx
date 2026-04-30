@@ -146,22 +146,45 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     redirect("/login");
   }
 
-  const project = (await prisma.project.findFirst({
-    where: { id: projectId, agencyId: session.user.agencyId },
-    include: projectInclude
-  })) as ProjectWithIncludes | null;
+  let project: ProjectWithIncludes | null = null;
+  let totalComments = 0;
 
-  if (!project) {
-    notFound();
+  try {
+    project = (await prisma.project.findFirst({
+      where: { id: projectId, agencyId: session.user.agencyId },
+      include: projectInclude
+    })) as ProjectWithIncludes | null;
+
+    if (!project) {
+      notFound();
+    }
+
+    const commentCounts = await prisma.comment.groupBy({
+      by: ["projectId"],
+      where: { projectId: project.id },
+      _count: { id: true }
+    });
+
+    totalComments = commentCounts[0]?._count.id ?? 0;
+  } catch {
+    return (
+      <ProjectWorkspaceTabs
+        project={{
+          id: projectId,
+          name: "Project unavailable",
+          description: "The database is currently unreachable. Please check your DATABASE_URL configuration.",
+          status: "DRAFT",
+          dueDate: null,
+          client: { id: "", companyName: "Unavailable", logoUrl: null },
+          deliverables: [],
+          comments: [],
+          tasks: [],
+          brief: null,
+          createdBy: { id: "", name: "", image: null }
+        }}
+      />
+    );
   }
-
-  const commentCounts = await prisma.comment.groupBy({
-    by: ["projectId"],
-    where: { projectId: project.id },
-    _count: { id: true }
-  });
-
-  const totalComments = commentCounts[0]?._count.id ?? 0;
 
   return (
     <ProjectWorkspaceTabs

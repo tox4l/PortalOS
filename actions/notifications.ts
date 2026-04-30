@@ -185,13 +185,17 @@ export async function getAgencyNotificationsForShell(): Promise<NotificationItem
     return [];
   }
 
-  const notifications = await prisma.notification.findMany({
-    where: { userId: session.user.id },
-    orderBy: { createdAt: "desc" },
-    take: 20
-  });
+  try {
+    const notifications = await prisma.notification.findMany({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: "desc" },
+      take: 20
+    });
 
-  return notifications.map(serializeNotification);
+    return notifications.map(serializeNotification);
+  } catch {
+    return [];
+  }
 }
 
 export async function getAgencyNotificationChannelForShell(): Promise<string> {
@@ -199,8 +203,12 @@ export async function getAgencyNotificationChannelForShell(): Promise<string> {
     return getAgencyNotificationsChannelName(getDevSession().user.agencyId ?? "dev-agency-001");
   }
 
-  const session = await auth();
-  return getAgencyNotificationsChannelName(session?.user?.agencyId ?? "unknown-agency");
+  try {
+    const session = await auth();
+    return getAgencyNotificationsChannelName(session?.user?.agencyId ?? "unknown-agency");
+  } catch {
+    return getAgencyNotificationsChannelName("unknown-agency");
+  }
 }
 
 export async function getClientNotificationsForShell(clientSlug: string): Promise<NotificationItem[]> {
@@ -208,22 +216,26 @@ export async function getClientNotificationsForShell(clientSlug: string): Promis
     return getDevClientNotifications() as NotificationItem[];
   }
 
-  const clientUser = await prisma.clientUser.findFirst({
-    where: { client: { portalSlug: clientSlug } },
-    select: { id: true }
-  });
+  try {
+    const clientUser = await prisma.clientUser.findFirst({
+      where: { client: { portalSlug: clientSlug } },
+      select: { id: true }
+    });
 
-  if (!clientUser) {
+    if (!clientUser) {
+      return [];
+    }
+
+    const notifications = await prisma.notification.findMany({
+      where: { clientUserId: clientUser.id },
+      orderBy: { createdAt: "desc" },
+      take: 20
+    });
+
+    return notifications.map(serializeNotification);
+  } catch {
     return [];
   }
-
-  const notifications = await prisma.notification.findMany({
-    where: { clientUserId: clientUser.id },
-    orderBy: { createdAt: "desc" },
-    take: 20
-  });
-
-  return notifications.map(serializeNotification);
 }
 
 export async function getClientNotificationChannelForShell(clientSlug: string): Promise<string> {
