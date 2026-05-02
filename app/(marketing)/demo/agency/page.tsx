@@ -166,7 +166,7 @@ export default function AgencyDemoPage() {
               </div>
               <div className="mt-8 divide-y divide-[var(--border-hairline)] border-y border-[var(--border-hairline)]">
                 {[
-                  ["Custom domain", "yourname.portalos.app"],
+                  ["Custom domain", "yourname.portalos.tech"],
                   ["Brand color", "Your accent color"],
                   ["Welcome message", "Set per client portal"],
                 ].map(([label, value]) => (
@@ -191,7 +191,7 @@ export default function AgencyDemoPage() {
               </div>
               <div>
                 <h3 className="font-display text-[28px] font-normal leading-tight">Your agency lives here</h3>
-                <p className="mt-1 text-[14px] text-[var(--ink-secondary)]">yourname.portalos.app</p>
+                <p className="mt-1 text-[14px] text-[var(--ink-secondary)]">yourname.portalos.tech</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <Badge variant="active">Your plan tier</Badge>
                   <Badge variant="active">Your team count</Badge>

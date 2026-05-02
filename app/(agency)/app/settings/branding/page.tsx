@@ -104,7 +104,7 @@ export default function BrandingSettingsPage() {
         <CardHeader>
           <CardTitle>Custom domain</CardTitle>
           <CardDescription>
-            Your client portal will be accessible at your own domain instead of portalos.app.
+            Your client portal will be accessible at your own domain instead of portalos.tech.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -114,7 +114,7 @@ export default function BrandingSettingsPage() {
             <Button variant="secondary">Verify</Button>
           </div>
           <p className="mt-3 text-[0.75rem] text-[var(--ink-tertiary)]">
-            You will need to add a CNAME record pointing to custom.portalos.app. Full instructions appear after verification.
+            You will need to add a CNAME record pointing to custom.portalos.tech. Full instructions appear after verification.
           </p>
         </CardContent>
       </Card>

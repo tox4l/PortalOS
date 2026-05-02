@@ -6,8 +6,8 @@ const APP_HOSTS = new Set([
   "localhost:3000",
   "127.0.0.1",
   "127.0.0.1:3000",
-  "portalos.app",
-  "www.portalos.app"
+  "portalos.tech",
+  "www.portalos.tech"
 ]);
 
 const PREVIEW_DOMAINS = [".vercel.app"];
@@ -39,7 +39,7 @@ function getAgencySlugFromHost(host: string): string | null {
     return slug && slug !== "www" ? slug : null;
   }
 
-  if (normalizedHost.endsWith(".portalos.app")) {
+  if (normalizedHost.endsWith(".portalos.tech")) {
     const [subdomain] = normalizedHost.split(".");
     return subdomain && subdomain !== "www" ? subdomain : null;
   }

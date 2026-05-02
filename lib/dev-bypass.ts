@@ -12,7 +12,7 @@ export function getDevSession(): Session {
     user: {
       id: "dev-user-001",
       name: "Sarah Kim",
-      email: "sarah@portalos.app",
+      email: "sarah@portalos.tech",
       image: null,
       role: "OWNER",
       agencyId: "dev-agency-001",
@@ -349,7 +349,7 @@ export function getDevTeamMembers() {
     {
       id: "dev-user-001",
       name: "Sarah Kim",
-      email: "sarah@portalos.app",
+      email: "sarah@portalos.tech",
       image: null,
       role: "OWNER",
       joinedAt: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString(),
@@ -357,7 +357,7 @@ export function getDevTeamMembers() {
     {
       id: "dev-user-002",
       name: "Marcus Reed",
-      email: "marcus@portalos.app",
+      email: "marcus@portalos.tech",
       image: null,
       role: "ADMIN",
       joinedAt: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
@@ -365,7 +365,7 @@ export function getDevTeamMembers() {
     {
       id: "dev-user-003",
       name: "Priya Nair",
-      email: "priya@portalos.app",
+      email: "priya@portalos.tech",
       image: null,
       role: "MEMBER",
       joinedAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),

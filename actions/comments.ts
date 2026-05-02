@@ -5,6 +5,7 @@ import { z } from "zod";
 import { createSafeAction, type ActionResult } from "@/actions/safe-action";
 import { createNotification } from "@/actions/notifications";
 import { auth } from "@/lib/auth";
+import { getClientSession } from "@/lib/client-sessions";
 import { prisma } from "@/lib/db";
 import { isDevBypass } from "@/lib/dev-bypass";
 import { checkPermission } from "@/lib/permissions";
@@ -116,6 +117,11 @@ export async function createClientCommentAction(
       return { commentId: `dev-comment-${Date.now()}` };
     }
 
+    const clientSession = await getClientSession();
+    if (!clientSession || clientSession.clientSlug !== parsed.clientSlug) {
+      throw new Error("You must be signed in to comment.");
+    }
+
     const project = await prisma.project.findFirst({
       where: {
         id: parsed.projectId,
@@ -126,15 +132,6 @@ export async function createClientCommentAction(
         name: true,
         agencyId: true,
         clientId: true,
-        client: {
-          select: {
-            clientUsers: {
-              orderBy: { createdAt: "asc" },
-              select: { id: true, name: true },
-              take: 1
-            }
-          }
-        }
       }
     });
 
@@ -142,13 +139,11 @@ export async function createClientCommentAction(
       throw new Error("Project not found.");
     }
 
-    const clientUser = project.client.clientUsers[0] ?? null;
-
     const comment = await prisma.comment.create({
       data: {
         body: parsed.body,
         projectId: project.id,
-        authorClientUserId: clientUser?.id ?? null,
+        authorClientUserId: clientSession.clientUserId,
         isInternal: false
       },
       select: { id: true }
@@ -157,7 +152,7 @@ export async function createClientCommentAction(
     await createNotification({
       type: "COMMENT",
       title: "New client comment",
-      body: `${clientUser?.name ?? "A client"} commented on ${project.name}.`,
+      body: `A client commented on ${project.name}.`,
       link: `/app/projects/${project.id}`,
       agencyId: project.agencyId,
       clientId: project.clientId,

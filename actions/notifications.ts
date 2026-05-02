@@ -252,9 +252,28 @@ export async function markNotificationReadAction(
       return { notificationId: parsed.notificationId };
     }
 
+    const session = await auth();
+    if (!session?.user?.id) {
+      throw new Error("You must be signed in.");
+    }
+
+    // Verify notification belongs to the calling user before updating
+    const notification = await prisma.notification.findUnique({
+      where: { id: parsed.notificationId },
+      select: { userId: true, clientUserId: true },
+    });
+
+    if (!notification) {
+      throw new Error("Notification not found.");
+    }
+
+    if (notification.userId && notification.userId !== session.user.id) {
+      throw new Error("You can only mark your own notifications as read.");
+    }
+
     await prisma.notification.update({
       where: { id: parsed.notificationId },
-      data: { read: true }
+      data: { read: true },
     });
 
     revalidatePath("/app");

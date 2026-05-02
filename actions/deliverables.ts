@@ -5,6 +5,7 @@ import { z } from "zod";
 import { createSafeAction, type ActionResult } from "@/actions/safe-action";
 import { createNotification } from "@/actions/notifications";
 import { auth } from "@/lib/auth";
+import { getClientSession } from "@/lib/client-sessions";
 import { prisma } from "@/lib/db";
 import { isDevBypass } from "@/lib/dev-bypass";
 import { checkPermission } from "@/lib/permissions";
@@ -89,6 +90,15 @@ export async function approveClientDeliverableAction(
   return createSafeAction(async () => {
     const parsed = clientApprovalSchema.parse(input);
 
+    const clientSession = await getClientSession();
+    if (!clientSession || clientSession.clientSlug !== parsed.clientSlug) {
+      throw new Error("You must be signed in.");
+    }
+
+    if (clientSession.role !== "CLIENT_LEAD" && clientSession.role !== "CLIENT_REVIEWER") {
+      throw new Error("You do not have permission to approve deliverables.");
+    }
+
     if (isDevBypass()) {
       await createNotification({
         type: "APPROVAL",
@@ -121,15 +131,6 @@ export async function approveClientDeliverableAction(
             name: true,
             agencyId: true,
             clientId: true,
-            client: {
-              select: {
-                clientUsers: {
-                  orderBy: { createdAt: "asc" },
-                  select: { id: true },
-                  take: 1
-                }
-              }
-            }
           }
         }
       }
@@ -143,7 +144,7 @@ export async function approveClientDeliverableAction(
       where: { id: deliverable.id },
       data: {
         status: "APPROVED",
-        approvedById: deliverable.project.client.clientUsers[0]?.id ?? null,
+        approvedById: clientSession.clientUserId,
         approvedAt: new Date()
       }
     });
@@ -172,6 +173,15 @@ export async function requestClientChangesAction(
 ): Promise<ActionResult<{ deliverableId: string }>> {
   return createSafeAction(async () => {
     const parsed = clientRejectSchema.parse(input);
+
+    const clientSession = await getClientSession();
+    if (!clientSession || clientSession.clientSlug !== parsed.clientSlug) {
+      throw new Error("You must be signed in.");
+    }
+
+    if (clientSession.role !== "CLIENT_LEAD" && clientSession.role !== "CLIENT_REVIEWER") {
+      throw new Error("You do not have permission to request changes.");
+    }
 
     if (isDevBypass()) {
       await createNotification({
@@ -204,15 +214,6 @@ export async function requestClientChangesAction(
           select: {
             agencyId: true,
             clientId: true,
-            client: {
-              select: {
-                clientUsers: {
-                  orderBy: { createdAt: "asc" },
-                  select: { id: true },
-                  take: 1
-                }
-              }
-            }
           }
         }
       }
@@ -221,8 +222,6 @@ export async function requestClientChangesAction(
     if (!deliverable) {
       throw new Error("Deliverable not found.");
     }
-
-    const clientUserId = deliverable.project.client.clientUsers[0]?.id ?? null;
 
     await prisma.$transaction([
       prisma.deliverable.update({
@@ -238,7 +237,7 @@ export async function requestClientChangesAction(
           body: parsed.comment,
           projectId: deliverable.projectId,
           deliverableId: deliverable.id,
-          authorClientUserId: clientUserId,
+          authorClientUserId: clientSession.clientUserId,
           isInternal: false
         }
       })

@@ -62,7 +62,7 @@ export default function PrivacyPage() {
             </h2>
             <p className="mt-3">
               You may request access to, correction of, or deletion of your personal data at any
-              time. Contact us at hello@portalos.app for data requests.
+              time. Contact us at hello@portalos.tech for data requests.
             </p>
           </section>
           <section>
@@ -70,7 +70,7 @@ export default function PrivacyPage() {
               5. Contact
             </h2>
             <p className="mt-3">
-              For questions about this policy, contact us at hello@portalos.app.
+              For questions about this policy, contact us at hello@portalos.tech.
             </p>
           </section>
         </div>

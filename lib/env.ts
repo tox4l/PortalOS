@@ -5,6 +5,7 @@ type EnvKey =
   | "CALENDLY_URL"
   | "DEMO_MODE"
   | "NEXT_PUBLIC_SUPABASE_ANON_KEY"
+  | "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"
   | "NEXT_PUBLIC_SUPABASE_URL"
   | "DEEPSEEK_API_KEY"
   | "POSTHOG_HOST"
@@ -51,9 +52,9 @@ const envSchema = z.object({
   // Required — auth (NextAuth)
   AUTH_SECRET: z.string().min(32, "AUTH_SECRET must be at least 32 characters"),
 
-  // Required — payments (Stripe)
-  STRIPE_SECRET_KEY: z.string().min(1, "STRIPE_SECRET_KEY is required"),
-  STRIPE_WEBHOOK_SECRET: z.string().min(1, "STRIPE_WEBHOOK_SECRET is required"),
+  // Optional — payments (Stripe) — not yet wired up
+  STRIPE_SECRET_KEY: z.string().optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().optional(),
 
   // Required — storage (Supabase)
   NEXT_PUBLIC_SUPABASE_URL: z.string().url(),

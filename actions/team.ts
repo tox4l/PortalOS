@@ -9,9 +9,15 @@ import { requireAgencyAdmin } from "@/lib/authz";
 import { getPlanLimits, checkTeamSeatAvailable } from "@/lib/plan-limits";
 import { generateInviteToken, inviteExpiresAt } from "@/lib/invite-tokens";
 import { sanitizeEmail } from "@/lib/sanitize";
-import { getResend, getDefaultFromEmail } from "@/lib/resend";
 import { createSafeAction, type ActionResult } from "@/actions/safe-action";
 import { isDevBypass, getDevTeamMembers, getDevPendingInvitations } from "@/lib/dev-bypass";
+import { checkRateLimit } from "@/lib/action-rate-limit";
+import { RATE_LIMITS } from "@/lib/rate-limit";
+import {
+  buildAcceptInviteUrl,
+  renderTeamInvitationEmail,
+  sendEmail,
+} from "@/lib/email";
 
 // ─── Types ───
 
@@ -145,6 +151,8 @@ export async function inviteTeamMemberAction(
       return { invitationId: `dev-invite-${Date.now()}` };
     }
 
+    await checkRateLimit("team/invite", RATE_LIMITS.MAGIC_LINK);
+
     const agency = await prisma.agency.findUniqueOrThrow({
       where: { id: agencyId },
       include: { _count: { select: { users: true } } },
@@ -191,23 +199,21 @@ export async function inviteTeamMemberAction(
       },
     });
 
-    const inviteUrl = `${process.env.APP_URL ?? "https://portalos.app"}/accept-invite?token=${encodeURIComponent(raw)}&email=${encodeURIComponent(email)}`;
+    const inviteUrl = buildAcceptInviteUrl(raw, email);
 
-    const resend = getResend();
-    await resend.emails.send({
-      from: getDefaultFromEmail(),
-      to: email,
-      subject: `${session.user.name ?? "Your team"} invited you to ${agency.name}`,
-      html: `
-        <div style="font-family: Georgia, serif; background: #0A0A0A; color: #FAF8F2; padding: 40px; max-width: 480px; margin: 0 auto;">
-          <p style="font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: #8C7340; margin-bottom: 24px;">${agency.name}</p>
-          <h1 style="font-size: 28px; font-weight: 400; margin-bottom: 16px;">You've been invited</h1>
-          <p style="color: #B8B2A0; margin-bottom: 8px;">${session.user.name ?? "Your team"} invited you to join as <strong>${role.toLowerCase()}</strong>.</p>
-          <p style="color: #B8B2A0; margin-bottom: 32px;">This invitation expires in 7 days.</p>
-          <a href="${inviteUrl}" style="display: inline-block; background: #8C7340; color: #000; padding: 12px 32px; text-decoration: none; font-size: 14px; letter-spacing: 0.05em;">Accept Invitation</a>
-        </div>
-      `,
-    });
+    await sendEmail(
+      email,
+      `${session.user.name ?? "Your team"} invited you to ${agency.name}`,
+      renderTeamInvitationEmail({
+        agency: {
+          name: agency.name,
+          brandColor: session.user.agencyBrandColor,
+        },
+        inviterName: session.user.name ?? "Your team",
+        role,
+        inviteUrl,
+      })
+    );
 
     revalidatePath("/app/settings/team");
     return { invitationId: "invite-sent" };

@@ -23,7 +23,9 @@ export function getSupabaseServiceClient(): SupabaseClient {
 export function createSupabaseBrowserClient(): SupabaseClient {
   const url = getOptionalEnv("NEXT_PUBLIC_SUPABASE_URL") ?? requireEnv("SUPABASE_URL");
   const anonKey =
-    getOptionalEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY") ?? requireEnv("SUPABASE_ANON_KEY");
+    getOptionalEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY") ??
+    getOptionalEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY") ??
+    requireEnv("SUPABASE_ANON_KEY");
 
   return createClient(url, anonKey);
 }

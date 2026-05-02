@@ -95,7 +95,8 @@ export default async function PortalAuthPage({ params, searchParams }: PortalAut
 
   const hashed = await hashToken(token);
 
-  const invitation = await prisma.clientInvitation.findFirst({
+  // Atomically claim the invitation to prevent TOCTOU race
+  const claim = await prisma.clientInvitation.updateMany({
     where: {
       token: hashed,
       email,
@@ -103,9 +104,10 @@ export default async function PortalAuthPage({ params, searchParams }: PortalAut
       acceptedAt: null,
       expiresAt: { gt: new Date() },
     },
+    data: { acceptedAt: new Date() },
   });
 
-  if (!invitation) {
+  if (claim.count === 0) {
     return (
       <div className="flex min-h-[80dvh] flex-col items-center justify-center px-4">
         <div className="surface-panel w-full max-w-[440px] p-10 text-center">
@@ -129,6 +131,16 @@ export default async function PortalAuthPage({ params, searchParams }: PortalAut
     );
   }
 
+  // Safely read the claimed invitation
+  const invitation = await prisma.clientInvitation.findFirst({
+    where: {
+      token: hashed,
+      email,
+      clientId: client.id,
+    },
+    select: { role: true },
+  });
+
   // Find or create the client user
   let clientUser = await prisma.clientUser.findFirst({
     where: { email, clientId: client.id },
@@ -142,16 +154,11 @@ export default async function PortalAuthPage({ params, searchParams }: PortalAut
         name: email.split("@")[0],
         clientId: client.id,
         agencyId: client.agencyId,
-        role: invitation.role,
+        role: invitation?.role ?? "CLIENT_LEAD",
       },
       select: { id: true, role: true },
     });
   }
-
-  await prisma.clientInvitation.update({
-    where: { id: invitation.id },
-    data: { acceptedAt: new Date() },
-  });
 
   await prisma.clientUser.update({
     where: { id: clientUser.id },

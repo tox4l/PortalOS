@@ -8,9 +8,15 @@ import { checkPermission } from "@/lib/permissions";
 import { checkClientSeatAvailable } from "@/lib/plan-limits";
 import { generateInviteToken, inviteExpiresAt } from "@/lib/invite-tokens";
 import { sanitizeEmail } from "@/lib/sanitize";
-import { getResend, getDefaultFromEmail } from "@/lib/resend";
 import { createSafeAction, type ActionResult } from "@/actions/safe-action";
 import { isDevBypass } from "@/lib/dev-bypass";
+import { checkRateLimit } from "@/lib/action-rate-limit";
+import { RATE_LIMITS } from "@/lib/rate-limit";
+import {
+  buildClientAuthUrl,
+  renderClientWelcomeEmail,
+  sendEmail,
+} from "@/lib/email";
 
 const createClientSchema = z.object({
   companyName: z.string().trim().min(2, "Company name is required."),
@@ -61,6 +67,8 @@ export async function createClientAction(
         portalSlug: input.portalSlug
       };
     }
+
+    await checkRateLimit("clients/create", RATE_LIMITS.MAGIC_LINK);
 
     const agency = await prisma.agency.findUniqueOrThrow({
       where: { id: session.user.agencyId },
@@ -121,23 +129,21 @@ export async function createClientAction(
         },
       });
 
-      const magicLinkUrl = `${process.env.APP_URL ?? "https://portalos.app"}/portal/${client.portalSlug}/auth?token=${encodeURIComponent(raw)}&email=${encodeURIComponent(input.contactEmail)}`;
+      const magicLinkUrl = buildClientAuthUrl(client.portalSlug, raw, input.contactEmail);
 
-      const resend = getResend();
-      await resend.emails.send({
-        from: getDefaultFromEmail(),
-        to: input.contactEmail,
-        subject: `Welcome to your portal — ${input.companyName}`,
-        html: `
-          <div style="font-family: Georgia, serif; background: #0A0A0A; color: #FAF8F2; padding: 40px; max-width: 480px; margin: 0 auto;">
-            <p style="font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: #8C7340; margin-bottom: 24px;">${session.user.agencyName ?? "Your Agency"}</p>
-            <h1 style="font-size: 28px; font-weight: 400; margin-bottom: 16px;">Your portal is ready</h1>
-            <p style="color: #B8B2A0; margin-bottom: 8px;">Hi ${input.contactName}, your dedicated project portal for <strong>${input.companyName}</strong> has been set up.</p>
-            <p style="color: #B8B2A0; margin-bottom: 32px;">Sign in below to track progress, review deliverables, and stay aligned with the team.</p>
-            <a href="${magicLinkUrl}" style="display: inline-block; background: #8C7340; color: #000; padding: 12px 32px; text-decoration: none; font-size: 14px; letter-spacing: 0.05em;">Access your portal</a>
-          </div>
-        `,
-      });
+      await sendEmail(
+        input.contactEmail,
+        `Welcome to your portal — ${input.companyName}`,
+        renderClientWelcomeEmail({
+          agency: {
+            name: session.user.agencyName ?? "Your Agency",
+            brandColor: session.user.agencyBrandColor,
+          },
+          contactName: input.contactName,
+          companyName: input.companyName,
+          magicLinkUrl,
+        })
+      );
     }
 
     revalidatePath("/app/clients");

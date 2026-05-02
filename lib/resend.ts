@@ -12,5 +12,5 @@ export function getResend(): Resend {
 }
 
 export function getDefaultFromEmail(): string {
-  return getOptionalEnv("RESEND_FROM_EMAIL") ?? "PortalOS <hello@portalos.app>";
+  return getOptionalEnv("RESEND_FROM_EMAIL") ?? "PortalOS <hello@portalos.tech>";
 }

@@ -33,7 +33,8 @@
       "Bash(netstat -ano)",
       "Bash(npm ls *)",
       "Bash(cat .env)",
-      "Bash(cat .env.local)"
+      "Bash(cat .env.local)",
+      "Bash(openssl rand *)"
     ]
   }
 }

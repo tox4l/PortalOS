@@ -23,7 +23,7 @@ function SquigglePath() {
 function CirclePath() {
   return (
     <path
-      d="M80 10 C132 5, 156 22, 156 42 C156 64, 132 78, 80 76 C28 74, 4 62, 4 42 C4 22, 24 15, 80 10"
+      d="M93 6 C139 3, 179 16, 185 50 C190 81, 158 105, 103 107 C52 109, 13 93, 9 56 C7 23, 45 9, 93 6"
       fill="none"
       stroke="currentColor"
       strokeLinecap="round"
@@ -73,7 +73,7 @@ function DotsPath() {
 
 const variantConfig: Record<DoodleVariant, { viewBox: string; render: () => ReactNode }> = {
   squiggle: { viewBox: "0 0 84 18", render: () => <SquigglePath /> },
-  circle: { viewBox: "0 0 160 86", render: () => <CirclePath /> },
+  circle: { viewBox: "0 0 200 112", render: () => <CirclePath /> },
   highlight: { viewBox: "0 0 86 18", render: () => <HighlighterPath /> },
   asterisk: { viewBox: "0 0 20 20", render: () => <AsteriskPath /> },
   dots: { viewBox: "0 0 60 8", render: () => <DotsPath /> },
@@ -171,7 +171,7 @@ export function DoodleWord({ children, variant = "squiggle" }: DoodleWordProps) 
         <span
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 flex items-center justify-center"
-          style={{ margin: "-0.45em -0.35em", zIndex: -1 }}
+          style={{ margin: "-0.55em -0.5em", zIndex: -1 }}
         >
           <span style={{ width: "100%" }}>
             <DoodleAccent variant={variant} />

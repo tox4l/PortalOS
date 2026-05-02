@@ -7,8 +7,15 @@ import { createSafeAction, type ActionResult } from "@/actions/safe-action";
 import { createClientSession, clearClientSession } from "@/lib/client-sessions";
 import { generateInviteToken, hashToken, inviteExpiresAt } from "@/lib/invite-tokens";
 import { sanitizeEmail } from "@/lib/sanitize";
-import { getResend, getDefaultFromEmail } from "@/lib/resend";
 import { isDevBypass, getDevPortalClient, getDevClientUsers, getDevMagicLinkToken } from "@/lib/dev-bypass";
+import {
+  buildClientAuthUrl,
+  renderMagicLinkEmail,
+  renderClientTeammateInviteEmail,
+  sendEmail,
+} from "@/lib/email";
+import { checkRateLimit } from "@/lib/action-rate-limit";
+import { RATE_LIMITS } from "@/lib/rate-limit";
 
 // ─── Request Magic Link ───
 
@@ -29,6 +36,8 @@ export async function requestMagicLinkAction(
     if (isDevBypass()) {
       return { sent: true };
     }
+
+    await checkRateLimit("auth/magic-link", RATE_LIMITS.MAGIC_LINK);
 
     const client = await prisma.client.findUnique({
       where: { portalSlug: clientSlug },
@@ -63,22 +72,20 @@ export async function requestMagicLinkAction(
       },
     });
 
-    const magicLinkUrl = `${process.env.APP_URL ?? "https://portalos.app"}/portal/${clientSlug}/auth?token=${encodeURIComponent(raw)}&email=${encodeURIComponent(email)}`;
+    const magicLinkUrl = buildClientAuthUrl(clientSlug, raw, email);
 
-    const resend = getResend();
-    await resend.emails.send({
-      from: getDefaultFromEmail(),
-      to: email,
-      subject: `Sign in to ${client.companyName} on PortalOS`,
-      html: `
-        <div style="font-family: Georgia, serif; background: #0A0A0A; color: #FAF8F2; padding: 40px; max-width: 480px; margin: 0 auto;">
-          <p style="font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: #8C7340; margin-bottom: 24px;">${client.agency.name}</p>
-          <h1 style="font-size: 28px; font-weight: 400; margin-bottom: 16px;">Sign in to your portal</h1>
-          <p style="color: #B8B2A0; margin-bottom: 32px;">Click the button below to sign in to ${client.companyName}. This link expires in 7 days.</p>
-          <a href="${magicLinkUrl}" style="display: inline-block; background: #8C7340; color: #000; padding: 12px 32px; text-decoration: none; font-size: 14px; letter-spacing: 0.05em;">Sign in</a>
-        </div>
-      `,
-    });
+    await sendEmail(
+      email,
+      `Sign in to ${client.companyName} on PortalOS`,
+      renderMagicLinkEmail({
+        agency: {
+          name: client.agency.name,
+          brandColor: client.agency.brandColor,
+        },
+        companyName: client.companyName,
+        magicLinkUrl,
+      })
+    );
 
     return { sent: true };
   });
@@ -114,7 +121,9 @@ export async function consumeMagicLinkAction(
     if (!client) throw new Error("Client portal not found.");
 
     const hashed = await hashToken(token);
-    const invitation = await prisma.clientInvitation.findFirst({
+
+    // Atomically claim the invitation to prevent TOCTOU race
+    const claim = await prisma.clientInvitation.updateMany({
       where: {
         token: hashed,
         email,
@@ -122,9 +131,19 @@ export async function consumeMagicLinkAction(
         acceptedAt: null,
         expiresAt: { gt: new Date() },
       },
-      include: {
-        client: { select: { portalSlug: true } },
+      data: { acceptedAt: new Date() },
+    });
+
+    if (claim.count === 0) throw new Error("Invalid or expired magic link.");
+
+    // Now safely read the claimed invitation
+    const invitation = await prisma.clientInvitation.findFirst({
+      where: {
+        token: hashed,
+        email,
+        clientId: client.id,
       },
+      select: { agencyId: true, role: true },
     });
     if (!invitation) throw new Error("Invalid or expired magic link.");
 
@@ -145,11 +164,6 @@ export async function consumeMagicLinkAction(
         select: { id: true, role: true },
       });
     }
-
-    await prisma.clientInvitation.update({
-      where: { id: invitation.id },
-      data: { acceptedAt: new Date() },
-    });
 
     await prisma.clientUser.update({
       where: { id: clientUser.id },
@@ -196,9 +210,11 @@ export async function inviteClientTeammateAction(
       return { invitationId: `dev-client-invite-${Date.now()}` };
     }
 
+    await checkRateLimit("auth/client-invite", RATE_LIMITS.CLIENT_INVITE);
+
     const client = await prisma.client.findUniqueOrThrow({
       where: { id: clientId },
-      select: { id: true, agencyId: true, companyName: true, portalSlug: true, agency: { select: { name: true } } },
+      select: { id: true, agencyId: true, companyName: true, portalSlug: true, agency: { select: { name: true, brandColor: true } } },
     });
 
     const existingUser = await prisma.clientUser.findFirst({
@@ -235,23 +251,21 @@ export async function inviteClientTeammateAction(
       },
     });
 
-    const inviteUrl = `${process.env.APP_URL ?? "https://portalos.app"}/portal/${client.portalSlug ?? "portal"}/auth?token=${encodeURIComponent(raw)}&email=${encodeURIComponent(email)}`;
+    const inviteUrl = buildClientAuthUrl(client.portalSlug ?? "portal", raw, email);
 
-    const resend = getResend();
-    await resend.emails.send({
-      from: getDefaultFromEmail(),
-      to: email,
-      subject: `You've been invited to ${client.companyName} on PortalOS`,
-      html: `
-        <div style="font-family: Georgia, serif; background: #0A0A0A; color: #FAF8F2; padding: 40px; max-width: 480px; margin: 0 auto;">
-          <p style="font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: #8C7340; margin-bottom: 24px;">${client.agency.name}</p>
-          <h1 style="font-size: 28px; font-weight: 400; margin-bottom: 16px;">You've been invited</h1>
-          <p style="color: #B8B2A0; margin-bottom: 8px;">You've been invited to join <strong>${client.companyName}</strong> as a <strong>${role.toLowerCase().replace(/_/g, " ")}</strong>.</p>
-          <p style="color: #B8B2A0; margin-bottom: 32px;">This invitation expires in 7 days.</p>
-          <a href="${inviteUrl}" style="display: inline-block; background: #8C7340; color: #000; padding: 12px 32px; text-decoration: none; font-size: 14px; letter-spacing: 0.05em;">Accept Invitation</a>
-        </div>
-      `,
-    });
+    await sendEmail(
+      email,
+      `You've been invited to ${client.companyName} on PortalOS`,
+      renderClientTeammateInviteEmail({
+        agency: {
+          name: client.agency.name,
+          brandColor: client.agency.brandColor,
+        },
+        companyName: client.companyName,
+        role,
+        inviteUrl,
+      })
+    );
 
     revalidatePath(`/portal/${client.portalSlug ?? "portal"}`);
     return { invitationId: "invite-sent" };

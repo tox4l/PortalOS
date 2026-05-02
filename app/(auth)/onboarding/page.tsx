@@ -234,7 +234,7 @@ export default function OnboardingPage() {
                   <div className="flex items-center gap-2">
                     <Input id="onb-agency-slug" placeholder="lumina" value={agencySlug} onChange={(e) => setAgencySlug(e.target.value)} />
                     <span className="shrink-0 text-[14px] text-[var(--ink-tertiary)]">
-                      .portalos.app
+                      .portalos.tech
                     </span>
                   </div>
                   <p className="text-[12px] leading-5 text-[var(--ink-tertiary)]">

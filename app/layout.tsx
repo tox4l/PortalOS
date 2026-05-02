@@ -25,7 +25,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://portalos.app"),
+  metadataBase: new URL("https://portalos.tech"),
   title: {
     default: "PortalOS — Client operations for refined agencies",
     template: "%s | PortalOS"
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     title: "PortalOS — Client operations for refined agencies",
     description:
       "A white-label client operations portal for creative agencies that need calm approvals, projects, briefs, files, and client collaboration in one place.",
-    url: "https://portalos.app",
+    url: "https://portalos.tech",
     siteName: "PortalOS",
     type: "website"
   }

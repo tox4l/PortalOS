@@ -24,7 +24,7 @@ const authConfig = {
     }),
     Resend({
       apiKey: process.env.RESEND_API_KEY ?? "",
-      from: process.env.RESEND_FROM_EMAIL ?? "PortalOS <hello@portalos.app>"
+      from: process.env.RESEND_FROM_EMAIL ?? "PortalOS <hello@portalos.tech>"
     })
   ],
   callbacks: {
@@ -59,7 +59,12 @@ const authConfig = {
 
       if (clientInvite) return true;
 
-      return true;
+      // If the user has no record at all, allow sign-in so they can go through onboarding.
+      // If they have a record but no agency, no invitation, and no client membership,
+      // they're an orphaned account — deny.
+      if (!existingUser) return true;
+
+      return false;
     },
     async session({ session, user }) {
       if (!session.user) {
