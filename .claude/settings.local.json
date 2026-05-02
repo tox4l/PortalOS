@@ -31,7 +31,9 @@
       "Bash(wc *)",
       "Bash(cd \"C:\\\\\\\\Users\\\\\\\\musal\\\\\\\\OneDrive\\\\\\\\Desktop\\\\\\\\SaaS\")",
       "Bash(netstat -ano)",
-      "Bash(npm ls *)"
+      "Bash(npm ls *)",
+      "Bash(cat .env)",
+      "Bash(cat .env.local)"
     ]
   }
 }
