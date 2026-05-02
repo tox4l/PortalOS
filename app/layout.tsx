@@ -5,26 +5,29 @@ import "./globals.css";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
-  weight: ["400", "600"],
-  variable: "--font-display-family"
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-display-family",
+  display: "swap",
 });
 
-const dmSans = DM_Sans({
+const dmsans = DM_Sans({
   subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-body-family"
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-body-family",
+  display: "swap",
 });
 
 const jetbrains = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400"],
-  variable: "--font-mono-family"
+  variable: "--font-mono-family",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://portalos.app"),
   title: {
-    default: "PortalOS - Client operations for refined agencies",
+    default: "PortalOS — Client operations for refined agencies",
     template: "%s | PortalOS"
   },
   description:
@@ -33,7 +36,7 @@ export const metadata: Metadata = {
     icon: "/favicon.svg"
   },
   openGraph: {
-    title: "PortalOS - Client operations for refined agencies",
+    title: "PortalOS — Client operations for refined agencies",
     description:
       "A white-label client operations portal for creative agencies that need calm approvals, projects, briefs, files, and client collaboration in one place.",
     url: "https://portalos.app",
@@ -45,7 +48,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0A0A0B"
+  themeColor: "#FAF6F0"
 };
 
 export default function RootLayout({
@@ -54,7 +57,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${dmSans.variable} ${jetbrains.variable}`}>
+    <html lang="en" className={`${playfair.variable} ${dmsans.variable} ${jetbrains.variable}`}>
       <body>
         <AppProviders>{children}</AppProviders>
       </body>

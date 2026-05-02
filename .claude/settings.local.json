@@ -19,7 +19,18 @@
       "Bash(grep -v \"^$\")",
       "Bash(node -e \"console.log\\(require\\('inngest/package.json'\\).version\\)\")",
       "Bash(node -e \"const p = require\\('./node_modules/inngest/package.json'\\); console.log\\(p.version\\)\")",
-      "Bash(npx kill-port *)"
+      "Bash(npx kill-port *)",
+      "Bash(NODE_OPTIONS=\"--max-old-space-size=4096\" npx next build --no-lint)",
+      "Bash(taskkill //F //IM node.exe)",
+      "Read(//c/Users/musal/.claude/**)",
+      "Read(//c/Users/musal/.claude/projects/**)",
+      "Bash(python3 -c \" import sys, json for line in sys.stdin: d = json.loads\\(line\\) if d.get\\('type'\\) == 'user': print\\('USER:', d.get\\('message',{}\\).get\\('content',''\\)[:200]\\) elif d.get\\('type'\\) == 'assistant': print\\('ASSISTANT:', str\\(d.get\\('message',{}\\).get\\('content',[]\\)\\)[:200]\\) print\\('---'\\) \")",
+      "Bash(node *)",
+      "Bash(xargs sed *)",
+      "Bash(ls -la \"C:\\\\\\\\Users\\\\\\\\musal\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\C--Users-musal-OneDrive-Desktop-SaaS\\\\\\\\e4a606c5-d4f0-45cb-bb94-747783e2d132\\\\\\\\tasks\\\\\\\\\")",
+      "Bash(wc *)",
+      "Bash(cd \"C:\\\\\\\\Users\\\\\\\\musal\\\\\\\\OneDrive\\\\\\\\Desktop\\\\\\\\SaaS\")",
+      "Bash(netstat -ano)"
     ]
   }
 }

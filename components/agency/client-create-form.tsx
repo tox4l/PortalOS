@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useActionState, useMemo, useState } from "react";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle } from "@phosphor-icons/react";
 import { createClientAction, type CreateClientState } from "@/actions/clients";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,9 +28,9 @@ export function ClientCreateForm() {
   return (
     <form action={action} className="space-y-6">
       {state.success ? (
-        <div className="rounded-[8px] border border-[rgba(74,222,128,0.2)] bg-[var(--status-success-bg)] px-4 py-3 text-sm leading-6 text-[var(--status-success-text)]">
+        <div className="rounded-[5px] border border-[var(--success-border)] bg-[var(--success-bg)] px-4 py-3 font-sans text-[0.875rem] leading-6 text-[var(--success-text)]">
           <div className="flex gap-3">
-            <CheckCircle2 aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+            <CheckCircle aria-hidden="true" className="mt-0.5 size-4 shrink-0" weight="fill" />
             <p>
               Client created. Portal slug: <span className="font-medium">{state.data?.portalSlug}</span>
             </p>
@@ -39,7 +39,7 @@ export function ClientCreateForm() {
       ) : null}
 
       {!state.success && state.error ? (
-        <div className="rounded-[8px] border border-[rgba(235,87,87,0.25)] bg-[var(--status-danger-bg)] px-4 py-3 text-sm leading-6 text-[var(--status-danger-text)]">
+        <div className="rounded-[5px] border border-[var(--danger-border)] bg-[var(--danger-bg)] px-4 py-3 font-sans text-[0.875rem] leading-6 text-[var(--danger-text)]">
           {state.error}
         </div>
       ) : null}
@@ -55,7 +55,7 @@ export function ClientCreateForm() {
             required
             value={companyName}
           />
-          <span className="mt-2 block text-[12px] leading-5 text-[var(--ink-tertiary)]">
+          <span className="mt-1.5 block font-sans text-[0.75rem] leading-5 text-[var(--ink-tertiary)]">
             The company name shown in their portal.
           </span>
         </label>
@@ -70,7 +70,7 @@ export function ClientCreateForm() {
             placeholder="northstar-branding"
             required
           />
-          <span className="mt-2 block text-[12px] leading-5 text-[var(--ink-tertiary)]">
+          <span className="mt-1.5 block font-sans text-[0.75rem] leading-5 text-[var(--ink-tertiary)]">
             Lowercase letters, numbers, and hyphens.
           </span>
         </label>
@@ -97,7 +97,7 @@ export function ClientCreateForm() {
       <label className="block">
         <Label htmlFor="welcomeMessage">Welcome message</Label>
         <textarea
-          className="mt-2 min-h-32 w-full rounded-[8px] border border-[var(--border-default)] bg-[var(--bg-sunken)] px-4 py-3 text-[15px] leading-7 text-[var(--ink-primary)] transition-[border-color,box-shadow] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] placeholder:text-[var(--ink-tertiary)] focus:border-[var(--border-gold)] focus:shadow-[0_0_0_3px_rgba(212,175,55,0.12)]"
+          className="mt-1.5 min-h-28 w-full rounded-[5px] border border-[var(--border-subtle)] bg-[var(--bg-sunken)] px-3.5 py-3 font-sans text-[0.875rem] leading-6 text-[var(--ink-primary)] transition-[border-color,box-shadow] duration-[180ms] ease-[cubic-bezier(0.16,1,0.3,1)] placeholder:text-[var(--ink-tertiary)] focus:border-[var(--border-gold)] focus:shadow-[var(--glow-gold-xs)]"
           defaultValue="Welcome to your project portal. Everything we need to review, approve, and launch together will live here."
           id="welcomeMessage"
           name="welcomeMessage"
@@ -105,13 +105,13 @@ export function ClientCreateForm() {
         />
       </label>
 
-      <div className="flex flex-col gap-3 border-t border-[var(--border-default)] pt-6 sm:flex-row sm:justify-end">
+      <div className="flex flex-col gap-3 border-t border-[var(--border-hairline)] pt-6 sm:flex-row sm:justify-end">
         <Button asChild type="button" variant="secondary">
           <Link href="/app/clients">Cancel</Link>
         </Button>
         <Button disabled={isPending} type="submit">
           {isPending ? "Creating client" : "Create client"}
-          <ArrowRight aria-hidden="true" className="size-4" />
+          <ArrowRight aria-hidden="true" className="size-4" weight="bold" />
         </Button>
       </div>
     </form>

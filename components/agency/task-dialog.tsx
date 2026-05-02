@@ -113,7 +113,7 @@ export function TaskDialog({
           <div className="space-y-1.5">
             <Label htmlFor="task-description">Description</Label>
             <textarea
-              className="min-h-[80px] w-full rounded-[8px] border border-[var(--border-default)] bg-[var(--bg-sunken)] px-4 py-3 text-[15px] text-[var(--ink-primary)] transition-[border-color,box-shadow] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] placeholder:text-[var(--ink-tertiary)] focus:border-[var(--border-gold)] focus:shadow-[0_0_0_3px_rgba(212,175,55,0.12)]"
+              className="min-h-[80px] w-full rounded-[5px] border border-[var(--border-subtle)] bg-[var(--bg-sunken)] px-3.5 py-3 font-sans text-[0.875rem] leading-6 text-[var(--ink-primary)] transition-[border-color,box-shadow] duration-[180ms] ease-[cubic-bezier(0.16,1,0.3,1)] placeholder:text-[var(--ink-tertiary)] focus:border-[var(--border-gold)] focus:shadow-[var(--glow-gold-xs)]"
               id="task-description"
               name="description"
               placeholder="Optional description"

@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { createClient as createSupabaseClient } from "@/utils/supabase/middleware";
 
 const PUBLIC_FILE = /\.(.*)$/;
 const APP_HOSTS = new Set([
@@ -57,51 +58,78 @@ function hasSessionCookie(request: NextRequest): boolean {
 }
 
 function isDevBypass(): boolean {
+  if (process.env.NODE_ENV === "production") {
+    return false;
+  }
   return process.env.DEV_BYPASS_AUTH === "true";
 }
 
+function withSupabaseCookies(
+  response: NextResponse,
+  supabaseResponse: NextResponse
+): NextResponse {
+  supabaseResponse.cookies.getAll().forEach((cookie) => {
+    response.cookies.set(cookie.name, cookie.value);
+  });
+  return response;
+}
+
 export default function middleware(request: NextRequest) {
+  // Initialize Supabase response — this wires up cookie refresh for the
+  // Supabase SSR client so that any auth token refresh propagates to the
+  // outgoing response automatically.
+  const supabaseResponse = createSupabaseClient(request);
+
   const { nextUrl } = request;
   const { pathname } = nextUrl;
 
   if (isStaticRequest(pathname) || pathname.startsWith("/api/auth")) {
-    return NextResponse.next();
+    return supabaseResponse;
   }
 
   const host = request.headers.get("host") ?? "";
   const agencySlug = getAgencySlugFromHost(host);
 
   if (isDevBypass() && pathname === "/portal") {
-    return NextResponse.redirect(new URL("/demo/client", request.url));
+    return withSupabaseCookies(
+      NextResponse.redirect(new URL("/demo/client", request.url)),
+      supabaseResponse
+    );
   }
 
   if (agencySlug && !pathname.startsWith("/portal") && !pathname.startsWith("/api")) {
     const rewriteUrl = nextUrl.clone();
     rewriteUrl.pathname = `/portal/${agencySlug}${pathname === "/" ? "" : pathname}`;
     rewriteUrl.searchParams.set("agency", agencySlug);
-    return NextResponse.rewrite(rewriteUrl);
+    return withSupabaseCookies(NextResponse.rewrite(rewriteUrl), supabaseResponse);
   }
 
   if (isDevBypass()) {
     if (pathname === "/login") {
-      return NextResponse.redirect(new URL("/app/dashboard", request.url));
+      return withSupabaseCookies(
+        NextResponse.redirect(new URL("/app/dashboard", request.url)),
+        supabaseResponse
+      );
     }
-    return NextResponse.next();
+    return supabaseResponse;
   }
 
   if (pathname.startsWith("/app")) {
     if (!hasSessionCookie(request)) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("callbackUrl", `${nextUrl.pathname}${nextUrl.search}`);
-      return NextResponse.redirect(loginUrl);
+      return withSupabaseCookies(NextResponse.redirect(loginUrl), supabaseResponse);
     }
   }
 
   if (pathname === "/login" && hasSessionCookie(request)) {
-    return NextResponse.redirect(new URL("/app/dashboard", request.url));
+    return withSupabaseCookies(
+      NextResponse.redirect(new URL("/app/dashboard", request.url)),
+      supabaseResponse
+    );
   }
 
-  return NextResponse.next();
+  return supabaseResponse;
 }
 
 export const config = {

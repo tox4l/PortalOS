@@ -4,24 +4,24 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-[8px] text-[14px] font-medium tracking-[0.02em] transition-[background-color,border-color,color,box-shadow,transform] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] focus-visible:shadow-[0_0_0_3px_rgba(212,175,55,0.12)] disabled:pointer-events-none disabled:opacity-[0.35] active:scale-[0.98]",
+  "inline-flex min-h-10 items-center justify-center gap-2 rounded-[10px] font-sans text-[0.8125rem] font-medium tracking-[0.01em] transition-[background-color,border-color,color,box-shadow,transform] duration-[200ms] ease-[cubic-bezier(0.16,1,0.3,1)] focus-visible:shadow-[var(--glow-gold-xs)] disabled:pointer-events-none disabled:opacity-35 active:scale-[0.985]",
   {
     variants: {
       variant: {
         primary:
-          "border border-transparent bg-[var(--gold-500)] text-[#0A0A0B] shadow-[var(--shadow-gold-sm)] hover:bg-[var(--gold-600)] hover:shadow-[var(--shadow-gold-md)]",
+          "border border-transparent bg-[var(--gold-core)] text-white shadow-[0_2px_8px_rgba(180,130,50,0.25)] hover:bg-[var(--gold-mid)] hover:shadow-[0_4px_16px_rgba(180,130,50,0.30)]",
         secondary:
-          "border border-[var(--border-medium)] bg-transparent text-[var(--ink-primary)] hover:border-[var(--border-strong)] hover:bg-[rgba(255,255,255,0.04)]",
+          "border border-[var(--border-subtle)] bg-[var(--bg-surface)] text-[var(--ink-primary)] shadow-[var(--shadow-xs)] hover:border-[var(--border-gold-dim)] hover:bg-[var(--gold-wash)] hover:shadow-[var(--shadow-sm)]",
         ghost:
-          "border border-transparent bg-transparent text-[var(--ink-secondary)] hover:bg-[rgba(255,255,255,0.04)] hover:text-[var(--ink-primary)]",
+          "border border-transparent bg-transparent text-[var(--ink-secondary)] hover:bg-[var(--neutral-bg)] hover:text-[var(--ink-primary)]",
         destructive:
-          "border border-[rgba(235,87,87,0.30)] bg-transparent text-[var(--status-danger-text)] hover:bg-[var(--status-danger-bg)]"
+          "border border-[var(--danger-border)] bg-transparent text-[var(--danger-text)] hover:bg-[var(--danger-bg)]"
       },
       size: {
-        sm: "min-h-9 px-3 text-[13px]",
-        md: "min-h-11 px-4",
-        lg: "min-h-12 px-6 text-[15px]",
-        icon: "size-11 p-0"
+        sm: "min-h-8 px-3 text-[0.75rem] rounded-[5px]",
+        md: "min-h-10 px-4",
+        lg: "min-h-12 px-6 text-[0.875rem] rounded-[7px]",
+        icon: "size-10 p-0"
       }
     },
     defaultVariants: {

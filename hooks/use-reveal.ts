@@ -1,37 +1,49 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 export function useReveal() {
+  const pathname = usePathname();
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const frameRef = useRef(0);
+
   useEffect(() => {
-    const elements = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal], .reveal"));
+    frameRef.current = window.setTimeout(() => {
+      observerRef.current?.disconnect();
 
-    if (elements.length === 0) {
-      return;
-    }
+      const elements = Array.from(
+        document.querySelectorAll<HTMLElement>("[data-reveal], .reveal")
+      );
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) {
-            return;
-          }
+      if (elements.length === 0) return;
 
-          const element = entry.target as HTMLElement;
-          const delay = element.dataset.delay;
-          if (delay) {
-            element.style.animationDelay = `${delay}ms`;
-          }
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
 
-          element.classList.add("in-view");
-          observer.unobserve(element);
-        });
-      },
-      { threshold: 0.15 }
-    );
+            const element = entry.target as HTMLElement;
+            const delay = element.dataset.delay;
+            if (delay) {
+              element.style.animationDelay = `${delay}ms`;
+            }
 
-    elements.forEach((element) => observer.observe(element));
+            element.classList.add("in-view");
+            observer.unobserve(element);
+          });
+        },
+        { threshold: 0.15 }
+      );
 
-    return () => observer.disconnect();
-  }, []);
+      elements.forEach((element) => observer.observe(element));
+      observerRef.current = observer;
+    }, 33);
+
+    return () => {
+      clearTimeout(frameRef.current);
+      observerRef.current?.disconnect();
+      observerRef.current = null;
+    };
+  }, [pathname]);
 }

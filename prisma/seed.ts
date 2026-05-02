@@ -55,8 +55,8 @@ async function seedApexCreative() {
     data: {
       name: "Apex Creative",
       slug: "apex-creative",
-      logoUrl: svgWordmark("Apex Creative", "#D4607A"),
-      brandColor: "#D4607A",
+      logoUrl: svgWordmark("Apex Creative", "#8C7340"),
+      brandColor: "#8C7340",
       brandFont: "Cormorant Garamond",
       demoMode: true
     }
@@ -102,7 +102,7 @@ async function seedApexCreative() {
       companyName: "Atlas Atelier",
       contactName: "Camille Laurent",
       contactEmail: "camille@atlasatelier.example",
-      logoUrl: svgWordmark("Atlas Atelier", "#D4607A"),
+      logoUrl: svgWordmark("Atlas Atelier", "#8C7340"),
       portalSlug: "atlas-atelier",
       welcomeMessage: "Your campaign work is organized here with every note in context.",
       status: "ACTIVE",
@@ -370,7 +370,7 @@ async function seedLuminaDemo() {
       companyName: "Forge Studio",
       contactName: "Theo Watanabe",
       contactEmail: "theo@forge-demo.com",
-      logoUrl: svgWordmark("Forge Studio", "#D4607A"),
+      logoUrl: svgWordmark("Forge Studio", "#8C7340"),
       portalSlug: "forge-studio",
       welcomeMessage: "Campaign work, approvals, and delivery notes live here for the Q4 rollout.",
       status: "ACTIVE",

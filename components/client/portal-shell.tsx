@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Briefcase, Buildings, SignOut, type Icon } from "@phosphor-icons/react";
+import { Briefcase, Buildings, Rows, SignOut, type Icon } from "@phosphor-icons/react";
 import { NotificationPanel } from "@/components/shared/notification-panel";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
+import { useScrollTop } from "@/hooks/use-scroll-top";
 import { cn } from "@/lib/utils";
 import type { NotificationItem } from "@/actions/notifications";
 
@@ -39,7 +41,7 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
 function rgbaFromHex(hex: string, alpha: number): string {
   const rgb = hexToRgb(hex);
   if (!rgb) {
-    return `rgba(212, 175, 55, ${alpha})`;
+    return `rgba(140, 115, 64, ${alpha})`;
   }
 
   return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
@@ -55,6 +57,7 @@ export function PortalShell({
   children
 }: PortalShellProps) {
   const pathname = usePathname();
+  const scrolled = useScrollTop(20);
   const brandColor = /^#[0-9a-fA-F]{6}$/.test(agencyBrandColor) ? agencyBrandColor : "#D4AF37";
   const brandVars = {
     "--brand": brandColor,
@@ -72,7 +75,8 @@ export function PortalShell({
   } as React.CSSProperties;
 
   const navItems: PortalNavItem[] = [
-    { href: `/portal/${portalSlug}`, label: "Projects", icon: Briefcase }
+    { href: `/portal/${portalSlug}`, label: "Projects", icon: Briefcase },
+    { href: `/portal/${portalSlug}/activity`, label: "Activity", icon: Rows }
   ];
 
   return (
@@ -80,18 +84,29 @@ export function PortalShell({
       className="min-h-[100dvh] bg-[var(--bg-void)] text-[var(--ink-primary)]"
       style={brandVars}
     >
-      <div className="pointer-events-none fixed inset-0 lux-grid opacity-[0.12]" aria-hidden="true" />
-      <header className="sticky top-0 z-20 border-b border-[var(--border-default)] bg-[rgba(10,10,11,0.86)] backdrop-blur-xl">
-        <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-4 px-4 py-4 md:px-8">
+      <div className="pointer-events-none fixed inset-0 opacity-[0.04]" aria-hidden="true" style={{
+        backgroundImage: `linear-gradient(var(--border-hairline) 1px, transparent 1px), linear-gradient(90deg, var(--border-hairline) 1px, transparent 1px)`,
+        backgroundPosition: '-1px -1px',
+        backgroundSize: '48px 48px'
+      }} />
+      <header
+        className={cn(
+          "sticky top-0 z-20 border-b transition-[background-color,backdrop-filter,border-color] duration-[280ms] ease-[var(--ease-out)]",
+          scrolled
+            ? "border-[var(--border-hairline)] bg-[var(--bg-base)]/90"
+            : "border-transparent bg-transparent"
+        )}
+      >
+        <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-4 px-5 py-5 md:px-10">
           <div className="flex min-w-0 items-center gap-4">
             <Link
               className="group inline-flex min-w-0 items-center gap-3"
               href={`/portal/${portalSlug}`}
             >
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-[8px] border border-[var(--border-gold-dim)] bg-[var(--gold-dim)] font-display text-[18px] text-[var(--gold-core)] shadow-[var(--inset-gold)]">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-[10px] border border-[var(--border-gold-dim)] bg-[var(--gold-wash)] font-display text-[20px] text-[var(--gold-core)] shadow-[var(--inset-gold)]">
                 {agencyName.charAt(0)}
               </span>
-              <span className="truncate font-display text-2xl font-normal tracking-[-0.01em] text-[var(--ink-primary)] transition-colors group-hover:text-[var(--gold-core)]">
+              <span className="truncate font-display text-[26px] font-normal tracking-[-0.02em] text-[var(--ink-primary)] transition-colors duration-[180ms] ease-[var(--ease-out)] group-hover:text-[var(--gold-core)]">
                 {agencyName}
               </span>
             </Link>
@@ -103,16 +118,17 @@ export function PortalShell({
           </div>
 
           <nav className="flex items-center gap-1" aria-label="Portal navigation">
+            <ThemeToggle />
             {navItems.map((item) => {
               const active = pathname === item.href || pathname.startsWith(`${item.href}/projects`);
               return (
                 <Link
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "inline-flex min-h-10 items-center gap-2 rounded-[8px] px-3 text-[14px] font-medium transition-[background-color,color,box-shadow] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
+                    "inline-flex min-h-11 items-center gap-2 rounded-[10px] px-4 text-[14px] font-medium transition-[background-color,color,box-shadow] duration-[180ms] ease-[var(--ease-out)]",
                     active
                       ? "bg-[var(--gold-dim)] text-[var(--gold-core)] shadow-[var(--inset-gold)]"
-                      : "text-[var(--ink-tertiary)] hover:bg-[rgba(255,255,255,0.04)] hover:text-[var(--ink-secondary)]"
+                      : "text-[var(--ink-tertiary)] hover:bg-[var(--gold-dim)] hover:text-[var(--gold-core)]"
                   )}
                   href={item.href}
                   key={item.href}
@@ -129,7 +145,7 @@ export function PortalShell({
               target="client"
             />
             <button
-              className="ml-1 inline-flex min-h-10 items-center gap-2 rounded-[8px] px-3 text-[13px] font-medium text-[var(--ink-tertiary)] transition-[background-color,color] duration-200 hover:bg-[rgba(255,255,255,0.04)] hover:text-[var(--ink-secondary)]"
+              className="ml-1 inline-flex min-h-10 items-center gap-2 rounded-[10px] px-3 text-[13px] font-medium text-[var(--ink-tertiary)] transition-[background-color,color] duration-[180ms] ease-[var(--ease-out)] hover:bg-[var(--neutral-bg)] hover:text-[var(--ink-primary)]"
               type="button"
             >
               <SignOut aria-hidden="true" className="size-4" />
@@ -139,9 +155,9 @@ export function PortalShell({
         </div>
       </header>
 
-      <main className="relative mx-auto max-w-[1280px] px-4 py-8 md:px-8 md:py-12">{children}</main>
+      <main className="relative mx-auto max-w-[1280px] px-5 py-10 md:px-10 md:py-16">{children}</main>
 
-      <footer className="relative border-t border-[var(--border-default)] bg-[var(--bg-void)] px-4 py-8 md:px-8">
+      <footer className="relative border-t border-[var(--border-hairline)] bg-[var(--bg-base)] px-5 py-10 md:px-10">
         <div className="mx-auto flex max-w-[1280px] flex-col items-center justify-between gap-4 sm:flex-row">
           <p className="text-[13px] text-[var(--ink-tertiary)]">
             Powered by{" "}
@@ -149,7 +165,7 @@ export function PortalShell({
             {" / "}
             {agencyName}
           </p>
-          <p className="lux-meta">Private client room</p>
+          <p className="font-sans text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ink-tertiary)]">Private client room</p>
         </div>
       </footer>
     </div>

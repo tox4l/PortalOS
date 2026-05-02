@@ -1,17 +1,33 @@
+"use client";
+
+import { useActionState, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, EnvelopeSimple } from "@phosphor-icons/react/dist/ssr";
+import { ArrowLeft, EnvelopeSimple } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { requestMagicLinkAction } from "@/actions/client-auth";
+import { use } from "react";
 
-export default function ClientLoginPage() {
+export default function ClientLoginPage({
+  params,
+}: {
+  params: Promise<{ clientSlug: string }>;
+}) {
+  const { clientSlug } = use(params);
+  const [state, dispatch] = useActionState(
+    (_prevState: { success: boolean; error?: string; sent?: boolean }, formData: FormData) =>
+      requestMagicLinkAction(clientSlug, { success: false }, formData),
+    { success: false }
+  );
+
   return (
-    <div className="flex min-h-[80dvh] flex-col items-center justify-center px-4">
-      <div className="w-full max-w-[420px] space-y-6">
+    <div className="flex min-h-[80dvh] flex-col items-center justify-center px-5">
+      <div className="w-full max-w-[440px] space-y-8">
         <div className="text-center">
           <Link
-            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[var(--ink-tertiary)] transition-colors hover:text-[var(--ink-secondary)]"
+            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[var(--ink-tertiary)] transition-colors duration-[180ms] ease-[var(--ease-out)] hover:text-[var(--gold-core)]"
             href="/"
           >
             <ArrowLeft aria-hidden="true" className="size-3.5" />
@@ -21,33 +37,54 @@ export default function ClientLoginPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-center font-display text-2xl">
-              Client sign-in
+            <CardTitle className="text-center text-[2rem]">
+              Welcome to your portal
             </CardTitle>
-            <CardDescription className="text-center">
-              Enter your email and we will send you a magic link to access your portal.
+            <CardDescription className="text-center text-[15px]">
+              Enter your email and we will send you a magic link to sign in.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form className="space-y-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="client-email">Email address</Label>
-                <Input
-                  id="client-email"
-                  placeholder="iris@northstar-branding.com"
-                  type="email"
-                />
+            {state?.data?.sent ? (
+              <div className="flex flex-col items-center gap-5 py-8 text-center">
+                <div className="flex size-16 items-center justify-center rounded-[14px] border border-[var(--border-gold)] bg-[var(--gold-wash)] shadow-[var(--inset-gold)]">
+                  <EnvelopeSimple aria-hidden="true" className="size-8 text-[var(--gold-core)]" weight="duotone" />
+                </div>
+                <div>
+                  <p className="font-display text-[28px] font-normal leading-[1.2] text-[var(--ink-primary)]">
+                    Magic link sent
+                  </p>
+                  <p className="mt-3 text-[15px] leading-[1.6] text-[var(--ink-secondary)]">
+                    Check your email for a sign-in link. It expires in 7 days.
+                  </p>
+                </div>
               </div>
-              <Button className="w-full">
-                <EnvelopeSimple aria-hidden="true" className="size-4" />
-                Send magic link
-              </Button>
-            </form>
+            ) : (
+              <form action={dispatch} className="space-y-5">
+                <div className="space-y-2">
+                  <Label htmlFor="client-email">Email address</Label>
+                  <Input
+                    id="client-email"
+                    name="email"
+                    placeholder="you@company.com"
+                    type="email"
+                    required
+                  />
+                </div>
+                {state?.error && (
+                  <p className="text-[13px] leading-5 text-[var(--danger-text)]">{state.error}</p>
+                )}
+                <Button className="w-full" size="lg" type="submit">
+                  <EnvelopeSimple aria-hidden="true" className="size-4" />
+                  Send magic link
+                </Button>
+              </form>
+            )}
           </CardContent>
         </Card>
 
-        <p className="text-center text-[12px] text-[var(--ink-tertiary)]">
-          Powered by PortalOS / A secure client portal for your agency projects
+        <p className="text-center text-[13px] text-[var(--ink-tertiary)]">
+          Powered by PortalOS, a secure client portal for your agency projects
         </p>
       </div>
     </div>

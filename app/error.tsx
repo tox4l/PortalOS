@@ -24,7 +24,7 @@ export default function ErrorPage({
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <button
-            className="inline-flex min-h-[44px] items-center gap-2 rounded-[8px] border border-transparent bg-[var(--gold-core)] px-4 text-[14px] font-medium text-[#0A0A0B] transition-colors hover:bg-[var(--gold-bright)]"
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-[8px] border border-transparent bg-[var(--gold-core)] px-4 text-[14px] font-medium text-[var(--bg-surface)] transition-colors hover:bg-[var(--gold-bright)]"
             onClick={reset}
             type="button"
           >
@@ -35,7 +35,7 @@ export default function ErrorPage({
             Try again
           </button>
           <Link
-            className="inline-flex min-h-[44px] items-center gap-2 rounded-[8px] border border-[var(--border-subtle)] bg-transparent px-4 text-[14px] font-medium text-[var(--ink-primary)] no-underline transition-colors hover:border-[var(--border-visible)] hover:bg-[rgba(255,255,255,0.04)]"
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-[8px] border border-[var(--border-subtle)] bg-transparent px-4 text-[14px] font-medium text-[var(--ink-primary)] no-underline transition-colors hover:border-[var(--border-visible)] hover:bg-[var(--neutral-bg)]"
             href="/"
           >
             <svg aria-hidden="true" fill="none" height="16" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" width="16">

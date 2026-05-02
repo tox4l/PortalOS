@@ -133,7 +133,7 @@ export function CommentsView({ projectId, comments: initialComments }: CommentsV
         <div className="mt-4 w-full max-w-lg">
           <div className="flex gap-2">
             <input
-              className="min-h-11 flex-1 rounded-[8px] border border-[var(--border-default)] bg-[var(--bg-sunken)] px-4 text-[15px] text-[var(--ink-primary)] placeholder:text-[var(--ink-tertiary)] focus:border-[var(--border-gold)] focus:shadow-[0_0_0_3px_rgba(212,175,55,0.12)]"
+              className="min-h-11 flex-1 rounded-[8px] border border-[var(--border-hairline)] bg-[var(--bg-sunken)] px-4 font-sans text-[15px] text-[var(--ink-primary)] placeholder:text-[var(--ink-tertiary)] focus:border-[var(--border-gold)] focus:shadow-[var(--glow-gold-xs)]"
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
@@ -161,7 +161,7 @@ export function CommentsView({ projectId, comments: initialComments }: CommentsV
             "inline-flex items-center gap-2 rounded-[8px] border px-3 py-1.5 text-[13px] font-medium transition-colors duration-150",
             showInternalOnly
               ? "border-[var(--border-gold)] bg-[var(--gold-100)] text-[var(--gold-400)]"
-              : "border-[var(--border-default)] text-[var(--ink-secondary)] hover:bg-[rgba(255,255,255,0.04)]"
+              : "border-[var(--border-hairline)] text-[var(--ink-secondary)] hover:bg-[var(--gold-wash)]"
           )}
           onClick={() => setShowInternalOnly((v) => !v)}
           type="button"
@@ -261,7 +261,7 @@ export function CommentsView({ projectId, comments: initialComments }: CommentsV
         </div>
         <div className="min-w-0 flex-1 space-y-2">
           <textarea
-            className="min-h-[60px] w-full rounded-[8px] border border-[var(--border-default)] bg-[var(--bg-sunken)] px-4 py-3 text-[15px] text-[var(--ink-primary)] placeholder:text-[var(--ink-tertiary)] focus:border-[var(--border-gold)] focus:shadow-[0_0_0_3px_rgba(212,175,55,0.12)]"
+            className="min-h-[60px] w-full rounded-[8px] border border-[var(--border-hairline)] bg-[var(--bg-sunken)] px-4 py-3 font-sans text-[15px] text-[var(--ink-primary)] placeholder:text-[var(--ink-tertiary)] focus:border-[var(--border-gold)] focus:shadow-[var(--glow-gold-xs)]"
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {

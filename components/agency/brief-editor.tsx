@@ -12,19 +12,19 @@ import { TableRow } from "@tiptap/extension-table-row";
 import { TableCell } from "@tiptap/extension-table-cell";
 import { TableHeader } from "@tiptap/extension-table-header";
 import {
-  Bold,
-  Heading1,
-  Heading2,
-  Heading3,
-  Italic,
-  List,
-  ListOrdered,
-  Quote,
-  Sparkles,
-  Strikethrough,
+  TextB,
+  TextHOne,
+  TextHTwo,
+  TextHThree,
+  TextItalic,
+  ListBullets,
+  ListNumbers,
+  Quotes,
+  Sparkle,
+  TextStrikethrough,
   Table as TableIcon,
-  Underline as UnderlineIcon
-} from "lucide-react";
+  TextUnderline as UnderlineIcon
+} from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AiBriefModal } from "@/components/agency/ai-brief-modal";
@@ -70,7 +70,7 @@ function ToolbarButton({ active, onClick, children, title }: ToolbarButtonProps)
         "inline-flex size-9 items-center justify-center rounded-[8px] text-[var(--ink-tertiary)] transition-colors duration-150",
         active
           ? "bg-[var(--gold-100)] text-[var(--gold-400)]"
-          : "hover:bg-[rgba(255,255,255,0.04)] hover:text-[var(--ink-secondary)]"
+          : "hover:bg-[var(--gold-wash)] hover:text-[var(--ink-secondary)]"
       )}
       onClick={onClick}
       title={title}
@@ -205,7 +205,7 @@ export function BriefEditor({ projectId, projectName, clientName, brief }: Brief
             size="sm"
             variant="secondary"
           >
-            <Sparkles aria-hidden="true" className="size-3.5" />
+            <Sparkle aria-hidden="true" className="size-3.5" />
             AI
           </Button>
           <Button
@@ -225,21 +225,21 @@ export function BriefEditor({ projectId, projectName, clientName, brief }: Brief
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           title="Heading 1"
         >
-          <Heading1 className="size-4" />
+          <TextHOne className="size-4" />
         </ToolbarButton>
         <ToolbarButton
           active={editor.isActive("heading", { level: 2 })}
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           title="Heading 2"
         >
-          <Heading2 className="size-4" />
+          <TextHTwo className="size-4" />
         </ToolbarButton>
         <ToolbarButton
           active={editor.isActive("heading", { level: 3 })}
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           title="Heading 3"
         >
-          <Heading3 className="size-4" />
+          <TextHThree className="size-4" />
         </ToolbarButton>
 
         <span className="mx-1 block h-5 w-px bg-[var(--border-default)]" />
@@ -249,14 +249,14 @@ export function BriefEditor({ projectId, projectName, clientName, brief }: Brief
           onClick={() => editor.chain().focus().toggleBold().run()}
           title="Bold"
         >
-          <Bold className="size-4" />
+          <TextB className="size-4" />
         </ToolbarButton>
         <ToolbarButton
           active={editor.isActive("italic")}
           onClick={() => editor.chain().focus().toggleItalic().run()}
           title="Italic"
         >
-          <Italic className="size-4" />
+          <TextItalic className="size-4" />
         </ToolbarButton>
         <ToolbarButton
           active={editor.isActive("underline")}
@@ -270,7 +270,7 @@ export function BriefEditor({ projectId, projectName, clientName, brief }: Brief
           onClick={() => editor.chain().focus().toggleStrike().run()}
           title="Strikethrough"
         >
-          <Strikethrough className="size-4" />
+          <TextStrikethrough className="size-4" />
         </ToolbarButton>
         <ToolbarButton
           active={editor.isActive("highlight")}
@@ -289,21 +289,21 @@ export function BriefEditor({ projectId, projectName, clientName, brief }: Brief
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           title="Bullet list"
         >
-          <List className="size-4" />
+          <ListBullets className="size-4" />
         </ToolbarButton>
         <ToolbarButton
           active={editor.isActive("orderedList")}
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           title="Numbered list"
         >
-          <ListOrdered className="size-4" />
+          <ListNumbers className="size-4" />
         </ToolbarButton>
         <ToolbarButton
           active={editor.isActive("blockquote")}
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           title="Blockquote"
         >
-          <Quote className="size-4" />
+          <Quotes className="size-4" />
         </ToolbarButton>
 
         <span className="mx-1 block h-5 w-px bg-[var(--border-default)]" />
@@ -323,7 +323,7 @@ export function BriefEditor({ projectId, projectName, clientName, brief }: Brief
       </div>
 
       {/* Editor area */}
-      <div className="rounded-[10px] border border-[var(--border-default)] border-t-[rgba(255,255,255,0.10)] bg-[var(--bg-base)] shadow-[var(--shadow-sm)]">
+      <div className="rounded-[10px] border border-[var(--border-hairline)] bg-[var(--bg-surface)] shadow-[var(--shadow-sm)]">
         <EditorContent editor={editor} />
       </div>
 

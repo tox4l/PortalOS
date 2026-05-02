@@ -1,4 +1,5 @@
-import { getOpenAI, OPENAI_BRIEF_MODEL } from "@/lib/openai";
+import { getDeepSeek, DEEPSEEK_MODEL } from "@/lib/deepseek";
+import { applyRateLimit, API_RATE_LIMITS } from "@/lib/api-rate-limit";
 
 const SYSTEM_PROMPT =
   "You are a senior project manager at a top creative agency. Given the current state of a client project, write a concise, human-readable 3-sentence summary that a client would find reassuring and informative. Mention: overall progress, any items needing their attention, and next steps. Be warm but professional. Never use jargon. Maximum 80 words.";
@@ -14,6 +15,9 @@ type ProjectSummaryInput = {
 };
 
 export async function POST(request: Request) {
+  const limited = applyRateLimit(request, "ai:summarize-project", API_RATE_LIMITS.AI_SUMMARIZE);
+  if (limited) return limited;
+
   const body = (await request.json()) as ProjectSummaryInput;
 
   const userPrompt = [
@@ -26,10 +30,10 @@ export async function POST(request: Request) {
   ].join("\n");
 
   try {
-    const openai = getOpenAI();
+    const deepseek = getDeepSeek();
 
-    const completion = await openai.chat.completions.create({
-      model: OPENAI_BRIEF_MODEL,
+    const completion = await deepseek.chat.completions.create({
+      model: DEEPSEEK_MODEL,
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: userPrompt },

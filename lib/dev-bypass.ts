@@ -1,6 +1,9 @@
 import type { Session } from "next-auth";
 
 export function isDevBypass(): boolean {
+  if (process.env.NODE_ENV === "production") {
+    return false;
+  }
   return process.env.DEV_BYPASS_AUTH === "true";
 }
 
@@ -15,7 +18,8 @@ export function getDevSession(): Session {
       agencyId: "dev-agency-001",
       agencySlug: "lumina-studio",
       agencyName: "Lumina Studio",
-      agencyBrandColor: "#D4607A",
+      agencyBrandColor: "#8C7340",
+      agencyPlan: "GROWTH",
       demoLocked: false
     },
     expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
@@ -338,6 +342,104 @@ export function getDevAgencyNotifications(): DevNotification[] {
       createdAt: new Date(Date.now() - 64 * 60 * 1000).toISOString()
     }
   ];
+}
+
+export function getDevTeamMembers() {
+  return [
+    {
+      id: "dev-user-001",
+      name: "Sarah Kim",
+      email: "sarah@portalos.app",
+      image: null,
+      role: "OWNER",
+      joinedAt: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "dev-user-002",
+      name: "Marcus Reed",
+      email: "marcus@portalos.app",
+      image: null,
+      role: "ADMIN",
+      joinedAt: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "dev-user-003",
+      name: "Priya Nair",
+      email: "priya@portalos.app",
+      image: null,
+      role: "MEMBER",
+      joinedAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+  ];
+}
+
+export function getDevPendingInvitations() {
+  return [
+    {
+      id: "dev-invite-001",
+      email: "alex@designstudio.com",
+      role: "MEMBER",
+      invitedByName: "Sarah Kim",
+      expiresAt: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "dev-invite-002",
+      email: "jordan@creativelab.io",
+      role: "ADMIN",
+      invitedByName: "Sarah Kim",
+      expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+  ];
+}
+
+export function getDevAgencyPlan() {
+  return "GROWTH" as const;
+}
+
+export function getDevClientUsers(clientId: string) {
+  return [
+    {
+      id: "dev-client-user-001",
+      name: "Iris Calloway",
+      email: "iris@northstar-branding.com",
+      role: "CLIENT_LEAD",
+      clientId,
+      lastLoginAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "dev-client-user-002",
+      name: "Theo Watanabe",
+      email: "theo@northstar-branding.com",
+      role: "CLIENT_REVIEWER",
+      clientId,
+      lastLoginAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: "dev-client-user-003",
+      name: "Lena Park",
+      email: "lena@northstar-branding.com",
+      role: "CLIENT_VIEWER",
+      clientId,
+      lastLoginAt: null,
+    },
+  ];
+}
+
+export function getDevClientInvitations(clientId: string) {
+  return [
+    {
+      id: "dev-client-invite-001",
+      email: "david@northstar-branding.com",
+      role: "CLIENT_REVIEWER",
+      invitedByName: "Iris Calloway",
+      expiresAt: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(),
+      clientId,
+    },
+  ];
+}
+
+export function getDevMagicLinkToken(): string {
+  return "dev-magic-link-token-001";
 }
 
 export function getDevClientNotifications(): DevNotification[] {

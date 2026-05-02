@@ -5,14 +5,14 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const presetColors = [
-  "#D4607A",
-  "#C9981A",
-  "#1E1208",
-  "#5C4F42",
-  "#8C6510",
-  "#9C3350",
-  "#D4AF37",
-  "#C9A84C"
+  "#B48232",
+  "#C9963C",
+  "#E0A842",
+  "#1E1B15",
+  "#5C5544",
+  "#7A5520",
+  "#F0C870",
+  "#8A826E"
 ];
 
 export default function BrandingSettingsPage() {
@@ -27,12 +27,12 @@ export default function BrandingSettingsPage() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-            <div className="flex size-20 items-center justify-center rounded-[10px] border border-dashed border-[var(--border-default)] bg-[var(--bg-sunken)]">
+            <div className="flex size-20 items-center justify-center rounded-[var(--radius-lg)] border border-dashed border-[var(--border-subtle)] bg-[var(--bg-sunken)]">
               <UploadSimple aria-hidden="true" className="size-6 text-[var(--ink-tertiary)]" />
             </div>
             <div>
               <Button variant="secondary">Upload logo</Button>
-              <p className="mt-2 text-[12px] text-[var(--ink-tertiary)]">
+              <p className="mt-2 text-[0.75rem] text-[var(--ink-tertiary)]">
                 Recommended: 200x60px SVG or PNG with transparent background.
               </p>
             </div>
@@ -51,17 +51,17 @@ export default function BrandingSettingsPage() {
           <div className="flex flex-wrap gap-3">
             {presetColors.map((color) => (
               <button
-                className="size-10 rounded-[10px] border-2 border-transparent transition-[border-color,box-shadow,transform] duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[var(--border-gold)]"
+                className="size-10 rounded-[var(--radius-lg)] border-2 border-transparent transition-[border-color,box-shadow,transform] duration-[var(--t-base)] ease-[var(--ease-out)] hover:scale-105 focus:outline-none"
                 key={color}
                 style={{
                   backgroundColor: color,
-                  borderColor: color === "#D4607A" ? "var(--ink-primary)" : "transparent",
-                  outline: color === "#D4607A" ? "2px solid var(--ink-primary)" : "none",
+                  borderColor: color === "#B48232" ? "var(--ink-primary)" : "transparent",
+                  outline: color === "#B48232" ? "2px solid var(--ink-primary)" : "none",
                   outlineOffset: "2px"
                 }}
                 type="button"
               >
-                {color === "#D4607A" && (
+                {color === "#B48232" && (
                   <Check aria-hidden="true" className="mx-auto size-4 text-[var(--ink-primary)] drop-shadow-sm" weight="bold" />
                 )}
                 <span className="sr-only">{color}</span>
@@ -73,25 +73,25 @@ export default function BrandingSettingsPage() {
             <Label htmlFor="brand-color-custom">Custom hex</Label>
             <Input
               className="w-32"
-              defaultValue="#D4607A"
+              defaultValue="#B48232"
               id="brand-color-custom"
               maxLength={7}
               placeholder="#D4AF37"
             />
           </div>
 
-          <div className="rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-base)] p-5">
-            <p className="lux-meta">Preview</p>
+          <div className="surface-panel bg-[var(--bg-sunken)] border-[var(--border-subtle)] p-5">
+            <p className="font-sans text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ink-tertiary)]">Preview</p>
             <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
               <div
-                className="rounded-[8px] px-4 py-2 text-[14px] font-medium text-[#0A0A0B]"
-                style={{ backgroundColor: "#D4607A" }}
+                className="rounded-[var(--radius-md)] px-4 py-2 text-[0.875rem] font-sans font-medium text-[var(--bg-void)]"
+                style={{ backgroundColor: "#B48232" }}
               >
                 Branded button
               </div>
               <div
-                className="rounded-[8px] px-4 py-2 text-[14px] font-medium"
-                style={{ color: "#D4607A", backgroundColor: "rgba(212,96,122,0.08)" }}
+                className="rounded-[var(--radius-md)] px-4 py-2 text-[0.875rem] font-sans font-medium"
+                style={{ color: "var(--gold-core)", backgroundColor: "var(--gold-dim)" }}
               >
                 Branded link
               </div>
@@ -113,7 +113,7 @@ export default function BrandingSettingsPage() {
             <Input className="max-w-sm" placeholder="portal.your-agency.com" />
             <Button variant="secondary">Verify</Button>
           </div>
-          <p className="mt-3 text-[12px] text-[var(--ink-tertiary)]">
+          <p className="mt-3 text-[0.75rem] text-[var(--ink-tertiary)]">
             You will need to add a CNAME record pointing to custom.portalos.app. Full instructions appear after verification.
           </p>
         </CardContent>

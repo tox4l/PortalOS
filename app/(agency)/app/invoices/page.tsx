@@ -58,25 +58,25 @@ const totalOutstanding = invoices
 export default function InvoicesPage() {
   return (
     <div className="space-y-8">
-      <section className="lux-panel grid grid-cols-1 divide-y divide-[var(--border-default)] md:grid-cols-4 md:divide-x md:divide-y-0" data-reveal>
+      <section className="surface-panel grid grid-cols-1 divide-y divide-[var(--border-hairline)] md:grid-cols-4 md:divide-x md:divide-y-0" data-reveal>
         {[
           { label: "Total invoiced", value: "$20,850" },
           { label: "Outstanding", value: `$${totalOutstanding.toLocaleString()}` },
           { label: "Paid this month", value: "$8,700" },
           { label: "Overdue", value: "1" }
         ].map((stat) => (
-          <div className="p-5" key={stat.label}>
-            <p className="lux-meta">{stat.label}</p>
-            <p className="mt-3 font-mono text-[32px] leading-none text-[var(--ink-primary)]">{stat.value}</p>
+          <div className="p-6" key={stat.label}>
+            <p className="font-sans text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ink-tertiary)]">{stat.label}</p>
+            <p className="mt-3 font-display text-[2rem] font-normal leading-none text-[var(--ink-primary)]">{stat.value}</p>
           </div>
         ))}
       </section>
 
-      <section className="lux-panel" data-reveal>
-        <div className="flex flex-col gap-4 border-b border-[var(--border-default)] p-6 md:flex-row md:items-center md:justify-between">
+      <section className="surface-panel" data-reveal>
+        <div className="flex flex-col gap-4 border-b border-[var(--border-hairline)] p-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 className="font-display text-[32px] font-normal leading-tight text-[var(--ink-primary)]">All invoices</h2>
-            <p className="mt-2 text-[14px] leading-6 text-[var(--ink-secondary)]">Track billing across all client engagements.</p>
+            <h2 className="font-display text-[2rem] font-normal leading-tight text-[var(--ink-primary)]">All invoices</h2>
+            <p className="mt-2 text-[0.875rem] leading-6 text-[var(--ink-secondary)]">Track billing across all client engagements.</p>
           </div>
           <Button asChild>
             <Link href="/app/projects">
@@ -86,31 +86,31 @@ export default function InvoicesPage() {
           </Button>
         </div>
 
-        <div className="divide-y divide-[var(--border-default)]">
+        <div className="divide-y divide-[var(--border-hairline)]">
           {invoices.map((invoice) => (
             <article
-              className="grid grid-cols-1 gap-4 p-5 transition-colors duration-200 hover:bg-[rgba(255,255,255,0.025)] md:grid-cols-[minmax(0,1fr)_180px_140px_120px]"
+              className="workspace-row grid grid-cols-1 gap-4 p-5 md:grid-cols-[minmax(0,1fr)_180px_140px_120px]"
               key={invoice.id}
             >
               <div>
                 <div className="flex flex-wrap items-center gap-3">
-                  <div className="flex size-10 items-center justify-center rounded-[8px] border border-[var(--border-default)] bg-[var(--bg-base)]">
+                  <div className="flex size-10 items-center justify-center rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-sunken)]">
                     <FileText aria-hidden="true" className="size-4 text-[var(--ink-tertiary)]" weight="duotone" />
                   </div>
                   <div>
-                    <p className="font-medium text-[var(--ink-primary)]">{invoice.project}</p>
-                    <p className="text-[14px] text-[var(--ink-secondary)]">{invoice.client}</p>
+                    <p className="font-sans font-medium text-[0.875rem] text-[var(--ink-primary)]">{invoice.project}</p>
+                    <p className="text-[0.8125rem] text-[var(--ink-secondary)]">{invoice.client}</p>
                   </div>
                 </div>
               </div>
-              <p className="flex items-center font-mono text-[18px] text-[var(--ink-primary)]">
+              <p className="flex items-center font-display text-[1.125rem] font-normal text-[var(--ink-primary)]">
                 ${invoice.amount.toLocaleString()}
               </p>
               <div className="flex items-center">
                 <Badge variant={invoice.badge}>{invoice.status}</Badge>
               </div>
               <div className="flex items-center justify-between gap-2 md:justify-end">
-                <span className="text-[13px] text-[var(--ink-tertiary)]">{invoice.due}</span>
+                <span className="text-[0.8125rem] text-[var(--ink-tertiary)]">{invoice.due}</span>
                 <Button asChild size="sm" variant="ghost">
                   <Link href={`/app/projects/dev-proj-001`}>
                     View

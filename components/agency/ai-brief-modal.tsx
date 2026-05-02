@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { Sparkles } from "lucide-react";
+import { Sparkle } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -179,7 +179,7 @@ export function AiBriefModal({
                 </>
               ) : (
                 <>
-                  <Sparkles aria-hidden="true" className="size-4" />
+                  <Sparkle aria-hidden="true" className="size-4" />
                   Generate brief
                 </>
               )}

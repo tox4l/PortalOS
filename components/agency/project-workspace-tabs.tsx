@@ -126,7 +126,7 @@ export function ProjectWorkspaceTabs({ project }: ProjectWorkspaceTabsProps) {
 
   return (
     <div className="space-y-8">
-      <div className="lux-panel p-5">
+      <div className="surface-panel p-5">
         <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
           <div className="min-w-0 space-y-4">
           <Link
@@ -149,7 +149,7 @@ export function ProjectWorkspaceTabs({ project }: ProjectWorkspaceTabsProps) {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2 rounded-[8px] border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-1.5">
+            <div className="flex items-center gap-2 rounded-[10px] border border-[var(--border-hairline)] bg-[var(--bg-sunken)] px-3 py-1.5">
               <div className="flex size-5 items-center justify-center rounded-[5px] bg-[var(--bg-elevated)] text-[10px] font-medium text-[var(--ink-secondary)]">
                 {project.client.companyName.charAt(0)}
               </div>
@@ -172,9 +172,9 @@ export function ProjectWorkspaceTabs({ project }: ProjectWorkspaceTabsProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="hidden rounded-[8px] border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-right md:block">
-            <p className="font-mono text-[18px] leading-none text-[var(--gold-mid)]">{project.tasks.length}</p>
-            <p className="mt-1 text-[10px] uppercase tracking-[0.08em] text-[var(--ink-tertiary)]">Tasks</p>
+          <div className="hidden rounded-[10px] border border-[var(--border-hairline)] bg-[var(--bg-sunken)] px-3 py-2 text-right md:block">
+            <p className="font-display text-[18px] font-normal leading-none text-[var(--gold-core)]">{project.tasks.length}</p>
+            <p className="mt-1 font-sans text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--ink-tertiary)]">Tasks</p>
           </div>
           <Button size="sm" variant="secondary">
             <CheckSquareOffset aria-hidden="true" className="size-4" />
@@ -187,7 +187,7 @@ export function ProjectWorkspaceTabs({ project }: ProjectWorkspaceTabsProps) {
         </div>
       </div>
 
-        <div className="mt-6 lux-divider" />
+        <div className="mt-6 border-t border-[var(--border-hairline)]" />
 
         <nav aria-label="Project sections" className="mt-4 flex gap-2 overflow-x-auto">
           {tabs.map((tab) => {
@@ -199,7 +199,7 @@ export function ProjectWorkspaceTabs({ project }: ProjectWorkspaceTabsProps) {
                   "inline-flex min-h-10 shrink-0 items-center gap-2 rounded-[8px] border px-3 text-[13px] font-medium transition-[background-color,border-color,color,box-shadow,transform] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
                   isActive
                     ? "border-[var(--border-gold-dim)] bg-[var(--gold-dim)] text-[var(--gold-core)] shadow-[var(--inset-gold)]"
-                    : "border-[var(--border-default)] bg-[var(--bg-base)] text-[var(--ink-tertiary)] hover:border-[var(--border-subtle)] hover:text-[var(--ink-secondary)]"
+                    : "border-[var(--border-hairline)] bg-[var(--bg-sunken)] text-[var(--ink-tertiary)] hover:border-[var(--border-subtle)] hover:bg-[var(--gold-wash)] hover:text-[var(--ink-secondary)]"
                 )}
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}

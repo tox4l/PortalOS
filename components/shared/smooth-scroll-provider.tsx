@@ -2,6 +2,7 @@
 
 import Lenis from "lenis";
 import { createContext, useContext, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 type SmoothScrollContextValue = {
   scrollTo: (target: string | HTMLElement | number) => void;
@@ -15,7 +16,9 @@ export function useSmoothScroll() {
 
 export function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
+  const pathname = usePathname();
 
+  // Initialize Lenis once
   useEffect(() => {
     const lenis = new Lenis({
       lerp: 0.08,
@@ -38,6 +41,14 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
       lenisRef.current = null;
     };
   }, []);
+
+  // Recalculate on route change
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => {
+      lenisRef.current?.resize();
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [pathname]);
 
   return (
     <SmoothScrollContext.Provider

@@ -1,7 +1,7 @@
 "use client";
 
 import { useDraggable } from "@dnd-kit/core";
-import { Calendar, MessageSquare } from "lucide-react";
+import { CalendarBlank, ChatCircle } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 type TaskCardAssignee = {
@@ -26,10 +26,10 @@ type TaskCardProps = {
 };
 
 const priorityConfig: Record<string, { color: string; label: string; border: string }> = {
-  LOW: { color: "#555555", label: "Low", border: "rgba(255,255,255,0.04)" },
-  MEDIUM: { color: "#C9A84C", label: "Medium", border: "rgba(201,168,76,0.24)" },
-  HIGH: { color: "#E8CB6A", label: "High", border: "rgba(232,203,106,0.38)" },
-  URGENT: { color: "#F87171", label: "Urgent", border: "rgba(248,113,113,0.45)" }
+  LOW: { color: "var(--ink-tertiary)", label: "Low", border: "var(--border-hairline)" },
+  MEDIUM: { color: "var(--gold-core)", label: "Medium", border: "var(--border-gold-dim)" },
+  HIGH: { color: "var(--gold-bright)", label: "High", border: "var(--border-gold)" },
+  URGENT: { color: "var(--danger-text)", label: "Urgent", border: "var(--danger-border)" }
 };
 
 function getInitials(name: string | null): string {
@@ -78,11 +78,11 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
     <button
       ref={setNodeRef}
       className={cn(
-        "relative w-full cursor-grab overflow-hidden rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-base)] p-4 text-left shadow-[var(--shadow-sm)] transition-[box-shadow,transform,border-color] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:shadow-[var(--shadow-md)] focus-visible:shadow-[0_0_0_3px_rgba(212,175,55,0.12)] active:cursor-grabbing",
+        "relative w-full cursor-grab overflow-hidden rounded-[5px] border border-[var(--border-hairline)] bg-[var(--bg-surface)] p-4 text-left transition-[box-shadow,transform,border-color] duration-[180ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-[var(--border-subtle)] hover:shadow-[var(--shadow-md)] focus-visible:shadow-[var(--glow-gold-xs)] active:cursor-grabbing",
         isDragging &&
           "kanban-card-dragging z-50 cursor-grabbing border-[var(--border-gold)]"
       )}
-      style={{ ...style, borderLeftColor: priority.border, borderLeftWidth: 2 }}
+      style={style}
       {...attributes}
       {...listeners}
       onClick={onClick}
@@ -104,13 +104,13 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
                 isOverdue ? "text-[var(--status-danger-text)]" : "text-[var(--ink-tertiary)]"
               )}
             >
-              <Calendar aria-hidden="true" className="size-3" />
+              <CalendarBlank aria-hidden="true" className="size-3" />
               {dueLabel}
             </span>
           )}
           {commentCount > 0 && (
             <span className="inline-flex items-center gap-1 text-[11px] font-medium leading-none text-[var(--ink-tertiary)]">
-              <MessageSquare aria-hidden="true" className="size-3" />
+              <ChatCircle aria-hidden="true" className="size-3" />
               {commentCount}
             </span>
           )}

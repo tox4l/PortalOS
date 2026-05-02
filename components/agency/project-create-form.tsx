@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle } from "@phosphor-icons/react";
 import { createProjectAction, type CreateProjectState } from "@/actions/projects";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,7 +27,7 @@ export function ProjectCreateForm() {
       {state.success ? (
         <div className="rounded-[8px] border border-[rgba(74,222,128,0.2)] bg-[var(--status-success-bg)] px-4 py-3 text-sm leading-6 text-[var(--status-success-text)]">
           <div className="flex gap-3">
-            <CheckCircle2 aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+            <CheckCircle aria-hidden="true" className="mt-0.5 size-4 shrink-0" weight="fill" />
             <p>
               Project created: <span className="font-medium">{state.data?.name}</span>
             </p>
@@ -87,7 +87,7 @@ export function ProjectCreateForm() {
       <label className="block">
         <Label htmlFor="description">Description</Label>
         <textarea
-          className="mt-2 min-h-32 w-full rounded-[8px] border border-[var(--border-default)] bg-[var(--bg-sunken)] px-4 py-3 text-[15px] leading-7 text-[var(--ink-primary)] transition-[border-color,box-shadow] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] placeholder:text-[var(--ink-tertiary)] focus:border-[var(--border-gold)] focus:shadow-[0_0_0_3px_rgba(212,175,55,0.12)]"
+          className="mt-1.5 min-h-32 w-full rounded-[5px] border border-[var(--border-subtle)] bg-[var(--bg-sunken)] px-3.5 py-3 font-sans text-[0.875rem] leading-6 text-[var(--ink-primary)] transition-[border-color,box-shadow] duration-[180ms] ease-[cubic-bezier(0.16,1,0.3,1)] placeholder:text-[var(--ink-tertiary)] focus:border-[var(--border-gold)] focus:shadow-[var(--glow-gold-xs)]"
           id="description"
           name="description"
           placeholder="A concise brief for the work, scope, and expected client outcome."

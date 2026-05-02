@@ -120,7 +120,7 @@ function renderBriefNode(node: Record<string, unknown>, index: number): ReactNod
 
     if (level === 1) {
       return (
-        <h1 className="mt-8 font-display text-[32px] font-normal leading-tight text-[var(--ink-primary)]" key={index}>
+        <h1 className="mt-10 font-display text-[38px] font-normal leading-[1.15] tracking-[-0.02em] text-[var(--ink-primary)]" key={index}>
           {text}
         </h1>
       );
@@ -128,14 +128,14 @@ function renderBriefNode(node: Record<string, unknown>, index: number): ReactNod
 
     if (level === 3) {
       return (
-        <h3 className="mt-7 font-display text-[22px] font-normal leading-tight text-[var(--ink-primary)]" key={index}>
+        <h3 className="mt-8 font-display text-[24px] font-normal leading-[1.3] tracking-[-0.01em] text-[var(--ink-primary)]" key={index}>
           {text}
         </h3>
       );
     }
 
     return (
-      <h2 className="mt-8 font-display text-[26px] font-normal leading-tight text-[var(--ink-primary)]" key={index}>
+      <h2 className="mt-9 font-display text-[30px] font-normal leading-[1.2] tracking-[-0.015em] text-[var(--ink-primary)]" key={index}>
         {text}
       </h2>
     );
@@ -146,7 +146,7 @@ function renderBriefNode(node: Record<string, unknown>, index: number): ReactNod
     if (!text.trim()) return <div className="h-3" key={index} />;
 
     return (
-      <p className="mt-3 max-w-[760px] text-[15px] leading-7 text-[var(--ink-secondary)]" key={index}>
+      <p className="mt-4 max-w-[760px] text-[16px] leading-[1.75] text-[var(--ink-secondary)]" key={index}>
         {text}
       </p>
     );
@@ -156,10 +156,10 @@ function renderBriefNode(node: Record<string, unknown>, index: number): ReactNod
     const items = Array.isArray(node.content) ? (node.content as Record<string, unknown>[]) : [];
 
     return (
-      <ul className="mt-4 grid gap-2" key={index}>
+      <ul className="mt-5 grid gap-2.5" key={index}>
         {items.map((item, itemIndex) => (
-          <li className="flex gap-3 text-[15px] leading-7 text-[var(--ink-secondary)]" key={itemIndex}>
-            <span className="mt-[11px] size-1.5 shrink-0 rounded-full bg-[var(--gold-core)]" />
+          <li className="flex gap-3 text-[16px] leading-[1.7] text-[var(--ink-secondary)]" key={itemIndex}>
+            <span className="mt-[9px] size-2 shrink-0 rounded-full bg-[var(--gold-mid)]" />
             <span>{extractText(item)}</span>
           </li>
         ))}
@@ -208,12 +208,12 @@ function EmptyState({
   title: string;
 }) {
   return (
-    <div className="lux-panel flex min-h-[300px] flex-col items-center justify-center border-dashed p-10 text-center">
-      <div className="flex size-14 items-center justify-center rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-base)]">
-        <IconComponent aria-hidden="true" className="size-7 text-[var(--ink-tertiary)]" weight="duotone" />
+    <div className="surface-panel flex min-h-[320px] flex-col items-center justify-center p-12 text-center">
+      <div className="flex size-16 items-center justify-center rounded-[14px] border border-[var(--border-gold-dim)] bg-[var(--gold-wash)]">
+        <IconComponent aria-hidden="true" className="size-8 text-[var(--gold-muted)]" weight="duotone" />
       </div>
-      <p className="mt-5 font-display text-[24px] font-normal text-[var(--ink-primary)]">{title}</p>
-      <p className="mt-2 max-w-[420px] text-[14px] leading-6 text-[var(--ink-secondary)]">{copy}</p>
+      <p className="mt-6 font-display text-[28px] font-normal leading-[1.2] text-[var(--ink-primary)]">{title}</p>
+      <p className="mt-3 max-w-[440px] text-[15px] leading-[1.6] text-[var(--ink-secondary)]">{copy}</p>
     </div>
   );
 }
@@ -235,24 +235,24 @@ export function ClientProjectView({ project, clientSlug }: ClientProjectViewProp
   const briefContent = project.brief?.content?.content;
 
   return (
-    <div className="space-y-8">
-      <section className="lux-panel p-6 md:p-8">
+    <div className="space-y-10">
+      <section className="surface-panel p-7 md:p-10">
         <Link
-          className="inline-flex items-center gap-2 text-[13px] font-medium text-[var(--ink-tertiary)] transition-colors hover:text-[var(--ink-secondary)]"
+          className="inline-flex items-center gap-2 text-[13px] font-medium text-[var(--ink-tertiary)] transition-colors duration-[180ms] ease-[var(--ease-out)] hover:text-[var(--gold-core)]"
           href={`/portal/${clientSlug}`}
         >
           <ArrowLeft aria-hidden="true" className="size-4" />
           Back to projects
         </Link>
 
-        <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
+        <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div>
             <div className="flex flex-wrap items-center gap-3">
               <Badge variant={statusBadgeVariant[project.status] ?? "draft"}>
                 {statusLabels[project.status] ?? project.status}
               </Badge>
               {project.dueDate && (
-                <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--ink-tertiary)]">
+                <span className="font-sans text-[12px] uppercase tracking-[0.1em] text-[var(--ink-tertiary)]">
                   Due{" "}
                   {new Date(project.dueDate).toLocaleDateString("en-US", {
                     month: "short",
@@ -263,30 +263,30 @@ export function ClientProjectView({ project, clientSlug }: ClientProjectViewProp
               )}
             </div>
 
-            <h1 className="mt-4 max-w-[780px] font-display text-[40px] font-normal leading-[1.08] tracking-[-0.015em] text-[var(--ink-primary)] md:text-[56px]">
+            <h1 className="mt-5 max-w-[780px] font-display text-[clamp(2.25rem,5vw,4rem)] font-normal leading-[1.08] tracking-[-0.025em] text-[var(--ink-primary)]">
               {project.name}
             </h1>
             {project.description && (
-              <p className="mt-4 max-w-[680px] text-[16px] leading-7 text-[var(--ink-secondary)]">
+              <p className="mt-5 max-w-[680px] text-[17px] leading-[1.7] text-[var(--ink-secondary)]">
                 {project.description}
               </p>
             )}
           </div>
 
           <div className="grid grid-cols-2 gap-3 self-end">
-            <div className="rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-base)] p-4">
-              <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--ink-tertiary)]">
+            <div className="surface-panel p-5">
+              <p className="font-sans text-[12px] font-medium uppercase tracking-[0.12em] text-[var(--ink-tertiary)]">
                 Files
               </p>
-              <p className="mt-3 font-mono text-[32px] leading-none text-[var(--ink-primary)]">
+              <p className="mt-3 font-display text-[40px] leading-none text-[var(--ink-primary)]">
                 {deliverables.length}
               </p>
             </div>
-            <div className="rounded-[10px] border border-[var(--border-gold-dim)] bg-[var(--gold-dim)] p-4">
-              <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--gold-core)]">
+            <div className="surface-panel border-[var(--border-gold-dim)] bg-[var(--gold-wash)] p-5">
+              <p className="font-sans text-[12px] font-medium uppercase tracking-[0.12em] text-[var(--gold-core)]">
                 Review
               </p>
-              <p className="mt-3 font-mono text-[32px] leading-none text-[var(--gold-mid)]">
+              <p className="mt-3 font-display text-[40px] leading-none text-[var(--gold-mid)]">
                 {pendingDeliverables}
               </p>
             </div>
@@ -294,8 +294,8 @@ export function ClientProjectView({ project, clientSlug }: ClientProjectViewProp
         </div>
       </section>
 
-      <div className="lux-panel bg-[var(--bg-base)] p-1">
-        <nav aria-label="Project sections" className="grid grid-cols-1 gap-1 sm:grid-cols-3">
+      <div className="surface-panel bg-[var(--bg-base)] p-1.5">
+        <nav aria-label="Project sections" className="grid grid-cols-1 gap-1.5 sm:grid-cols-3">
           {tabs.map((tab) => {
             const IconComponent = tab.icon;
             const isActive = activeTab === tab.id;
@@ -304,10 +304,10 @@ export function ClientProjectView({ project, clientSlug }: ClientProjectViewProp
               <button
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "relative flex min-h-12 items-center justify-center gap-2 rounded-[8px] px-3 text-[13px] font-medium transition-[background-color,color,box-shadow] duration-200",
+                  "relative flex min-h-14 items-center justify-center gap-2.5 rounded-[10px] px-4 text-[14px] font-medium transition-[background-color,color,box-shadow] duration-[200ms] ease-[var(--ease-out)]",
                   isActive
                     ? "bg-[var(--gold-dim)] text-[var(--gold-core)] shadow-[var(--inset-gold)]"
-                    : "text-[var(--ink-tertiary)] hover:bg-[rgba(255,255,255,0.03)] hover:text-[var(--ink-secondary)]"
+                    : "text-[var(--ink-tertiary)] hover:bg-[var(--gold-dim)] hover:text-[var(--gold-core)]"
                 )}
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
@@ -322,15 +322,15 @@ export function ClientProjectView({ project, clientSlug }: ClientProjectViewProp
       </div>
 
       {activeTab === "brief" && (
-        <section className="lux-panel p-6 md:p-8">
+        <section className="surface-panel p-7 md:p-10">
           {project.brief ? (
             <>
-              <div className="flex flex-col gap-4 border-b border-[var(--border-default)] pb-6 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex flex-col gap-5 border-b border-[var(--border-hairline)] pb-7 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--gold-core)]">
+                  <p className="font-sans text-[12px] font-medium uppercase tracking-[0.14em] text-[var(--gold-core)]">
                     Creative brief
                   </p>
-                  <h2 className="mt-3 font-display text-[32px] font-normal leading-tight text-[var(--ink-primary)]">
+                  <h2 className="mt-4 font-display text-[36px] font-normal leading-[1.15] tracking-[-0.02em] text-[var(--ink-primary)]">
                     {project.brief.title}
                   </h2>
                 </div>
@@ -360,7 +360,7 @@ export function ClientProjectView({ project, clientSlug }: ClientProjectViewProp
       )}
 
       {activeTab === "deliverables" && (
-        <section className="space-y-4">
+        <section className="space-y-5">
           {deliverables.length === 0 ? (
             <EmptyState
               copy="Files shared by your agency team will appear here, with approval controls when review is needed."
@@ -375,19 +375,19 @@ export function ClientProjectView({ project, clientSlug }: ClientProjectViewProp
               return (
                 <article
                   className={cn(
-                    "lux-panel lux-panel-interactive p-5",
-                    awaitingReview && "border-[var(--border-gold-dim)] shadow-[var(--inset-gold)]"
+                    "surface-panel surface-panel-interactive p-6",
+                    awaitingReview && "border-[var(--border-gold)] shadow-[var(--inset-gold)] bg-[var(--gold-wash)]"
                   )}
                   key={deliverable.id}
                 >
-                  <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-                    <div className="flex gap-4">
-                      <div className="flex size-14 shrink-0 items-center justify-center rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-base)] font-mono text-[10px] uppercase tracking-[0.08em] text-[var(--ink-tertiary)]">
+                  <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+                    <div className="flex gap-5">
+                      <div className="flex size-16 shrink-0 items-center justify-center rounded-[12px] border border-[var(--border-gold-dim)] bg-[var(--gold-wash)] font-sans text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--gold-core)]">
                         {getFileKind(deliverable.fileType)}
                       </div>
                       <div className="min-w-0">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <h3 className="font-display text-[24px] font-normal leading-tight text-[var(--ink-primary)]">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <h3 className="font-display text-[26px] font-normal leading-[1.2] tracking-[-0.01em] text-[var(--ink-primary)]">
                             {deliverable.title}
                           </h3>
                           <Badge variant={deliverableStatusBadge[deliverable.status] ?? "draft"}>
@@ -395,11 +395,11 @@ export function ClientProjectView({ project, clientSlug }: ClientProjectViewProp
                           </Badge>
                         </div>
                         {deliverable.description && (
-                          <p className="mt-2 max-w-[720px] text-[14px] leading-6 text-[var(--ink-secondary)]">
+                          <p className="mt-3 max-w-[720px] text-[15px] leading-[1.6] text-[var(--ink-secondary)]">
                             {deliverable.description}
                           </p>
                         )}
-                        <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.06em] text-[var(--ink-tertiary)]">
+                        <p className="mt-4 font-sans text-[11px] uppercase tracking-[0.08em] text-[var(--ink-tertiary)]">
                           {deliverable.fileName} / {formatFileSize(deliverable.fileSize)} / v{deliverable.version} /{" "}
                           {new Date(deliverable.createdAt).toLocaleDateString("en-US", {
                             month: "short",
@@ -422,9 +422,9 @@ export function ClientProjectView({ project, clientSlug }: ClientProjectViewProp
                   </div>
 
                   {awaitingReview && (
-                    <div className="mt-5 flex flex-col gap-3 border-t border-[var(--border-default)] pt-5 sm:flex-row sm:items-center sm:justify-between">
-                      <div className="flex items-center gap-3 text-[14px] text-[var(--ink-secondary)]">
-                        <HourglassMedium aria-hidden="true" className="size-5 text-[var(--gold-core)]" weight="duotone" />
+                    <div className="mt-6 flex flex-col gap-4 border-t border-[var(--border-gold-dim)] pt-6 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex items-center gap-3 text-[15px] font-medium text-[var(--gold-core)]">
+                        <HourglassMedium aria-hidden="true" className="size-5" weight="duotone" />
                         Waiting on your approval.
                       </div>
                       <div className="flex flex-col gap-2 sm:flex-row">
@@ -462,18 +462,18 @@ export function ClientProjectView({ project, clientSlug }: ClientProjectViewProp
       )}
 
       {activeTab === "comments" && (
-        <section className="grid gap-6 lg:grid-cols-[360px_minmax(0,1fr)]">
-          <div className="lux-panel p-5">
-            <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--gold-core)]">
+        <section className="grid gap-8 lg:grid-cols-[380px_minmax(0,1fr)]">
+          <div className="surface-panel p-6">
+            <p className="font-sans text-[12px] font-medium uppercase tracking-[0.14em] text-[var(--gold-core)]">
               Client thread
             </p>
-            <h2 className="mt-3 font-display text-[28px] font-normal leading-tight text-[var(--ink-primary)]">
+            <h2 className="mt-4 font-display text-[32px] font-normal leading-[1.2] tracking-[-0.02em] text-[var(--ink-primary)]">
               Keep decisions visible.
             </h2>
-            <p className="mt-3 text-[14px] leading-6 text-[var(--ink-secondary)]">
+            <p className="mt-4 text-[15px] leading-[1.6] text-[var(--ink-secondary)]">
               Only client-facing comments appear here. Internal agency notes stay private.
             </p>
-            <div className="mt-5">
+            <div className="mt-6">
               <CommentInput clientSlug={clientSlug} projectId={project.id} />
             </div>
           </div>
@@ -485,22 +485,22 @@ export function ClientProjectView({ project, clientSlug }: ClientProjectViewProp
               title="No comments yet"
             />
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-5">
               {clientFacingComments.map((comment) => {
                 const author = comment.authorUser?.name ?? comment.authorClientUser?.name ?? "Unknown";
 
                 return (
                   <article
-                    className="lux-panel p-5"
+                    className="surface-panel p-6"
                     key={comment.id}
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="flex size-10 shrink-0 items-center justify-center rounded-[8px] border border-[var(--border-default)] bg-[var(--bg-base)] font-mono text-[12px] text-[var(--ink-primary)]">
+                    <div className="flex items-center gap-4">
+                      <div className="flex size-11 shrink-0 items-center justify-center rounded-[10px] border border-[var(--border-gold-dim)] bg-[var(--gold-wash)] font-sans text-[13px] font-semibold text-[var(--gold-core)]">
                         {getInitials(author)}
                       </div>
                       <div>
-                        <p className="text-[14px] font-medium text-[var(--ink-primary)]">{author}</p>
-                        <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-[var(--ink-tertiary)]">
+                        <p className="text-[15px] font-semibold text-[var(--ink-primary)]">{author}</p>
+                        <p className="mt-0.5 font-sans text-[11px] uppercase tracking-[0.1em] text-[var(--ink-tertiary)]">
                           {new Date(comment.createdAt).toLocaleDateString("en-US", {
                             month: "short",
                             day: "numeric",
@@ -510,7 +510,7 @@ export function ClientProjectView({ project, clientSlug }: ClientProjectViewProp
                         </p>
                       </div>
                     </div>
-                    <p className="mt-4 text-[14px] leading-7 text-[var(--ink-secondary)]">{comment.body}</p>
+                    <p className="mt-5 text-[15px] leading-[1.7] text-[var(--ink-secondary)]">{comment.body}</p>
                   </article>
                 );
               })}

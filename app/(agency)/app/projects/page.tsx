@@ -60,24 +60,24 @@ const metrics = [
 export default function ProjectsPage() {
   return (
     <div className="space-y-8">
-      <section className="lux-panel p-6 md:p-8" data-reveal>
+      <section className="surface-panel p-6 md:p-8" data-reveal>
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_420px]">
           <div>
             <p className="section-label">Project rooms</p>
             <h2 className="mt-7 max-w-[820px] font-display text-[clamp(3rem,5vw,5.5rem)] font-normal leading-[0.98] tracking-[-0.025em] text-[var(--ink-primary)] text-balance">
               Work in motion, without the theater.
             </h2>
-            <p className="mt-7 max-w-[620px] text-[16px] leading-7 text-[var(--ink-secondary)]">
+            <p className="mt-6 max-w-[620px] text-[0.9375rem] leading-7 text-[var(--ink-secondary)]">
               Track the handoff from brief to approval while every file and comment stays attached to the room that produced it.
             </p>
           </div>
 
           <div className="grid content-end gap-3">
-            <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[10px] border border-[var(--border-default)] bg-[var(--border-default)]">
+            <div className="surface-panel grid grid-cols-2 gap-px overflow-hidden bg-[var(--border-hairline)] p-0">
               {metrics.map(([label, value]) => (
                 <div className="bg-[var(--bg-base)] p-4" key={label}>
-                  <p className="lux-meta">{label}</p>
-                  <p className="mt-3 font-mono text-[28px] leading-none text-[var(--ink-primary)]">{value}</p>
+                  <p className="font-sans text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ink-tertiary)]">{label}</p>
+                  <p className="mt-3 font-display text-[1.75rem] font-normal leading-none text-[var(--ink-primary)]">{value}</p>
                 </div>
               ))}
             </div>
@@ -91,48 +91,48 @@ export default function ProjectsPage() {
         </div>
       </section>
 
-      <section className="lux-panel overflow-hidden" data-reveal>
-        <div className="grid grid-cols-[1.25fr_0.95fr_160px_110px] border-b border-[var(--border-default)] bg-[var(--bg-sunken)] px-5 py-3 text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--ink-tertiary)] max-lg:hidden">
+      <section className="surface-panel overflow-hidden" data-reveal>
+        <div className="grid grid-cols-[1.25fr_0.95fr_160px_110px] border-b border-[var(--border-hairline)] bg-[var(--bg-sunken)] px-5 py-3 font-sans text-[0.6875rem] font-medium uppercase tracking-[0.08em] text-[var(--ink-tertiary)] max-lg:hidden">
           <span>Project</span>
           <span>Runway</span>
           <span>Owner</span>
           <span className="text-right">Open</span>
         </div>
 
-        <div className="divide-y divide-[var(--border-default)]">
+        <div className="divide-y divide-[var(--border-hairline)]">
           {projects.map((project) => (
             <article
-              className="grid grid-cols-1 gap-5 p-5 transition-[background-color] duration-200 hover:bg-[rgba(255,255,255,0.025)] lg:grid-cols-[1.25fr_0.95fr_160px_110px] lg:items-center"
+              className="workspace-row grid grid-cols-1 gap-5 p-5 lg:grid-cols-[1.25fr_0.95fr_160px_110px] lg:items-center"
               key={project.id}
             >
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-3">
-                  <h3 className="font-display text-2xl font-normal leading-tight text-[var(--ink-primary)]">
+                  <h3 className="font-display text-[1.5rem] font-normal leading-tight text-[var(--ink-primary)]">
                     {project.name}
                   </h3>
                   <Badge variant={project.badge}>{project.status}</Badge>
                 </div>
-                <p className="mt-1 text-sm text-[var(--ink-secondary)]">{project.client}</p>
+                <p className="mt-1 text-[0.875rem] text-[var(--ink-secondary)]">{project.client}</p>
               </div>
 
               <div className="space-y-3">
-                <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.08em] text-[var(--ink-tertiary)]">
+                <div className="flex items-center justify-between font-mono text-[0.625rem] uppercase tracking-[0.08em] text-[var(--ink-tertiary)]">
                   <span>{project.tasks}</span>
                   <span>{project.progress}%</span>
                 </div>
                 <div className="h-1.5 rounded-full bg-[var(--bg-sunken)]">
                   <div
-                    className="h-full rounded-full bg-[var(--gold-500)]"
+                    className="h-full rounded-full bg-[var(--gold-core)] transition-[width] duration-[var(--t-slow)] ease-[var(--ease-out)]"
                     style={{ width: `${project.progress}%` }}
                   />
                 </div>
-                <p className="inline-flex items-center gap-2 text-[13px] text-[var(--ink-secondary)]">
+                <p className="inline-flex items-center gap-2 text-[0.8125rem] text-[var(--ink-secondary)]">
                   <CalendarBlank aria-hidden="true" className="size-4 text-[var(--ink-tertiary)]" />
                   {project.due}
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-3 text-[13px] text-[var(--ink-secondary)] lg:block">
+              <div className="flex flex-wrap gap-3 text-[0.8125rem] text-[var(--ink-secondary)] lg:block">
                 <span className="inline-flex items-center gap-2">
                   <UserCircle aria-hidden="true" className="size-4 text-[var(--ink-tertiary)]" />
                   {project.owner}
@@ -156,14 +156,14 @@ export default function ProjectsPage() {
         </div>
       </section>
 
-      <section className="lux-panel p-6" data-reveal>
+      <section className="surface-panel p-6" data-reveal>
         <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_220px] md:items-center">
           <div>
-            <p className="flex items-center gap-2 text-[12px] font-medium uppercase tracking-[0.06em] text-[var(--ink-tertiary)]">
+            <p className="flex items-center gap-2 font-sans text-[0.6875rem] font-medium uppercase tracking-[0.06em] text-[var(--ink-tertiary)]">
               <CheckCircle aria-hidden="true" className="size-4" weight="duotone" />
               Project workspace
             </p>
-            <h3 className="mt-3 max-w-[760px] font-display text-3xl font-normal leading-tight text-[var(--ink-primary)]">
+            <h3 className="mt-3 max-w-[760px] font-display text-[1.875rem] font-normal leading-tight text-[var(--ink-primary)]">
               Kanban, briefs, deliverables, and comments now live behind each room.
             </h3>
           </div>

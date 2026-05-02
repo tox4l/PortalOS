@@ -102,7 +102,7 @@ const paragraph: React.CSSProperties = {
 };
 
 const button: React.CSSProperties = {
-  backgroundColor: "#D4607A",
+  backgroundColor: "#8C7340",
   color: "#FFFFFF",
   borderRadius: "10px",
   padding: "12px 24px",

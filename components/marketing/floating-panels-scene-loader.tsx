@@ -7,11 +7,11 @@ const FloatingPanelsScene = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="lux-panel flex min-h-[420px] items-center justify-center overflow-hidden">
-        <div className="grid w-full max-w-[520px] gap-3 p-6">
-          <div className="h-24 rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-base)]" />
-          <div className="ml-auto h-20 w-4/5 rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-base)]" />
-          <div className="h-28 w-11/12 rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-base)]" />
+      <div className="flex min-h-[900px] w-full items-center justify-center overflow-hidden">
+        <div className="grid w-full max-w-[720px] gap-6 p-6">
+          <div className="skeleton h-28 rounded-[5px]" />
+          <div className="skeleton ml-auto h-24 w-4/5 rounded-[5px]" />
+          <div className="skeleton h-32 w-11/12 rounded-[5px]" />
         </div>
       </div>
     )

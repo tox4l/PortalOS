@@ -134,7 +134,7 @@ export function KanbanBoard({ projectId, tasks, assignees }: KanbanBoardProps) {
             "inline-flex items-center gap-2 rounded-[8px] border px-3 py-2 text-[13px] font-medium transition-colors duration-200",
             filterOpen
               ? "border-[var(--border-gold)] bg-[var(--gold-100)] text-[var(--gold-400)]"
-              : "border-[var(--border-default)] text-[var(--ink-secondary)] hover:bg-[rgba(255,255,255,0.04)]"
+              : "border-[var(--border-default)] text-[var(--ink-secondary)] hover:bg-[var(--neutral-bg)]"
           )}
           onClick={() => setFilterOpen((v) => !v)}
           type="button"
@@ -142,7 +142,7 @@ export function KanbanBoard({ projectId, tasks, assignees }: KanbanBoardProps) {
           <FunnelSimple aria-hidden="true" className="size-3.5" weight="bold" />
           Filters
           {(priorityFilter !== "ALL" || assigneeFilter !== "ALL") && (
-            <span className="inline-flex size-4 items-center justify-center rounded-full bg-[var(--gold-500)] text-[10px] text-[#0A0A0B]">
+            <span className="inline-flex size-4 items-center justify-center rounded-full bg-[var(--gold-500)] text-[10px] text-[var(--bg-surface)]">
               {[priorityFilter, assigneeFilter].filter((f) => f !== "ALL").length}
             </span>
           )}

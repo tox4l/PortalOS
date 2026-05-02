@@ -1,5 +1,5 @@
 import type { DefaultSession } from "next-auth";
-import type { UserRole } from "@prisma/client";
+import type { UserRole, Plan } from "@prisma/client";
 
 declare module "next-auth" {
   interface Session {
@@ -10,6 +10,7 @@ declare module "next-auth" {
       agencySlug: string | null;
       agencyName: string | null;
       agencyBrandColor: string | null;
+      agencyPlan: Plan | null;
       demoLocked: boolean;
     } & DefaultSession["user"];
   }

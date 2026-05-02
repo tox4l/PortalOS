@@ -58,6 +58,18 @@ enum NotificationType {
   MENTION
   TASK_ASSIGNED
   DELIVERABLE_UPLOADED
+  GENERIC
+}
+
+enum Plan {
+  STUDIO
+  GROWTH
+}
+
+enum ClientRole {
+  CLIENT_LEAD
+  CLIENT_REVIEWER
+  CLIENT_VIEWER
 }
 
 enum ActivityEventType {
@@ -69,22 +81,25 @@ enum ActivityEventType {
 }
 
 model Agency {
-  id                   String             @id @default(cuid())
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime           @updatedAt
-  name                 String
-  slug                 String             @unique
-  logoUrl              String?            @map("logo_url")
-  brandColor           String             @default("#D4607A") @map("brand_color")
-  brandFont            String             @default("Cormorant Garamond") @map("brand_font")
-  customDomain         String?            @unique @map("custom_domain")
-  demoMode             Boolean            @default(false) @map("demo_mode")
-  users                User[]
-  clients              Client[]
-  clientUsers          ClientUser[]
-  projects             Project[]
-  notifications        Notification[]
-  activityEvents       ActivityEvent[]
+  id                String             @id @default(cuid())
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  name              String
+  slug              String             @unique
+  logoUrl           String?            @map("logo_url")
+  brandColor        String             @default("#8C7340") @map("brand_color")
+  brandFont         String             @default("Cormorant Garamond") @map("brand_font")
+  customDomain      String?            @unique @map("custom_domain")
+  demoMode          Boolean            @default(false) @map("demo_mode")
+  plan              Plan               @default(STUDIO)
+  users             User[]
+  clients           Client[]
+  clientUsers       ClientUser[]
+  projects          Project[]
+  notifications     Notification[]
+  activityEvents    ActivityEvent[]
+  teamInvitations   TeamInvitation[]
+  clientInvitations ClientInvitation[]
 
   @@index([slug])
   @@index([customDomain])
@@ -92,26 +107,27 @@ model Agency {
 }
 
 model User {
-  id              String          @id @default(cuid())
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  email           String?         @unique
+  id              String           @id @default(cuid())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  email           String?          @unique
   name            String?
-  image           String?         @map("avatar_url")
-  role            UserRole        @default(MEMBER)
-  agencyId        String?         @map("agency_id")
-  emailVerified   DateTime?       @map("email_verified")
-  lastSeenAt      DateTime?       @map("last_seen_at")
-  demoLocked      Boolean         @default(false) @map("demo_locked")
-  agency          Agency?         @relation(fields: [agencyId], references: [id], onDelete: SetNull)
+  image           String?          @map("avatar_url")
+  role            UserRole         @default(MEMBER)
+  agencyId        String?          @map("agency_id")
+  emailVerified   DateTime?        @map("email_verified")
+  lastSeenAt      DateTime?        @map("last_seen_at")
+  demoLocked      Boolean          @default(false) @map("demo_locked")
+  agency          Agency?          @relation(fields: [agencyId], references: [id], onDelete: SetNull)
   accounts        Account[]
   sessions        Session[]
-  createdProjects Project[]       @relation("ProjectCreator")
-  assignedTasks   Task[]          @relation("TaskAssignee")
-  uploadedFiles   Deliverable[]   @relation("DeliverableUploader")
-  comments        Comment[]       @relation("UserComments")
+  createdProjects Project[]        @relation("ProjectCreator")
+  assignedTasks   Task[]           @relation("TaskAssignee")
+  uploadedFiles   Deliverable[]    @relation("DeliverableUploader")
+  comments        Comment[]        @relation("UserComments")
   notifications   Notification[]
-  activityEvents  ActivityEvent[] @relation("UserActivityEvents")
+  activityEvents  ActivityEvent[]  @relation("UserActivityEvents")
+  sentInvitations TeamInvitation[] @relation("SentInvitations")
 
   @@index([agencyId])
   @@index([email])
@@ -166,22 +182,23 @@ model VerificationToken {
 }
 
 model Client {
-  id             String          @id @default(cuid())
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  companyName    String          @map("company_name")
-  contactName    String          @map("contact_name")
-  contactEmail   String          @map("contact_email")
-  logoUrl        String?         @map("logo_url")
-  portalSlug     String          @unique @map("portal_slug")
-  welcomeMessage String          @default("Welcome to your project portal.") @map("welcome_message")
-  status         ClientStatus    @default(ACTIVE)
-  agencyId       String          @map("agency_id")
-  agency         Agency          @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-  clientUsers    ClientUser[]
-  projects       Project[]
-  notifications  Notification[]
-  activityEvents ActivityEvent[]
+  id                String             @id @default(cuid())
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  companyName       String             @map("company_name")
+  contactName       String             @map("contact_name")
+  contactEmail      String             @map("contact_email")
+  logoUrl           String?            @map("logo_url")
+  portalSlug        String             @unique @map("portal_slug")
+  welcomeMessage    String             @default("Welcome to your project portal.") @map("welcome_message")
+  status            ClientStatus       @default(ACTIVE)
+  agencyId          String             @map("agency_id")
+  agency            Agency             @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  clientUsers       ClientUser[]
+  projects          Project[]
+  notifications     Notification[]
+  activityEvents    ActivityEvent[]
+  clientInvitations ClientInvitation[]
 
   @@index([agencyId])
   @@index([portalSlug])
@@ -190,21 +207,23 @@ model Client {
 }
 
 model ClientUser {
-  id             String          @id @default(cuid())
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  email          String
-  name           String
-  clientId       String          @map("client_id")
-  agencyId       String          @map("agency_id")
-  lastLoginAt    DateTime?       @map("last_login_at")
-  demoLocked     Boolean         @default(false) @map("demo_locked")
-  client         Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  agency         Agency          @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-  approvals      Deliverable[]   @relation("DeliverableApprover")
-  comments       Comment[]       @relation("ClientUserComments")
-  notifications  Notification[]
-  activityEvents ActivityEvent[] @relation("ClientUserActivityEvents")
+  id                    String             @id @default(cuid())
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+  email                 String
+  name                  String
+  clientId              String             @map("client_id")
+  agencyId              String             @map("agency_id")
+  lastLoginAt           DateTime?          @map("last_login_at")
+  role                  ClientRole         @default(CLIENT_LEAD)
+  demoLocked            Boolean            @default(false) @map("demo_locked")
+  client                Client             @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  agency                Agency             @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  approvals             Deliverable[]      @relation("DeliverableApprover")
+  comments              Comment[]          @relation("ClientUserComments")
+  notifications         Notification[]
+  activityEvents        ActivityEvent[]    @relation("ClientUserActivityEvents")
+  sentClientInvitations ClientInvitation[] @relation("SentClientInvitations")
 
   @@unique([clientId, email])
   @@index([agencyId])
@@ -404,4 +423,46 @@ model DemoResetLog {
 
   @@index([resetAt])
   @@map("demo_reset_logs")
+}
+
+model TeamInvitation {
+  id          String    @id @default(cuid())
+  agencyId    String    @map("agency_id")
+  email       String
+  role        UserRole  @default(MEMBER)
+  token       String    @unique
+  expiresAt   DateTime  @map("expires_at")
+  acceptedAt  DateTime? @map("accepted_at")
+  invitedById String    @map("invited_by_id")
+  createdAt   DateTime  @default(now())
+
+  agency    Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  invitedBy User   @relation("SentInvitations", fields: [invitedById], references: [id])
+
+  @@unique([agencyId, email])
+  @@index([token])
+  @@index([email])
+  @@map("team_invitations")
+}
+
+model ClientInvitation {
+  id          String     @id @default(cuid())
+  clientId    String     @map("client_id")
+  agencyId    String     @map("agency_id")
+  email       String
+  role        ClientRole @default(CLIENT_REVIEWER)
+  token       String     @unique
+  expiresAt   DateTime   @map("expires_at")
+  acceptedAt  DateTime?  @map("accepted_at")
+  invitedById String     @map("invited_by_id")
+  createdAt   DateTime   @default(now())
+
+  client    Client     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  agency    Agency     @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  invitedBy ClientUser @relation("SentClientInvitations", fields: [invitedById], references: [id])
+
+  @@unique([clientId, email])
+  @@index([token])
+  @@index([email])
+  @@map("client_invitations")
 }

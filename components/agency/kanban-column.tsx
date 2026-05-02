@@ -15,9 +15,9 @@ type KanbanColumnProps = {
 };
 
 const statusStyles: Record<string, { dot: string }> = {
-  TODO: { dot: "#5C5A56" },
-  IN_PROGRESS: { dot: "#C9A84C" },
-  IN_REVIEW: { dot: "#D4AF37" },
+  TODO: { dot: "#8A826E" },
+  IN_PROGRESS: { dot: "#C9963C" },
+  IN_REVIEW: { dot: "#E0A842" },
   DONE: { dot: "#4ADE80" }
 };
 
@@ -31,7 +31,7 @@ export function KanbanColumn({ id, status, title, count, children, onAddTask }: 
 
   return (
     <div
-      className="flex w-[296px] shrink-0 flex-col rounded-[10px] border border-[var(--border-default)] border-t-[rgba(255,255,255,0.10)] bg-[var(--bg-surface)] shadow-[var(--shadow-sm)]"
+      className="flex w-[296px] shrink-0 flex-col rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)] shadow-[var(--shadow-sm)]"
     >
       <div className="flex items-center justify-between px-4 pt-4 pb-3">
         <div className="flex items-center gap-2">

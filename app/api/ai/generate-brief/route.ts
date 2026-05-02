@@ -1,10 +1,14 @@
-import { getOpenAI, OPENAI_BRIEF_MODEL } from "@/lib/openai";
+import { getDeepSeek, DEEPSEEK_MODEL } from "@/lib/deepseek";
+import { applyRateLimit, API_RATE_LIMITS } from "@/lib/api-rate-limit";
 
 const SYSTEM_PROMPT =
   "You are a senior creative strategist at a top creative agency. Write detailed, professional creative briefs. Use clear sections: Background, Objectives, Target Audience, Key Messages, Tone & Voice, Deliverables, and Timeline. Write in a confident, articulate tone. Use markdown formatting for structure. Avoid buzzwords. Be specific and actionable.";
 
 export async function POST(request: Request) {
-  const openai = getOpenAI();
+  const limited = applyRateLimit(request, "ai:generate-brief", API_RATE_LIMITS.AI_GENERATE);
+  if (limited) return limited;
+
+  const deepseek = getDeepSeek();
 
   const body = (await request.json()) as {
     projectName?: string;
@@ -27,8 +31,8 @@ export async function POST(request: Request) {
     "\n\nFormat the brief with clear section headings using markdown."
   ].join("");
 
-  const stream = await openai.chat.completions.create({
-    model: OPENAI_BRIEF_MODEL,
+  const stream = await deepseek.chat.completions.create({
+    model: DEEPSEEK_MODEL,
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "user", content: userPrompt }

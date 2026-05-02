@@ -110,7 +110,7 @@ const quoteBox: React.CSSProperties = {
   border: "1px solid #E7DFD4",
   padding: "16px 20px",
   margin: "16px 0 24px",
-  borderLeft: "3px solid #D4607A",
+  borderLeft: "3px solid #8C7340",
 };
 
 const quote: React.CSSProperties = {
@@ -121,7 +121,7 @@ const quote: React.CSSProperties = {
 };
 
 const button: React.CSSProperties = {
-  backgroundColor: "#D4607A",
+  backgroundColor: "#8C7340",
   color: "#FFFFFF",
   borderRadius: "10px",
   padding: "12px 24px",

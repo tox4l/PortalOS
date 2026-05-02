@@ -3,6 +3,7 @@
 import { Toaster } from "sonner";
 import { useReveal } from "@/hooks/use-reveal";
 import { SmoothScrollProvider } from "@/components/shared/smooth-scroll-provider";
+import { ThemeProvider } from "@/components/shared/theme-provider";
 
 function RevealProvider({ children }: { children: React.ReactNode }) {
   useReveal();
@@ -11,21 +12,21 @@ function RevealProvider({ children }: { children: React.ReactNode }) {
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
-    <SmoothScrollProvider>
-      <RevealProvider>{children}</RevealProvider>
-      <Toaster
+    <ThemeProvider>
+      <SmoothScrollProvider>
+        <RevealProvider>{children}</RevealProvider>
+        <Toaster
         position="bottom-right"
-        theme="dark"
         toastOptions={{
           style: {
-            background: "var(--bg-elevated)",
+            background: "var(--bg-surface)",
             border: "1px solid var(--border-hairline)",
-            borderTop: "1px solid rgba(255,255,255,0.10)",
             color: "var(--ink-primary)",
             boxShadow: "var(--shadow-lg)"
           }
         }}
       />
-    </SmoothScrollProvider>
+      </SmoothScrollProvider>
+    </ThemeProvider>
   );
 }

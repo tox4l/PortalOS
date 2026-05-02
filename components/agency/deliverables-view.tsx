@@ -8,11 +8,11 @@ import {
   FileText,
   FileVideo,
   FileArchive,
-  Download,
-  Trash2,
-  Send,
-  Upload
-} from "lucide-react";
+  DownloadSimple,
+  Trash,
+  PaperPlaneTilt,
+  UploadSimple
+} from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -199,7 +199,7 @@ export function DeliverablesView({ projectId, deliverables }: DeliverablesViewPr
 
         <div className="flex flex-col items-center gap-3">
           <div className="flex size-12 items-center justify-center rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-base)]">
-            <Upload aria-hidden="true" className="size-5 text-[var(--ink-tertiary)]" />
+            <UploadSimple aria-hidden="true" className="size-5 text-[var(--ink-tertiary)]" />
           </div>
           <div>
             <p className="text-[14px] font-medium text-[var(--ink-primary)]">
@@ -218,7 +218,7 @@ export function DeliverablesView({ projectId, deliverables }: DeliverablesViewPr
       {items.length === 0 ? (
         <div className="flex min-h-[160px] flex-col items-center justify-center gap-3 text-center">
           <div className="flex size-12 items-center justify-center rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-surface)]">
-            <Upload aria-hidden="true" className="size-5 text-[var(--ink-tertiary)]" />
+            <UploadSimple aria-hidden="true" className="size-5 text-[var(--ink-tertiary)]" />
           </div>
           <p className="font-display text-xl font-medium text-[var(--ink-primary)]">
             No deliverables yet
@@ -269,7 +269,7 @@ export function DeliverablesView({ projectId, deliverables }: DeliverablesViewPr
                       title="Download"
                       variant="ghost"
                     >
-                      <Download aria-hidden="true" className="size-4" />
+                      <DownloadSimple aria-hidden="true" className="size-4" />
                       <span className="sr-only">Download</span>
                     </Button>
 
@@ -280,7 +280,7 @@ export function DeliverablesView({ projectId, deliverables }: DeliverablesViewPr
                         title="Request approval"
                         variant="ghost"
                       >
-                        <Send aria-hidden="true" className="size-4" />
+                        <PaperPlaneTilt aria-hidden="true" className="size-4" />
                         <span className="sr-only">Request approval</span>
                       </Button>
                     )}
@@ -291,7 +291,7 @@ export function DeliverablesView({ projectId, deliverables }: DeliverablesViewPr
                       title="Delete"
                       variant="ghost"
                     >
-                      <Trash2 aria-hidden="true" className="size-4" />
+                      <Trash aria-hidden="true" className="size-4" />
                       <span className="sr-only">Delete</span>
                     </Button>
                   </div>
@@ -306,7 +306,7 @@ export function DeliverablesView({ projectId, deliverables }: DeliverablesViewPr
                       const version = d.version - index;
                       return (
                         <span
-                          className="inline-flex items-center gap-1 rounded-[6px] border border-[var(--border-default)] bg-[var(--bg-sunken)] px-2 py-1 font-mono text-[11px] text-[var(--ink-tertiary)]"
+                          className="inline-flex items-center gap-1 rounded-[6px] border border-[var(--border-hairline)] bg-[var(--bg-sunken)] px-2 py-1 font-sans text-[11px] font-medium text-[var(--ink-tertiary)]"
                           key={version}
                         >
                           v{version}

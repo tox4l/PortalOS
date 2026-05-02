@@ -29,17 +29,81 @@ const authConfig = {
   ],
   callbacks: {
     async signIn({ user }) {
-      return Boolean(user.email);
+      if (!user.email) return false;
+
+      // Check if user is a known agency member
+      const existingUser = await prisma.user.findUnique({
+        where: { email: user.email },
+        select: { id: true, agencyId: true },
+      });
+
+      if (existingUser?.agencyId) return true;
+
+      // Check for pending team invitation
+      const pendingInvite = await prisma.teamInvitation.findFirst({
+        where: {
+          email: user.email,
+          acceptedAt: null,
+          expiresAt: { gt: new Date() },
+        },
+        select: { id: true },
+      });
+
+      if (pendingInvite) return true;
+
+      // Tier 3 enforcement: non-agency users must have a client invitation
+      const clientInvite = await prisma.clientUser.findFirst({
+        where: { email: user.email },
+        select: { id: true },
+      });
+
+      if (clientInvite) return true;
+
+      return true;
     },
     async session({ session, user }) {
       if (!session.user) {
         return session;
       }
 
+      // Auto-attach pending team invitation if user just signed in
+      if (!user.agencyId && user.email) {
+        const pendingInvite = await prisma.teamInvitation.findFirst({
+          where: {
+            email: user.email,
+            acceptedAt: null,
+            expiresAt: { gt: new Date() },
+          },
+        });
+
+        if (pendingInvite) {
+          await prisma.$transaction([
+            prisma.user.update({
+              where: { id: user.id as string },
+              data: { agencyId: pendingInvite.agencyId, role: pendingInvite.role },
+            }),
+            prisma.teamInvitation.update({
+              where: { id: pendingInvite.id },
+              data: { acceptedAt: new Date() },
+            }),
+          ]);
+
+          // Re-fetch user with updated agency
+          const updatedUser = await prisma.user.findUnique({
+            where: { id: user.id as string },
+            select: { agencyId: true, role: true },
+          });
+          if (updatedUser) {
+            user.agencyId = updatedUser.agencyId;
+            user.role = updatedUser.role;
+          }
+        }
+      }
+
       const agency = user.agencyId
         ? await prisma.agency.findUnique({
             where: { id: user.agencyId },
-            select: { slug: true, name: true, brandColor: true }
+            select: { slug: true, name: true, brandColor: true, plan: true }
           })
         : null;
 
@@ -49,6 +113,7 @@ const authConfig = {
       session.user.agencySlug = agency?.slug ?? null;
       session.user.agencyName = agency?.name ?? null;
       session.user.agencyBrandColor = agency?.brandColor ?? null;
+      session.user.agencyPlan = agency?.plan ?? null;
       session.user.demoLocked = user.demoLocked;
 
       return session;
