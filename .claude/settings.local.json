@@ -30,7 +30,8 @@
       "Bash(ls -la \"C:\\\\\\\\Users\\\\\\\\musal\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\C--Users-musal-OneDrive-Desktop-SaaS\\\\\\\\e4a606c5-d4f0-45cb-bb94-747783e2d132\\\\\\\\tasks\\\\\\\\\")",
       "Bash(wc *)",
       "Bash(cd \"C:\\\\\\\\Users\\\\\\\\musal\\\\\\\\OneDrive\\\\\\\\Desktop\\\\\\\\SaaS\")",
-      "Bash(netstat -ano)"
+      "Bash(netstat -ano)",
+      "Bash(npm ls *)"
     ]
   }
 }

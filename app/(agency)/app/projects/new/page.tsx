@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, CalendarBlank, FileText, Rows } from "@phosphor-icons/react";
+import { ArrowLeft, CalendarBlank, FileText, Rows } from "@phosphor-icons/react/dist/ssr";
 import { ProjectCreateForm } from "@/components/agency/project-create-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
