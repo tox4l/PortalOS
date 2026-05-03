@@ -126,6 +126,7 @@ export function DeliverablesView({ projectId, deliverables }: DeliverablesViewPr
         formData.set("fileSize", String(file.size));
         formData.set("fileType", file.type || "application/octet-stream");
         formData.set("projectId", projectId);
+        formData.set("file", file);
 
         await createDeliverableAction({ success: false }, formData);
       }
@@ -268,6 +269,7 @@ export function DeliverablesView({ projectId, deliverables }: DeliverablesViewPr
                       size="icon"
                       title="Download"
                       variant="ghost"
+                      onClick={() => window.open(`/api/deliverables/${d.id}/download`, "_blank")}
                     >
                       <DownloadSimple aria-hidden="true" className="size-4" />
                       <span className="sr-only">Download</span>

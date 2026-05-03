@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: process.cwd(),
   reactStrictMode: true,
   poweredByHeader: false,
+  experimental: {
+    serverActions: { bodySizeLimit: "500mb" },
+  },
 
   async headers() {
     return [

@@ -39,3 +39,40 @@ export function getStoragePublicUrl(bucket: string, path: string): string {
 
   return `${requireEnv("SUPABASE_URL").replace(/\/$/, "")}/storage/v1/object/public/${bucket}/${path.replace(/^\//, "")}`;
 }
+
+const DELIVERABLES_BUCKET = "deliverables";
+
+export async function uploadDeliverableFile(
+  path: string,
+  file: ArrayBuffer,
+  contentType: string
+): Promise<string> {
+  const client = getSupabaseServiceClient();
+  const { error } = await client.storage
+    .from(DELIVERABLES_BUCKET)
+    .upload(path, file, { contentType, upsert: false });
+
+  if (error) throw new Error(`Upload failed: ${error.message}`);
+
+  return path;
+}
+
+export async function getDeliverableSignedUrl(path: string): Promise<string> {
+  const client = getSupabaseServiceClient();
+  const { data, error } = await client.storage
+    .from(DELIVERABLES_BUCKET)
+    .createSignedUrl(path, 60);
+
+  if (error) throw new Error(`Signed URL failed: ${error.message}`);
+
+  return data.signedUrl;
+}
+
+export async function deleteDeliverableFile(path: string): Promise<void> {
+  const client = getSupabaseServiceClient();
+  const { error } = await client.storage
+    .from(DELIVERABLES_BUCKET)
+    .remove([path]);
+
+  if (error) throw new Error(`Delete failed: ${error.message}`);
+}

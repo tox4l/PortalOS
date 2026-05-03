@@ -2,20 +2,36 @@ import { getResend, getDefaultFromEmail } from "@/lib/resend";
 
 const APP_URL = process.env.APP_URL ?? "https://portalos.tech";
 
-export function buildClientUrl(agencySlug: string, clientSlug: string, path = ""): string {
+export function buildClientUrl(
+  agencySlug: string,
+  clientSlug: string,
+  path = "",
+  opts?: { plan?: string | null }
+): string {
   const base = APP_URL.replace(/\/$/, "");
-  // Growth plan uses subdomain routing, Studio uses path-based.
-  // The URL format is controlled by whether the agency slug is used as subdomain.
-  // Default to path-based unless explicitly on a subdomain-capable plan.
+
+  if (opts?.plan === "GROWTH" && agencySlug) {
+    const url = new URL(base);
+    return `${url.protocol}//${agencySlug}.${url.host}/portal/${clientSlug}${path}`;
+  }
+
   return `${base}/portal/${clientSlug}${path}`;
 }
 
 export function buildClientAuthUrl(
   clientSlug: string,
   token: string,
-  email: string
+  email: string,
+  opts?: { plan?: string | null; agencySlug?: string | null }
 ): string {
-  return `${APP_URL.replace(/\/$/, "")}/portal/${clientSlug}/auth?token=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}`;
+  const base = APP_URL.replace(/\/$/, "");
+
+  if (opts?.plan === "GROWTH" && opts?.agencySlug) {
+    const url = new URL(base);
+    return `${url.protocol}//${opts.agencySlug}.${url.host}/portal/${clientSlug}/auth?token=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}`;
+  }
+
+  return `${base}/portal/${clientSlug}/auth?token=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}`;
 }
 
 export function buildAcceptInviteUrl(token: string, email: string): string {

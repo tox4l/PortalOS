@@ -414,7 +414,12 @@ export function ClientProjectView({ project, clientSlug }: ClientProjectViewProp
                         <Eye aria-hidden="true" className="size-4" />
                         Preview
                       </Button>
-                      <Button size="sm" type="button" variant="ghost">
+                      <Button
+                        size="sm"
+                        type="button"
+                        variant="ghost"
+                        onClick={() => window.open(`/api/deliverables/${deliverable.id}/download`, "_blank")}
+                      >
                         <DownloadSimple aria-hidden="true" className="size-4" />
                         Download
                       </Button>

@@ -43,6 +43,7 @@ const steps = [
 export default function OnboardingPage() {
   const [step, setStep] = useState(1);
   const [agencyId, setAgencyId] = useState<string | null>(null);
+  const [agencyPlan, setAgencyPlan] = useState<string | null>(null);
   const [brandColor, setBrandColor] = useState<string | null>(null);
   const [completing, setCompleting] = useState(false);
   const [agencyName, setAgencyName] = useState("");
@@ -78,6 +79,7 @@ export default function OnboardingPage() {
     setSubmitting(false);
     if (result.success && result.data) {
       setAgencyId(result.data.agencyId);
+      setAgencyPlan(result.data.plan ?? null);
       setStep(2);
     } else {
       setStepError(result.error ?? "Something went wrong.");
@@ -142,14 +144,24 @@ export default function OnboardingPage() {
     }
   }
 
+  function buildDashboardUrl(): string {
+    const baseUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "https://portalos.tech").replace(/\/$/, "");
+
+    if (agencyPlan === "GROWTH" && agencySlug) {
+      const url = new URL(baseUrl);
+      return `${url.protocol}//${agencySlug}.${url.host}/app/dashboard`;
+    }
+
+    return `${baseUrl}/app/dashboard`;
+  }
+
   async function handleGoToDashboard() {
     setCompleting(true);
     setStepError(null);
     if (agencyId) {
       await completeOnboardingAction(agencyId);
     }
-    await new Promise((resolve) => setTimeout(resolve, 900));
-    router.push("/app/dashboard");
+    window.location.href = buildDashboardUrl();
   }
 
   function handleContinue() {

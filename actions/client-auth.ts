@@ -41,7 +41,7 @@ export async function requestMagicLinkAction(
 
     const client = await prisma.client.findUnique({
       where: { portalSlug: clientSlug },
-      select: { id: true, agencyId: true, companyName: true, agency: { select: { name: true, brandColor: true } } },
+      select: { id: true, agencyId: true, companyName: true, agency: { select: { name: true, brandColor: true, slug: true, plan: true } } },
     });
     if (!client) throw new Error("Client portal not found.");
 
@@ -49,7 +49,10 @@ export async function requestMagicLinkAction(
       where: { email, clientId: client.id },
       select: { id: true, name: true },
     });
-    if (!clientUser) throw new Error("No account found with that email for this portal.");
+    if (!clientUser) {
+      // Do not reveal whether the email exists — return success either way
+      return { sent: true };
+    }
 
     const { raw, hashed } = await generateInviteToken();
     const expiresAt = inviteExpiresAt();
@@ -72,7 +75,10 @@ export async function requestMagicLinkAction(
       },
     });
 
-    const magicLinkUrl = buildClientAuthUrl(clientSlug, raw, email);
+    const magicLinkUrl = buildClientAuthUrl(clientSlug, raw, email, {
+      plan: client.agency.plan,
+      agencySlug: client.agency.slug,
+    });
 
     await sendEmail(
       email,
@@ -214,7 +220,7 @@ export async function inviteClientTeammateAction(
 
     const client = await prisma.client.findUniqueOrThrow({
       where: { id: clientId },
-      select: { id: true, agencyId: true, companyName: true, portalSlug: true, agency: { select: { name: true, brandColor: true } } },
+      select: { id: true, agencyId: true, companyName: true, portalSlug: true, agency: { select: { name: true, brandColor: true, slug: true, plan: true } } },
     });
 
     const existingUser = await prisma.clientUser.findFirst({
@@ -251,7 +257,10 @@ export async function inviteClientTeammateAction(
       },
     });
 
-    const inviteUrl = buildClientAuthUrl(client.portalSlug ?? "portal", raw, email);
+    const inviteUrl = buildClientAuthUrl(client.portalSlug ?? "portal", raw, email, {
+      plan: client.agency.plan,
+      agencySlug: client.agency.slug,
+    });
 
     await sendEmail(
       email,

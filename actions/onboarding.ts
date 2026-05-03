@@ -31,9 +31,9 @@ const createAgencySchema = z.object({
 });
 
 export async function createAgencyAction(
-  _prevState: ActionResult<{ agencyId: string; slug: string }>,
+  _prevState: ActionResult<{ agencyId: string; slug: string; plan?: string }>,
   formData: FormData
-): Promise<ActionResult<{ agencyId: string; slug: string }>> {
+): Promise<ActionResult<{ agencyId: string; slug: string; plan?: string }>> {
   return createSafeAction(async () => {
     const session = await auth();
     if (!session?.user?.id) throw new Error("You must be signed in.");
@@ -44,7 +44,7 @@ export async function createAgencyAction(
     });
 
     if (isDevBypass()) {
-      return { agencyId: "dev-agency-001", slug: input.slug };
+      return { agencyId: "dev-agency-001", slug: input.slug, plan: "GROWTH" };
     }
 
     const existing = await prisma.agency.findUnique({ where: { slug: input.slug }, select: { id: true } });
@@ -54,11 +54,12 @@ export async function createAgencyAction(
       data: {
         name: input.name,
         slug: input.slug,
+        plan: "GROWTH",
         users: {
           connect: { id: session.user.id },
         },
       },
-      select: { id: true, slug: true },
+      select: { id: true, slug: true, plan: true },
     });
 
     await prisma.user.update({
@@ -67,7 +68,7 @@ export async function createAgencyAction(
     });
 
     revalidatePath("/app/dashboard");
-    return { agencyId: agency.id, slug: agency.slug };
+    return { agencyId: agency.id, slug: agency.slug, plan: agency.plan };
   });
 }
 

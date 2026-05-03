@@ -129,7 +129,10 @@ export async function createClientAction(
         },
       });
 
-      const magicLinkUrl = buildClientAuthUrl(client.portalSlug, raw, input.contactEmail);
+      const magicLinkUrl = buildClientAuthUrl(client.portalSlug, raw, input.contactEmail, {
+        plan: session.user.agencyPlan,
+        agencySlug: session.user.agencySlug,
+      });
 
       await sendEmail(
         input.contactEmail,

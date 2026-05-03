@@ -1,4 +1,5 @@
-import { notFound } from "next/navigation";
+import { headers } from "next/headers";
+import { notFound, redirect } from "next/navigation";
 import {
   getClientNotificationChannelForShell,
   getClientNotificationsForShell
@@ -48,7 +49,9 @@ export default async function PortalLayout({
         agency: {
           select: {
             name: true,
-            brandColor: true
+            brandColor: true,
+            slug: true,
+            plan: true,
           }
         }
       }
@@ -56,6 +59,17 @@ export default async function PortalLayout({
 
     if (!client?.agency) {
       notFound();
+    }
+
+    // Studio plan agencies cannot use subdomain routing — redirect to apex
+    if (client.agency.plan === "STUDIO") {
+      const h = await headers();
+      const host = h.get("host") ?? "";
+      const isSubdomain = host.split(".").length >= 3 && !host.startsWith("www.");
+      if (isSubdomain) {
+        const apexUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "https://portalos.tech").replace(/\/$/, "");
+        redirect(`${apexUrl}/portal/${clientSlug}`);
+      }
     }
 
     return (

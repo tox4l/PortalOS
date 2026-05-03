@@ -9,6 +9,8 @@ import { getClientSession } from "@/lib/client-sessions";
 import { prisma } from "@/lib/db";
 import { isDevBypass } from "@/lib/dev-bypass";
 import { checkPermission } from "@/lib/permissions";
+import { uploadDeliverableFile, deleteDeliverableFile } from "@/lib/supabase";
+import { checkStorageQuota } from "@/lib/storage-quota";
 
 const createDeliverableSchema = z.object({
   title: z.string().trim().min(2, "Title is required."),
@@ -53,15 +55,29 @@ export async function createDeliverableAction(
       projectId: formData.get("projectId")
     });
 
+    const file = formData.get("file") as File | null;
+
     const project = await prisma.project.findFirst({
       where: { id: input.projectId, agencyId: session.user.agencyId },
-      select: { id: true }
+      select: {
+        id: true,
+        agency: { select: { slug: true, id: true } },
+      },
     });
 
     if (!project) {
       throw new Error("Project not found.");
     }
 
+    // Check storage quota BEFORE creating the record
+    if (file && file.size > 0) {
+      const quotaCheck = await checkStorageQuota(project.agency.id, file.size);
+      if (!quotaCheck.allowed) {
+        throw new Error(quotaCheck.reason ?? "Storage quota exceeded.");
+      }
+    }
+
+    // Create the deliverable record
     const deliverable = await prisma.deliverable.create({
       data: {
         title: input.title,
@@ -77,6 +93,20 @@ export async function createDeliverableAction(
       },
       select: { id: true }
     });
+
+    // Upload file to Supabase if provided
+    let fileUrl = "";
+    if (file && file.size > 0) {
+      const safeName = input.fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const storagePath = `${project.agency.slug}/${input.projectId}/${deliverable.id}-${safeName}`;
+      await uploadDeliverableFile(storagePath, await file.arrayBuffer(), input.fileType);
+      fileUrl = storagePath;
+
+      await prisma.deliverable.update({
+        where: { id: deliverable.id },
+        data: { fileUrl },
+      });
+    }
 
     revalidatePath(`/app/projects/${input.projectId}`);
 
@@ -344,11 +374,15 @@ export async function deleteDeliverableAction(
         id: deliverableId,
         project: { agencyId: session.user.agencyId }
       },
-      select: { id: true, projectId: true }
+      select: { id: true, projectId: true, fileUrl: true }
     });
 
     if (!deliverable) {
       throw new Error("Deliverable not found.");
+    }
+
+    if (deliverable.fileUrl) {
+      try { await deleteDeliverableFile(deliverable.fileUrl); } catch { /* file may already be gone */ }
     }
 
     await prisma.deliverable.delete({ where: { id: deliverableId } });

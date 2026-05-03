@@ -21,6 +21,22 @@ import { useScrollTop } from "@/hooks/use-scroll-top";
 import { cn } from "@/lib/utils";
 import type { NotificationItem } from "@/actions/notifications";
 
+function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+  const normalized = hex.trim().replace("#", "");
+  if (!/^[0-9a-fA-F]{6}$/.test(normalized)) return null;
+  return {
+    r: Number.parseInt(normalized.slice(0, 2), 16),
+    g: Number.parseInt(normalized.slice(2, 4), 16),
+    b: Number.parseInt(normalized.slice(4, 6), 16),
+  };
+}
+
+function rgbaFromHex(hex: string, alpha: number): string {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return `rgba(140, 115, 64, ${alpha})`;
+  return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
+}
+
 const navItems = [
   { href: "/app/dashboard", label: "Dashboard", icon: SquaresFour },
   { href: "/app/clients", label: "Clients", icon: Buildings },
@@ -29,34 +45,66 @@ const navItems = [
   { href: "/app/settings", label: "Settings", icon: GearSix }
 ] satisfies Array<{ href: string; label: string; icon: Icon }>;
 
+function greetingForHour(hour: number): string {
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+}
+
 const pageTitles: Array<{ match: string; eyebrow: string; title: string }> = [
-  { match: "/app/dashboard", eyebrow: "Client operations", title: "Good evening, Sarah" },
+  { match: "/app/dashboard", eyebrow: "Client operations", title: "" },
   { match: "/app/clients", eyebrow: "Relationships", title: "Clients" },
   { match: "/app/projects", eyebrow: "Production", title: "Projects" },
   { match: "/app/invoices", eyebrow: "Revenue", title: "Invoices" },
   { match: "/app/settings", eyebrow: "Workspace", title: "Settings" }
 ];
 
-const commandSignals = [
-  { label: "Review load", value: "05" },
-  { label: "Reviews", value: "5" },
-  { label: "Due", value: "14" }
-];
-
 type AgencyShellProps = {
   children: React.ReactNode;
+  agencyName: string | null;
+  agencyBrandColor: string | null;
+  userName: string | null;
+  userInitials: string;
   initialNotifications: NotificationItem[];
   notificationChannel: string;
 };
 
-export function AgencyShell({ children, initialNotifications, notificationChannel }: AgencyShellProps) {
+export function AgencyShell({
+  children,
+  agencyName,
+  agencyBrandColor,
+  userName,
+  userInitials,
+  initialNotifications,
+  notificationChannel,
+}: AgencyShellProps) {
   const pathname = usePathname();
   const scrolled = useScrollTop(20);
-  const title = pageTitles.find((item) => pathname.startsWith(item.match)) ?? pageTitles[0];
+  const matchedTitle = pageTitles.find((item) => pathname.startsWith(item.match)) ?? pageTitles[0];
+  const isDashboard = pathname.startsWith("/app/dashboard");
+  const headingTitle = isDashboard
+    ? `${greetingForHour(new Date().getHours())}, ${agencyName ?? "PortalOS"}`
+    : matchedTitle.title;
+  const brandColor = agencyBrandColor && /^#[0-9a-fA-F]{6}$/.test(agencyBrandColor) ? agencyBrandColor : "#B48232";
+  const brandVars = {
+    "--brand": brandColor,
+    "--gold-core": brandColor,
+    "--gold-mid": brandColor,
+    "--gold-400": brandColor,
+    "--gold-500": brandColor,
+    "--border-gold": rgbaFromHex(brandColor, 0.45),
+    "--border-gold-dim": rgbaFromHex(brandColor, 0.20),
+    "--border-gold-hot": rgbaFromHex(brandColor, 0.75),
+    "--gold-dim": rgbaFromHex(brandColor, 0.06),
+    "--gold-glow": rgbaFromHex(brandColor, 0.12),
+    "--gold-100": rgbaFromHex(brandColor, 0.06),
+    "--gold-200": rgbaFromHex(brandColor, 0.12),
+    "--gold-wash": rgbaFromHex(brandColor, 0.06),
+  } as React.CSSProperties;
 
   return (
     <TooltipProvider>
-      <div className="min-h-[100dvh] bg-[var(--bg-void)] text-[var(--ink-primary)]">
+      <div className="min-h-[100dvh] bg-[var(--bg-void)] text-[var(--ink-primary)]" style={brandVars}>
         <div className="pointer-events-none fixed inset-0 opacity-[0.08]" aria-hidden="true" style={{
           backgroundImage: `linear-gradient(var(--border-hairline) 1px, transparent 1px), linear-gradient(90deg, var(--border-hairline) 1px, transparent 1px)`,
           backgroundPosition: '-1px -1px',
@@ -76,16 +124,10 @@ export function AgencyShell({ children, initialNotifications, notificationChanne
               <div className="mt-4 border-t border-[var(--border-hairline)]" />
               <div className="mt-4 surface-panel p-3.5">
                 <p className="font-sans text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ink-tertiary)]">Agency</p>
-                <p className="mt-1.5 font-sans text-[0.9375rem] font-medium leading-tight text-[var(--ink-primary)]">Lumina Creative</p>
-                <p className="mt-0.5 font-sans text-[0.75rem] leading-5 text-[var(--ink-secondary)]">Demo workspace</p>
-                <div className="mt-3 grid grid-cols-3 gap-2 border-t border-[var(--border-hairline)] pt-3">
-                  {commandSignals.map((signal) => (
-                    <div key={signal.label}>
-                      <p className="font-display text-[0.8125rem] leading-none text-[var(--ink-primary)]">{signal.value}</p>
-                      <p className="mt-1 font-sans text-[0.625rem] uppercase tracking-[0.08em] text-[var(--ink-tertiary)]">{signal.label}</p>
-                    </div>
-                  ))}
-                </div>
+                <p className="mt-1.5 font-sans text-[0.9375rem] font-medium leading-tight text-[var(--ink-primary)]">
+                  {agencyName ?? "PortalOS"}
+                </p>
+                <p className="mt-0.5 font-sans text-[0.75rem] leading-5 text-[var(--ink-secondary)]">Workspace</p>
               </div>
               <nav className="mt-6 space-y-0.5" aria-label="Agency navigation">
                 {navItems.map((item) => (
@@ -115,11 +157,11 @@ export function AgencyShell({ children, initialNotifications, notificationChanne
               <div className="mt-auto surface-panel p-3.5">
                 <div className="flex items-center gap-3">
                   <div className="flex size-9 items-center justify-center rounded-[6px] border border-[var(--border-hairline)] bg-[var(--bg-elevated)] font-sans text-[0.75rem] font-medium text-[var(--ink-primary)]">
-                    SK
+                    {userInitials}
                   </div>
                   <div>
-                    <p className="font-sans text-[0.8125rem] font-medium text-[var(--ink-primary)]">Sarah Kim</p>
-                    <p className="font-sans text-[0.625rem] uppercase tracking-[0.06em] text-[var(--ink-tertiary)]">Owner</p>
+                    <p className="font-sans text-[0.8125rem] font-medium text-[var(--ink-primary)]">{userName ?? "User"}</p>
+                    <p className="font-sans text-[0.625rem] uppercase tracking-[0.06em] text-[var(--ink-tertiary)]">Member</p>
                   </div>
                 </div>
               </div>
@@ -136,9 +178,9 @@ export function AgencyShell({ children, initialNotifications, notificationChanne
             >
               <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-4">
                 <div className="min-w-0">
-                  <p className="font-sans text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ink-tertiary)]">{title.eyebrow}</p>
+                  <p className="font-sans text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ink-tertiary)]">{matchedTitle.eyebrow}</p>
                   <h1 className="font-display text-[2rem] font-normal leading-tight text-[var(--ink-primary)]">
-                    {title.title}
+                    {headingTitle}
                   </h1>
                 </div>
                 <div className="flex items-center gap-2">
