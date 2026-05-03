@@ -8,6 +8,17 @@ import { createSafeAction, type ActionResult } from "@/actions/safe-action";
 import { sanitizeSlug, sanitizeText } from "@/lib/sanitize";
 import { isDevBypass } from "@/lib/dev-bypass";
 
+// ─── Session Check ───
+
+export async function getOnboardingSession(): Promise<{
+  signedIn: boolean;
+  hasAgency: boolean;
+}> {
+  const session = await auth();
+  if (!session?.user?.id) return { signedIn: false, hasAgency: false };
+  return { signedIn: true, hasAgency: !!session.user.agencyId };
+}
+
 // ─── Create Agency ───
 
 const createAgencySchema = z.object({

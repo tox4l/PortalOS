@@ -19,11 +19,9 @@ import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { createAgencyAction } from "@/actions/onboarding";
-import { saveBrandingAction } from "@/actions/onboarding";
+import { createAgencyAction, getOnboardingSession, saveBrandingAction, completeOnboardingAction } from "@/actions/onboarding";
 import { inviteTeamMemberAction } from "@/actions/team";
 import { createClientAction } from "@/actions/clients";
-import { completeOnboardingAction } from "@/actions/onboarding";
 
 const brandColors = [
   { hex: "#000000", name: "Obsidian", description: "The moodiest agencies" },
@@ -59,6 +57,14 @@ export default function OnboardingPage() {
   const [stepError, setStepError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
+
+  // Signed-in users with an agency skip to dashboard; unsigned-in users go to login
+  useEffect(() => {
+    getOnboardingSession().then((s) => {
+      if (!s.signedIn) router.replace("/login");
+      else if (s.hasAgency) router.replace("/app/dashboard");
+    });
+  }, [router]);
 
   const canContinueStep2 = step !== 2 || brandColor !== null;
 

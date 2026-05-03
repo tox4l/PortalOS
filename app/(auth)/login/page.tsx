@@ -48,7 +48,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           <form
             action={async () => {
               "use server";
-              await signIn("google", { redirectTo: "/app/dashboard" });
+              await signIn("google", { redirectTo: "/onboarding" });
             }}
             className="mt-6"
           >
@@ -78,7 +78,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
               const email = String(formData.get("email") ?? "");
               await signIn("resend", {
                 email,
-                redirectTo: "/app/dashboard"
+                redirectTo: "/onboarding"
               });
             }}
             className="space-y-6"

@@ -34,7 +34,10 @@
       "Bash(npm ls *)",
       "Bash(cat .env)",
       "Bash(cat .env.local)",
-      "Bash(openssl rand *)"
+      "Bash(openssl rand *)",
+      "Bash(nslookup db.zlqgizdblpvupbrbwphq.supabase.co)",
+      "Bash(nslookup *)",
+      "Bash(ping -6 -n 1 db.zlqgizdblpvupbrbwphq.supabase.co)"
     ]
   }
 }
