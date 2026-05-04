@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Briefcase, Buildings, Rows, SignOut, type Icon } from "@phosphor-icons/react";
 import { NotificationPanel } from "@/components/shared/notification-panel";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { useScrollTop } from "@/hooks/use-scroll-top";
 import { cn } from "@/lib/utils";
+import { signOutClientAction } from "@/actions/client-auth";
 import type { NotificationItem } from "@/actions/notifications";
 
 type PortalNavItem = {
@@ -57,6 +58,7 @@ export function PortalShell({
   children
 }: PortalShellProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const scrolled = useScrollTop(20);
   const brandColor = /^#[0-9a-fA-F]{6}$/.test(agencyBrandColor) ? agencyBrandColor : "#D4AF37";
   const brandVars = {
@@ -147,6 +149,11 @@ export function PortalShell({
             <button
               className="ml-1 inline-flex min-h-10 items-center gap-2 rounded-[10px] px-3 text-[13px] font-medium text-[var(--ink-tertiary)] transition-[background-color,color] duration-[180ms] ease-[var(--ease-out)] hover:bg-[var(--neutral-bg)] hover:text-[var(--ink-primary)]"
               type="button"
+              onClick={async () => {
+                await signOutClientAction();
+                router.push(`/portal/${portalSlug}/login`);
+                router.refresh();
+              }}
             >
               <SignOut aria-hidden="true" className="size-4" />
               <span className="hidden sm:inline">Sign out</span>

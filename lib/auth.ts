@@ -142,15 +142,18 @@ const authConfig = {
       return session;
     },
     async redirect({ url, baseUrl }) {
+      // Strip www. so callbacks never land on the www subdomain
+      const cleanBase = baseUrl.replace(/\/$/, "").replace(/\/\/www\./, "//");
+
       if (url.startsWith("/")) {
-        return `${baseUrl}${url}`;
+        return `${cleanBase}${url}`;
       }
 
-      if (new URL(url).origin === baseUrl) {
+      if (new URL(url).origin === new URL(cleanBase).origin) {
         return url;
       }
 
-      return `${baseUrl}/app/dashboard`;
+      return `${cleanBase}/app/dashboard`;
     }
   }
 } satisfies NextAuthConfig;

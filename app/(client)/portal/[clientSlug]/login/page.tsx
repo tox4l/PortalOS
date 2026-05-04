@@ -1,21 +1,25 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { Suspense, use, useActionState } from "react";
 import Link from "next/link";
-import { ArrowLeft, EnvelopeSimple } from "@phosphor-icons/react";
+import { useSearchParams } from "next/navigation";
+import { ArrowLeft, EnvelopeSimple, WarningCircle } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { requestMagicLinkAction } from "@/actions/client-auth";
-import { use } from "react";
 
-export default function ClientLoginPage({
-  params,
-}: {
-  params: Promise<{ clientSlug: string }>;
-}) {
-  const { clientSlug } = use(params);
+function LoginForm({ clientSlug }: { clientSlug: string }) {
+  const searchParams = useSearchParams();
+  const authError = searchParams.get("error");
+
+  const authErrorMessages: Record<string, string> = {
+    "invalid-link": "This sign-in link is missing required information. Please request a new magic link.",
+    "portal-not-found": "The portal you are trying to access does not exist.",
+    "expired": "This sign-in link is no longer valid. It may have expired or already been used.",
+  };
+
   const [state, dispatch] = useActionState(
     (_prevState: { success: boolean; error?: string; sent?: boolean }, formData: FormData) =>
       requestMagicLinkAction(clientSlug, { success: false }, formData),
@@ -45,6 +49,14 @@ export default function ClientLoginPage({
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {authError && (
+              <div className="mb-6 flex items-start gap-3 rounded-[8px] border border-[var(--border-danger)] bg-[var(--danger-bg)] p-4 text-left">
+                <WarningCircle aria-hidden="true" className="size-5 shrink-0 text-[var(--danger-text)]" />
+                <p className="text-[14px] leading-[1.5] text-[var(--danger-text)]">
+                  {authErrorMessages[authError] ?? "An unexpected error occurred. Please try again."}
+                </p>
+              </div>
+            )}
             {state?.data?.sent ? (
               <div className="flex flex-col items-center gap-5 py-8 text-center">
                 <div className="flex size-16 items-center justify-center rounded-[14px] border border-[var(--border-gold)] bg-[var(--gold-wash)] shadow-[var(--inset-gold)]">
@@ -88,5 +100,19 @@ export default function ClientLoginPage({
         </p>
       </div>
     </div>
+  );
+}
+
+export default function ClientLoginPage({
+  params,
+}: {
+  params: Promise<{ clientSlug: string }>;
+}) {
+  const { clientSlug } = use(params);
+
+  return (
+    <Suspense fallback={null}>
+      <LoginForm clientSlug={clientSlug} />
+    </Suspense>
   );
 }

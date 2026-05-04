@@ -7,12 +7,14 @@ import {
   Buildings,
   ChartLineUp,
   Plus,
+  SignOut,
   SquaresFour,
   GearSix,
   UsersThree,
   FileText,
   type Icon
 } from "@phosphor-icons/react";
+import { signOutAction } from "@/actions/sign-out";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { NotificationPanel } from "@/components/shared/notification-panel";
@@ -154,16 +156,27 @@ export function AgencyShell({
                   </Link>
                 ))}
               </nav>
-              <div className="mt-auto surface-panel p-3.5">
-                <div className="flex items-center gap-3">
-                  <div className="flex size-9 items-center justify-center rounded-[6px] border border-[var(--border-hairline)] bg-[var(--bg-elevated)] font-sans text-[0.75rem] font-medium text-[var(--ink-primary)]">
-                    {userInitials}
-                  </div>
-                  <div>
-                    <p className="font-sans text-[0.8125rem] font-medium text-[var(--ink-primary)]">{userName ?? "User"}</p>
-                    <p className="font-sans text-[0.625rem] uppercase tracking-[0.06em] text-[var(--ink-tertiary)]">Member</p>
+              <div className="mt-auto space-y-3">
+                <div className="surface-panel p-3.5">
+                  <div className="flex items-center gap-3">
+                    <div className="flex size-9 items-center justify-center rounded-[6px] border border-[var(--border-hairline)] bg-[var(--bg-elevated)] font-sans text-[0.75rem] font-medium text-[var(--ink-primary)]">
+                      {userInitials}
+                    </div>
+                    <div>
+                      <p className="font-sans text-[0.8125rem] font-medium text-[var(--ink-primary)]">{userName ?? "User"}</p>
+                      <p className="font-sans text-[0.625rem] uppercase tracking-[0.06em] text-[var(--ink-tertiary)]">Member</p>
+                    </div>
                   </div>
                 </div>
+                <form action={signOutAction}>
+                  <button
+                    className="flex w-full items-center gap-2.5 rounded-[8px] px-3 py-2 font-sans text-[0.8125rem] font-medium text-[var(--ink-tertiary)] transition-[background-color,color] duration-[180ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-[var(--gold-wash)] hover:text-[var(--ink-secondary)]"
+                    type="submit"
+                  >
+                    <SignOut aria-hidden="true" className="size-4" />
+                    Sign out
+                  </button>
+                </form>
               </div>
             </div>
           </aside>
