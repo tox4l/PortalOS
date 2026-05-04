@@ -11,6 +11,20 @@ const authConfig = {
     maxAge: 30 * 24 * 60 * 60,
     updateAge: 24 * 60 * 60
   },
+  cookies: {
+    sessionToken: {
+      name: process.env.NODE_ENV === "production"
+        ? "__Secure-authjs.session-token"
+        : "authjs.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+        ...(process.env.NODE_ENV === "production" ? { domain: ".portalos.tech" } : {}),
+      },
+    },
+  },
   pages: {
     signIn: "/login",
     verifyRequest: "/login?check=email",
