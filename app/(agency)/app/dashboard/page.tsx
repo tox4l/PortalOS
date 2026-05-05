@@ -1,4 +1,3 @@
-import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
@@ -21,20 +20,6 @@ export default async function DashboardPage() {
   if (!session?.user?.agencyId) redirect("/login");
 
   const agencyId = session.user.agencyId;
-
-  // Growth plan users on apex or www → redirect to subdomain
-  const hdrs = await headers();
-  const host = hdrs.get("host") ?? "";
-  const isOnApexOrWww = host === "portalos.tech" || host === "www.portalos.tech";
-  if (isOnApexOrWww) {
-    const agency = await prisma.agency.findUnique({
-      where: { id: agencyId },
-      select: { slug: true, plan: true },
-    });
-    if (agency?.plan === "GROWTH" && agency.slug) {
-      redirect(`https://${agency.slug}.portalos.tech/app/dashboard`);
-    }
-  }
 
   const [activeProjects, totalDeliverables, pendingApprovals, urgentTasks, recentProjects, recentActivity] =
     await Promise.all([

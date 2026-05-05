@@ -78,7 +78,7 @@ export default function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/demo/client", request.url));
   }
 
-  if (agencySlug && !pathname.startsWith("/portal") && !pathname.startsWith("/api")) {
+  if (agencySlug && !pathname.startsWith("/app") && !pathname.startsWith("/portal") && !pathname.startsWith("/api")) {
     const rewriteUrl = nextUrl.clone();
     rewriteUrl.pathname = `/portal/${agencySlug}${pathname === "/" ? "" : pathname}`;
     rewriteUrl.searchParams.set("agency", agencySlug);
