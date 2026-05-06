@@ -143,7 +143,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const session = await auth();
 
   if (!session?.user?.id || !session.user.agencyId) {
-    redirect("/login");
+    redirect("/onboarding");
   }
 
   let project: ProjectWithIncludes | null = null;

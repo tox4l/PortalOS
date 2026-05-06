@@ -109,7 +109,7 @@ export function KanbanBoard({ projectId, tasks, assignees }: KanbanBoardProps) {
 
       const newPosition = (tasksByStatus[newStatus]?.length ?? 0) + 1;
 
-      await updateTaskStatusAction(taskId, newStatus, newPosition);
+      await updateTaskStatusAction({ taskId, status: newStatus as "TODO" | "IN_PROGRESS" | "IN_REVIEW" | "DONE", position: newPosition });
     },
     [tasks, tasksByStatus]
   );

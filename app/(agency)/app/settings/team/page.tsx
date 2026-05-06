@@ -5,7 +5,7 @@ import { TeamSettingsClient } from "./team-client";
 
 export default async function TeamSettingsPage() {
   const session = await auth();
-  if (!session?.user?.agencyId) redirect("/login");
+  if (!session?.user?.agencyId) redirect("/onboarding");
 
   const data = await getTeamPageData(session.user.agencyId);
 

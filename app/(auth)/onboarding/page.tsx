@@ -59,11 +59,15 @@ export default function OnboardingPage() {
   const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
 
-  // Signed-in users with an agency skip to dashboard; unsigned-in users go to login
+  // Three-way branching based on session state:
+  // 1. No session  → redirect to login
+  // 2. Has agency  → redirect to dashboard (onboarding already complete)
+  // 3. Has session, no agency → stay here and show the onboarding flow
   useEffect(() => {
     getOnboardingSession().then((s) => {
       if (!s.signedIn) router.replace("/login");
       else if (s.hasAgency) router.replace("/app/dashboard");
+      // else: signed in but no agency — show the onboarding form below
     });
   }, [router]);
 

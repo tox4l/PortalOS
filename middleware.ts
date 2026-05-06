@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { isDevBypass } from "@/lib/dev-bypass";
 
 const PUBLIC_FILE = /\.(.*)$/;
 const APP_HOSTS = new Set([
@@ -56,14 +57,18 @@ function hasSessionCookie(request: NextRequest): boolean {
   );
 }
 
-function isDevBypass(): boolean {
-  if (process.env.NODE_ENV === "production") {
+async function needsOnboarding(request: NextRequest): Promise<boolean> {
+  if (!hasSessionCookie(request)) return false;
+  try {
+    const { auth } = await import("@/lib/auth");
+    const session = await auth();
+    return !session?.user?.agencyId;
+  } catch {
     return false;
   }
-  return process.env.DEV_BYPASS_AUTH === "true";
 }
 
-export default function middleware(request: NextRequest) {
+export default async function middleware(request: NextRequest) {
   const { nextUrl } = request;
   const { pathname } = nextUrl;
 
@@ -74,14 +79,52 @@ export default function middleware(request: NextRequest) {
   const host = request.headers.get("host") ?? "";
   const agencySlug = getAgencySlugFromHost(host);
 
-  if (isDevBypass() && pathname === "/portal") {
-    return NextResponse.redirect(new URL("/demo/client", request.url));
-  }
-
-  if (agencySlug && !pathname.startsWith("/app") && !pathname.startsWith("/portal") && !pathname.startsWith("/api")) {
+  if (agencySlug) {
     const rewriteUrl = nextUrl.clone();
-    rewriteUrl.pathname = `/portal/${agencySlug}${pathname === "/" ? "" : pathname}`;
     rewriteUrl.searchParams.set("agency", agencySlug);
+
+    // Bypass routes that don't need agency context
+    if (pathname.startsWith("/api") || pathname.startsWith("/onboarding") || pathname.startsWith("/accept-invite")) {
+      return NextResponse.rewrite(rewriteUrl);
+    }
+
+    if (pathname.startsWith("/app")) {
+      // Agency dashboard via subdomain — protect with session
+      if (!hasSessionCookie(request)) {
+        const loginUrl = new URL("/login", request.url);
+        loginUrl.searchParams.set("callbackUrl", `${nextUrl.pathname}${nextUrl.search}`);
+        return NextResponse.redirect(loginUrl);
+      }
+      if (await needsOnboarding(request)) {
+        return NextResponse.redirect(new URL("/onboarding", request.url));
+      }
+      return NextResponse.rewrite(rewriteUrl);
+    }
+
+    if (pathname.startsWith("/portal")) {
+	      const slug = pathname.split("/")[2];
+	      if (slug && !pathname.startsWith(`/portal/${slug}/login`) && !pathname.startsWith(`/portal/${slug}/auth/`)) {
+	        if (!request.cookies.has("portalos-client-session")) {
+	          const loginUrl = new URL(`/portal/${slug}/login`, request.url);
+	          loginUrl.searchParams.set("callbackUrl", `${nextUrl.pathname}${nextUrl.search}`);
+	          return NextResponse.redirect(loginUrl);
+	        }
+	      }
+      return NextResponse.rewrite(rewriteUrl);
+    }
+
+    if (pathname === "/login") {
+      if (hasSessionCookie(request)) {
+        if (await needsOnboarding(request)) {
+          return NextResponse.redirect(new URL("/onboarding", request.url));
+        }
+        return NextResponse.redirect(new URL("/app/dashboard", request.url));
+      }
+      return NextResponse.rewrite(rewriteUrl);
+    }
+
+    // Root or unknown paths — rewrite to client portal landing
+    rewriteUrl.pathname = `/portal/${agencySlug}${pathname === "/" ? "" : pathname}`;
     return NextResponse.rewrite(rewriteUrl);
   }
 
@@ -92,15 +135,43 @@ export default function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Routes that bypass session checks entirely
+  if (pathname === "/onboarding" || pathname.startsWith("/onboarding/") ||
+      pathname === "/accept-invite" || pathname.startsWith("/accept-invite/")) {
+    return NextResponse.next();
+  }
+
+  // ---- Portal (tier 3 / client) auth ----
+  // /portal/{slug}/* requires a client session; redirect to /portal/{slug}/login, NOT /login.
+  // Loop prevention: skip redirect when already on login or auth-callback pages.
+  if (pathname.startsWith("/portal/")) {
+    const slug = pathname.split("/")[2];
+    if (slug &&
+        !pathname.startsWith(`/portal/${slug}/login`) &&
+        !pathname.startsWith(`/portal/${slug}/auth/`)) {
+      if (!request.cookies.has("portalos-client-session")) {
+        const loginUrl = new URL(`/portal/${slug}/login`, request.url);
+        loginUrl.searchParams.set("callbackUrl", `${nextUrl.pathname}${nextUrl.search}`);
+        return NextResponse.redirect(loginUrl);
+      }
+    }
+  }
+
   if (pathname.startsWith("/app")) {
     if (!hasSessionCookie(request)) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("callbackUrl", `${nextUrl.pathname}${nextUrl.search}`);
       return NextResponse.redirect(loginUrl);
     }
+    if (await needsOnboarding(request)) {
+      return NextResponse.redirect(new URL("/onboarding", request.url));
+    }
   }
 
   if (pathname === "/login" && hasSessionCookie(request)) {
+    if (await needsOnboarding(request)) {
+      return NextResponse.redirect(new URL("/onboarding", request.url));
+    }
     return NextResponse.redirect(new URL("/app/dashboard", request.url));
   }
 

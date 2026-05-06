@@ -1,0 +1,57 @@
+{
+  "agents": {
+    "agent-1778061664493-aaqu9j": {
+      "agentId": "agent-1778061664493-aaqu9j",
+      "agentType": "coordinator",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic"
+      },
+      "createdAt": "2026-05-06T10:01:04.493Z",
+      "model": "sonnet",
+      "modelRoutedBy": "default"
+    },
+    "agent-1778061676303-1usfct": {
+      "agentId": "agent-1778061676303-1usfct",
+      "agentType": "coder",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic"
+      },
+      "createdAt": "2026-05-06T10:01:16.304Z",
+      "model": "sonnet",
+      "modelRoutedBy": "default"
+    },
+    "agent-1778061701116-auhqnb": {
+      "agentId": "agent-1778061701116-auhqnb",
+      "agentType": "reviewer",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic"
+      },
+      "createdAt": "2026-05-06T10:01:41.116Z",
+      "model": "sonnet",
+      "modelRoutedBy": "default"
+    },
+    "agent-1778061743823-qz18zd": {
+      "agentId": "agent-1778061743823-qz18zd",
+      "agentType": "security-auditor",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "provider": "anthropic"
+      },
+      "createdAt": "2026-05-06T10:02:23.823Z",
+      "model": "sonnet",
+      "modelRoutedBy": "default"
+    }
+  },
+  "version": "3.0.0"
+}

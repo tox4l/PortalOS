@@ -7,6 +7,7 @@ import {
 import { isDevBypass, getDevPortalAgency, getDevPortalClient } from "@/lib/dev-bypass";
 import { prisma } from "@/lib/db";
 import { PortalShell } from "@/components/client/portal-shell";
+import { PortalSessionProvider } from "@/components/client/portal-session-provider";
 
 export default async function PortalLayout({
   children,
@@ -35,7 +36,9 @@ export default async function PortalLayout({
         notificationChannel={notificationChannel}
         portalSlug={clientSlug}
       >
-        {children}
+        <PortalSessionProvider portalSlug={clientSlug}>
+          {children}
+        </PortalSessionProvider>
       </PortalShell>
     );
   }
@@ -81,7 +84,9 @@ export default async function PortalLayout({
         notificationChannel={notificationChannel}
         portalSlug={client.portalSlug}
       >
-        {children}
+        <PortalSessionProvider portalSlug={client.portalSlug}>
+          {children}
+        </PortalSessionProvider>
       </PortalShell>
     );
   } catch {

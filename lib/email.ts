@@ -1,4 +1,5 @@
 import { getResend, getDefaultFromEmail } from "@/lib/resend";
+import { logger } from "@/lib/logger";
 
 const APP_URL = process.env.APP_URL ?? "https://portalos.tech";
 
@@ -134,7 +135,7 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
     });
     return true;
   } catch (error) {
-    console.error("Failed to send email:", error instanceof Error ? error.message : error);
+    logger.error("Failed to send email", { error: error instanceof Error ? error.message : String(error) });
     return false;
   }
 }

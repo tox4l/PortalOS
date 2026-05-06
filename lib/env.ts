@@ -2,8 +2,10 @@ import { z } from "zod";
 
 type EnvKey =
   | "ABLY_API_KEY"
+  | "AUTH_SECRET"
   | "CALENDLY_URL"
   | "DEMO_MODE"
+  | "LOG_LEVEL"
   | "NEXT_PUBLIC_SUPABASE_ANON_KEY"
   | "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"
   | "NEXT_PUBLIC_SUPABASE_URL"
@@ -12,12 +14,17 @@ type EnvKey =
   | "POSTHOG_KEY"
   | "RESEND_API_KEY"
   | "RESEND_FROM_EMAIL"
+  | "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY"
   | "STRIPE_SECRET_KEY"
   | "STRIPE_WEBHOOK_SECRET"
+  | "STRIPE_STUDIO_PRICE_ID"
+  | "STRIPE_GROWTH_PRICE_ID"
   | "SUPABASE_ANON_KEY"
   | "SUPABASE_SERVICE_ROLE_KEY"
   | "SUPABASE_STORAGE_URL"
   | "SUPABASE_URL"
+  | "UPSTASH_REDIS_REST_TOKEN"
+  | "UPSTASH_REDIS_REST_URL"
   | "VELOCITY_AI_INBOX";
 
 export function getOptionalEnv(key: EnvKey): string | undefined {
@@ -37,6 +44,15 @@ export function requireEnv(key: EnvKey): string {
 
 export function isDemoMode(): boolean {
   return getOptionalEnv("DEMO_MODE") === "true";
+}
+
+export function assertNotDevBypassInProduction(): void {
+  if (
+    process.env.NODE_ENV === "production" &&
+    process.env.DEV_BYPASS_AUTH === "true"
+  ) {
+    throw new Error("DEV_BYPASS_AUTH cannot be enabled in production.");
+  }
 }
 
 // ─── Zod validation schema for build-time / startup checks ───
@@ -70,6 +86,9 @@ const envSchema = z.object({
   POSTHOG_KEY: z.string().optional(),
   CALENDLY_URL: z.string().url().optional(),
   SUPABASE_STORAGE_URL: z.string().url().optional(),
+  UPSTASH_REDIS_REST_URL: z.string().url().optional(),
+  UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
+  LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).optional(),
   VELOCITY_AI_INBOX: z.string().optional(),
   DEMO_MODE: z.enum(["true", "false"]).optional(),
   DEV_BYPASS_AUTH: z.enum(["true", "false"]).optional(),

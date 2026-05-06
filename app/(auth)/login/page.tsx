@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { signIn } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 
 type LoginPageProps = {
   searchParams?: Promise<{
@@ -12,6 +13,40 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const params = await searchParams;
   const shouldCheckEmail = params?.check === "email";
   const hasError = Boolean(params?.error);
+
+  // If the user already has a session but no agency, prompt them to finish
+  // onboarding instead of showing the sign-in form.
+  const session = await auth();
+  const needsOnboarding = session?.user && !session.user.agencyId;
+
+  if (needsOnboarding) {
+    return (
+      <main className="flex min-h-[100dvh] items-center justify-center bg-[var(--bg-void)] px-4 py-12">
+        <div className="w-full max-w-[28rem] text-center">
+          <Link
+            className="font-display text-[32px] font-normal tracking-[-0.01em] text-[var(--gold-core)]"
+            href="/"
+          >
+            PortalOS
+          </Link>
+          <div className="mt-16">
+            <h1 className="font-display text-[clamp(2rem,5vw,2.5rem)] font-normal leading-[1.08] text-[var(--ink-primary)]">
+              Complete your account setup
+            </h1>
+            <p className="mt-4 text-[15px] leading-7 text-[var(--ink-secondary)]">
+              You are signed in but have not finished setting up your agency.
+            </p>
+            <Link
+              className="mt-8 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[10px] border border-transparent bg-[var(--gold-core)] px-5 text-[14px] font-medium tracking-[0.02em] text-white shadow-[var(--shadow-sm)] transition-[background-color,box-shadow] duration-200 hover:bg-[var(--gold-mid)] hover:shadow-[var(--shadow-md)]"
+              href="/onboarding"
+            >
+              Continue setup
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="flex min-h-[100dvh] items-center justify-center bg-[var(--bg-void)] px-4 py-12">

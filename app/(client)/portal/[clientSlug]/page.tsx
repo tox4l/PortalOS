@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ArrowRight, Clock, FileText, Rows } from "@phosphor-icons/react/dist/ssr";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import {
   getDevPortalProjects,
   getDevPortalActivity
 } from "@/lib/dev-bypass";
+import { getClientSession } from "@/lib/client-sessions";
 
 type PortalHomeProps = {
   params: Promise<{ clientSlug: string }>;
@@ -32,6 +33,14 @@ const statusLabels: Record<string, string> = {
 
 export default async function PortalHomePage({ params }: PortalHomeProps) {
   const { clientSlug } = await params;
+
+  // Verify client session — redirect to /portal/{slug}/login if missing
+  if (!isDevBypass()) {
+    const clientSession = await getClientSession();
+    if (!clientSession || clientSession.clientSlug !== clientSlug) {
+      redirect(`/portal/${clientSlug}/login`);
+    }
+  }
 
   let clientName = "Northstar Brand";
   let welcomeMessage = "Here's where your projects stand today.";

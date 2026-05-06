@@ -14,6 +14,10 @@ import { isDevBypass, getDevTeamMembers, getDevPendingInvitations } from "@/lib/
 import { checkRateLimit } from "@/lib/action-rate-limit";
 import { RATE_LIMITS } from "@/lib/rate-limit";
 import {
+  checkInviteeAvailability,
+  prepareInvitation,
+} from "@/lib/domain/services/invitation-service";
+import {
   buildAcceptInviteUrl,
   renderTeamInvitationEmail,
   sendEmail,
@@ -107,16 +111,19 @@ export async function getTeamPageData(agencyId: string) {
 
   const limits = getPlanLimits(agency.plan);
 
+  const unlimitedTeam = !Number.isFinite(limits.maxTeamMembers);
+  const unlimitedClients = !Number.isFinite(limits.maxClients);
+
   return {
     members,
     invitations,
     plan: agency.plan,
     teamSeatsUsed: agency._count.users,
-    teamSeatsMax: limits.maxTeamMembers,
+    teamSeatsMax: unlimitedTeam ? agency._count.users : limits.maxTeamMembers,
     clientSeatsUsed: agency._count.clients,
-    clientSeatsMax: limits.maxClients,
-    canInvite: agency._count.users < limits.maxTeamMembers,
-    canCreateClient: agency._count.clients < limits.maxClients,
+    clientSeatsMax: unlimitedClients ? agency._count.clients : limits.maxClients,
+    canInvite: unlimitedTeam || agency._count.users < limits.maxTeamMembers,
+    canCreateClient: unlimitedClients || agency._count.clients < limits.maxClients,
   };
 }
 
@@ -161,24 +168,17 @@ export async function inviteTeamMemberAction(
     const seatCheck = checkTeamSeatAvailable(agency.plan, agency._count.users);
     if (!seatCheck.allowed) throw new Error(seatCheck.reason);
 
-    const existingUser = await prisma.user.findFirst({
-      where: { email, agencyId },
-    });
-    if (existingUser) throw new Error("A team member with this email already exists.");
-
-    const existingInvite = await prisma.teamInvitation.findUnique({
-      where: { agencyId_email: { agencyId, email } },
-    });
-    if (
-      existingInvite &&
-      existingInvite.expiresAt > new Date() &&
-      !existingInvite.acceptedAt
-    ) {
+    // Use shared invitation service for availability checks
+    const availability = await checkInviteeAvailability("teamInvitation", "agencyId", agencyId, email);
+    if (availability.status === "exists") {
+      throw new Error("A team member with this email already exists.");
+    }
+    if (availability.status === "duplicate_invite") {
       throw new Error("An invitation has already been sent to this email.");
     }
 
-    const { raw, hashed } = await generateInviteToken();
-    const expiresAt = inviteExpiresAt();
+    // Use shared invitation service for token generation
+    const { raw, hashed, expiresAt } = await prepareInvitation();
 
     await prisma.teamInvitation.upsert({
       where: { agencyId_email: { agencyId, email } },

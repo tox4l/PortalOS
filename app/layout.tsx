@@ -1,7 +1,19 @@
 import type { Metadata, Viewport } from "next";
 import { Playfair_Display, DM_Sans, JetBrains_Mono } from "next/font/google";
 import { AppProviders } from "@/components/shared/app-providers";
+import { validateEnv } from "@/lib/env";
+import { initDomainLayer } from "@/lib/domain/init";
 import "./globals.css";
+
+// Validate required environment variables at server startup.
+// Throws on first request if a required var is missing in production.
+// In dev with DEV_BYPASS_AUTH only minimal vars are checked.
+validateEnv();
+
+// Initialize the Domain-Driven Design layer: register cross-context
+// event handlers (e.g., notification subscribers, activity feed writers).
+// Safe to call multiple times -- runs only once.
+initDomainLayer();
 
 const playfair = Playfair_Display({
   subsets: ["latin"],

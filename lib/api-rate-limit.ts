@@ -32,13 +32,13 @@ type RateLimitConfig = {
  * Apply rate limiting to an API route. Returns a 429 response if exceeded,
  * or null if the request is allowed.
  */
-export function applyRateLimit(
+export async function applyRateLimit(
   request: Request,
   route: string,
   config: RateLimitConfig
-): NextResponse | null {
+): Promise<NextResponse | null> {
   const ip = getClientIp(request);
-  const result = rateLimit(ip, route, config);
+  const result = await rateLimit(ip, route, config);
 
   if (!result.allowed) {
     return NextResponse.json(

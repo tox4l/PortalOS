@@ -17,7 +17,7 @@ export async function checkRateLimit(
   config: { windowMs: number; maxRequests: number }
 ): Promise<void> {
   const ip = await getActionIp();
-  const result = rateLimit(ip, route, config);
+  const result = await rateLimit(ip, route, config);
   if (!result.allowed) {
     throw new Error(`Too many requests. Try again in ${result.retryAfter} seconds.`);
   }

@@ -9,6 +9,10 @@ import { generateInviteToken, hashToken, inviteExpiresAt } from "@/lib/invite-to
 import { sanitizeEmail } from "@/lib/sanitize";
 import { isDevBypass, getDevPortalClient, getDevClientUsers, getDevMagicLinkToken } from "@/lib/dev-bypass";
 import {
+  checkInviteeAvailability,
+  prepareInvitation,
+} from "@/lib/domain/services/invitation-service";
+import {
   buildClientAuthUrl,
   renderMagicLinkEmail,
   renderClientTeammateInviteEmail,
@@ -235,8 +239,7 @@ export async function inviteClientTeammateAction(
       throw new Error("An invitation has already been sent to this email.");
     }
 
-    const { raw, hashed } = await generateInviteToken();
-    const expiresAt = inviteExpiresAt();
+    const { raw, hashed, expiresAt } = await prepareInvitation();
 
     await prisma.clientInvitation.upsert({
       where: { clientId_email: { clientId, email } },

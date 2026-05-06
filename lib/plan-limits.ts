@@ -11,8 +11,8 @@ export const PLAN_LIMITS: Record<string, PlanLimits> = {
     subdomainRouting: false,
   },
   GROWTH: {
-    maxTeamMembers: 10,
-    maxClients: 25,
+    maxTeamMembers: Infinity,
+    maxClients: Infinity,
     subdomainRouting: true,
   },
 };
@@ -26,6 +26,9 @@ export function checkTeamSeatAvailable(
   currentMemberCount: number
 ): { allowed: boolean; reason?: string } {
   const limits = getPlanLimits(plan);
+  if (!Number.isFinite(limits.maxTeamMembers)) {
+    return { allowed: true };
+  }
   if (currentMemberCount >= limits.maxTeamMembers) {
     return {
       allowed: false,
@@ -35,11 +38,37 @@ export function checkTeamSeatAvailable(
   return { allowed: true };
 }
 
+export function buildPortalUrl(
+  agencySlug: string | null,
+  clientSlug: string,
+  plan: string,
+  path?: string
+): string {
+  const appUrl = process.env.APP_URL ?? "https://portalos.tech";
+  const base = appUrl.replace(/\/$/, "");
+
+  if (plan === "GROWTH" && agencySlug) {
+    // Growth: {agency}.portalos.tech/portal/{client}
+    try {
+      const url = new URL(base);
+      return `${url.protocol}//${agencySlug}.${url.host}/portal/${clientSlug}${path ?? ""}`;
+    } catch {
+      return `${base}/portal/${clientSlug}${path ?? ""}`;
+    }
+  }
+
+  // Studio: portalos.tech/portal/{client}
+  return `${base}/portal/${clientSlug}${path ?? ""}`;
+}
+
 export function checkClientSeatAvailable(
   plan: string,
   currentClientCount: number
 ): { allowed: boolean; reason?: string } {
   const limits = getPlanLimits(plan);
+  if (!Number.isFinite(limits.maxClients)) {
+    return { allowed: true };
+  }
   if (currentClientCount >= limits.maxClients) {
     return {
       allowed: false,

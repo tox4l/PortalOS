@@ -6,7 +6,7 @@ import { getAgencyStorageUsage, getStorageLimitBytes, formatBytes } from "@/lib/
 
 export default async function SettingsPage() {
   const session = await auth();
-  if (!session?.user?.agencyId) redirect("/login");
+  if (!session?.user?.agencyId) redirect("/onboarding");
 
   const usedBytes = await getAgencyStorageUsage(session.user.agencyId);
   const limitBytes = getStorageLimitBytes();

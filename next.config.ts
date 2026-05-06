@@ -1,11 +1,16 @@
 import type { NextConfig } from "next";
+import bundleAnalyzer from "@next/bundle-analyzer";
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
 
 const nextConfig: NextConfig = {
   outputFileTracingRoot: process.cwd(),
   reactStrictMode: true,
   poweredByHeader: false,
   experimental: {
-    serverActions: { bodySizeLimit: "500mb" },
+    serverActions: { bodySizeLimit: "100mb" },
   },
 
   async headers() {
@@ -26,14 +31,15 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
+              `script-src 'self'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""} 'unsafe-inline'`,
               "style-src 'self' 'unsafe-inline' fonts.googleapis.com",
               "img-src 'self' data: blob: https:",
               "font-src 'self' fonts.gstatic.com",
-              "connect-src 'self' https://api.resend.com https://uploadthing.com https://api.stripe.com https://*.supabase.co https://*.ably-realtime.com",
+              "connect-src 'self' https://api.resend.com https://api.stripe.com https://*.supabase.co https://*.ably-realtime.com",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",
+              "report-uri /api/csp-report",
             ].join("; "),
           }
         ]
@@ -53,4 +59,4 @@ const nextConfig: NextConfig = {
   }
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);

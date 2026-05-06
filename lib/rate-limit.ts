@@ -1,10 +1,65 @@
-/**
- * In-memory rate limiter.
- * Works per-instance only. Replace with Upstash Redis post-launch
- * for multi-instance deployments.
- */
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+import { getOptionalEnv } from "@/lib/env";
+
+const UPSTASH_URL = getOptionalEnv("UPSTASH_REDIS_REST_URL");
+const UPSTASH_TOKEN = getOptionalEnv("UPSTASH_REDIS_REST_TOKEN");
+
+let redis: Redis | null = null;
+let upstash: Ratelimit | null = null;
+
+function getUpstash(): Ratelimit | null {
+  if (upstash) return upstash;
+  if (!UPSTASH_URL || !UPSTASH_TOKEN) return null;
+
+  try {
+    redis = new Redis({ url: UPSTASH_URL, token: UPSTASH_TOKEN });
+    upstash = new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(10, "10 s"),
+      analytics: true,
+    });
+    return upstash;
+  } catch {
+    return null;
+  }
+}
+
+// ─── In-memory fallback (single-instance only, used when Upstash is not configured) ───
 
 const counters = new Map<string, { count: number; resetAt: number }>();
+
+function pruneExpired(): void {
+  const now = Date.now();
+  for (const [key, value] of counters) {
+    if (now >= value.resetAt) counters.delete(key);
+  }
+}
+
+function inMemoryRateLimit(
+  key: string,
+  windowMs: number,
+  maxRequests: number
+): RateLimitResult {
+  pruneExpired();
+  const now = Date.now();
+  const existing = counters.get(key);
+
+  if (!existing || now >= existing.resetAt) {
+    counters.set(key, { count: 1, resetAt: now + windowMs });
+    return { allowed: true, remaining: maxRequests - 1, retryAfter: 0 };
+  }
+
+  if (existing.count >= maxRequests) {
+    const retryAfter = Math.ceil((existing.resetAt - now) / 1000);
+    return { allowed: false, remaining: 0, retryAfter };
+  }
+
+  existing.count++;
+  return { allowed: true, remaining: maxRequests - existing.count, retryAfter: 0 };
+}
+
+// ─── Public API ───
 
 interface RateLimitOptions {
   windowMs: number;
@@ -17,59 +72,29 @@ interface RateLimitResult {
   retryAfter: number;
 }
 
-function getKey(ip: string, route: string): string {
-  return `${ip}:${route}`;
-}
-
-function pruneExpired(): void {
-  const now = Date.now();
-  for (const [key, value] of counters) {
-    if (now >= value.resetAt) {
-      counters.delete(key);
-    }
-  }
-}
-
-// Prune every 60 seconds
-if (typeof setInterval !== "undefined") {
-  setInterval(pruneExpired, 60_000);
-}
-
-export function rateLimit(
+export async function rateLimit(
   ip: string,
   route: string,
   options: RateLimitOptions
-): RateLimitResult {
-  const key = getKey(ip, route);
-  const now = Date.now();
-  const existing = counters.get(key);
+): Promise<RateLimitResult> {
+  const key = `${ip}:${route}`;
+  const rl = getUpstash();
 
-  if (!existing || now >= existing.resetAt) {
-    counters.set(key, { count: 1, resetAt: now + options.windowMs });
-    return { allowed: true, remaining: options.maxRequests - 1, retryAfter: 0 };
+  if (rl) {
+    try {
+      const result = await rl.limit(key);
+      return {
+        allowed: result.success,
+        remaining: result.remaining,
+        retryAfter: Math.ceil((result.reset - Date.now()) / 1000),
+      };
+    } catch {
+      return inMemoryRateLimit(key, options.windowMs, options.maxRequests);
+    }
   }
 
-  if (existing.count >= options.maxRequests) {
-    const retryAfter = Math.ceil((existing.resetAt - now) / 1000);
-    return { allowed: false, remaining: 0, retryAfter };
-  }
-
-  existing.count++;
-  return {
-    allowed: true,
-    remaining: options.maxRequests - existing.count,
-    retryAfter: 0,
-  };
+  return inMemoryRateLimit(key, options.windowMs, options.maxRequests);
 }
-
-/**
- * Rate limits by route:
- * - auth/magic-link:  3 per IP per 15 min
- * - auth/signin:     10 per IP per 15 min
- * - auth/register:    5 per IP per 15 min
- * - contact:          3 per IP per hour
- * - client-invite:   10 per agency per hour (caller provides custom key)
- */
 
 export const RATE_LIMITS = {
   MAGIC_LINK: { windowMs: 15 * 60 * 1000, maxRequests: 3 },

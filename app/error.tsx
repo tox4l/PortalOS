@@ -1,15 +1,28 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 
 export default function ErrorPage({
-  error: _error,
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  void _error;
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      fetch("/api/monitoring/error", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: error.message,
+          stack: error.stack,
+          url: window.location.href,
+        }),
+      }).catch(() => {});
+    }
+  }, [error]);
   return (
     <div className="flex min-h-[100dvh] items-center justify-center bg-[var(--bg-void)] px-4">
       <div className="mx-auto max-w-[480px] text-center">

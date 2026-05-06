@@ -1,10 +1,9 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
+import { requireEnv } from "@/lib/env";
 
 const CLIENT_SESSION_COOKIE = "portalos-client-session";
-const secret = new TextEncoder().encode(
-  process.env.AUTH_SECRET ?? "fallback-dev-secret-must-be-32-chars"
-);
+const secret = new TextEncoder().encode(requireEnv("AUTH_SECRET"));
 
 export type ClientSessionPayload = {
   clientUserId: string;
@@ -59,6 +58,17 @@ export async function getClientSession(): Promise<ClientSessionPayload | null> {
 }
 
 export async function clearClientSession(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.delete(CLIENT_SESSION_COOKIE);
+}
+
+/**
+ * Revoke all client sessions for a user.
+ * Client sessions use JWT, so revocation requires a token blacklist.
+ * For now, clears the current session cookie.
+ * Future: maintain a Redis set of revoked JWT IDs with TTL matching token expiry.
+ */
+export async function revokeAllClientSessions(_userId: string): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete(CLIENT_SESSION_COOKIE);
 }

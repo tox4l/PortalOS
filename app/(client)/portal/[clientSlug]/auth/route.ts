@@ -2,7 +2,14 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { hashToken } from "@/lib/invite-tokens";
 import { createClientSession } from "@/lib/client-sessions";
+import { rateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 import { isDevBypass, getDevPortalClient } from "@/lib/dev-bypass";
+
+function getIp(request: Request): string {
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) return forwarded.split(",")[0]!.trim();
+  return "127.0.0.1";
+}
 
 export async function GET(
   request: Request,
@@ -16,6 +23,14 @@ export async function GET(
   if (!token || !email) {
     return NextResponse.redirect(
       new URL(`/portal/${clientSlug}/login?error=invalid-link`, request.url)
+    );
+  }
+
+  const ip = getIp(request);
+  const rl = await rateLimit(ip, `magic-link:${clientSlug}`, RATE_LIMITS.MAGIC_LINK);
+  if (!rl.allowed) {
+    return NextResponse.redirect(
+      new URL(`/portal/${clientSlug}/login?error=too-many-requests`, request.url)
     );
   }
 
@@ -51,7 +66,6 @@ export async function GET(
 
   const hashed = await hashToken(token);
 
-  // Atomically claim the invitation to prevent TOCTOU race
   const claim = await prisma.clientInvitation.updateMany({
     where: {
       token: hashed,
@@ -69,17 +83,11 @@ export async function GET(
     );
   }
 
-  // Safely read the claimed invitation
   const invitation = await prisma.clientInvitation.findFirst({
-    where: {
-      token: hashed,
-      email,
-      clientId: client.id,
-    },
+    where: { token: hashed, email, clientId: client.id },
     select: { role: true },
   });
 
-  // Find or create the client user
   let clientUser = await prisma.clientUser.findFirst({
     where: { email, clientId: client.id },
     select: { id: true, role: true },

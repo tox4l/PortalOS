@@ -1,5 +1,9 @@
 import type { Session } from "next-auth";
 
+if (process.env.NODE_ENV === "production" && process.env.DEV_BYPASS_AUTH === "true") {
+  throw new Error("DEV_BYPASS_AUTH cannot be enabled in production.");
+}
+
 export function isDevBypass(): boolean {
   if (process.env.NODE_ENV === "production") {
     return false;

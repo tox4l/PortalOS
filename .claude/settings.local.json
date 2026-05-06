@@ -37,7 +37,35 @@
       "Bash(openssl rand *)",
       "Bash(nslookup db.zlqgizdblpvupbrbwphq.supabase.co)",
       "Bash(nslookup *)",
-      "Bash(ping -6 -n 1 db.zlqgizdblpvupbrbwphq.supabase.co)"
+      "Bash(ping -6 -n 1 db.zlqgizdblpvupbrbwphq.supabase.co)",
+      "Skill(ruflo-autopilot:autopilot-loop)",
+      "Bash(npm audit *)",
+      "Bash([ -f \"/c/Users/musal/OneDrive/Desktop/PortalOS/$f\" ])",
+      "Bash(mkdir -p tests)",
+      "mcp__claude-flow__autopilot_status",
+      "mcp__claude-flow__autopilot_enable",
+      "mcp__claude-flow__swarm_status",
+      "mcp__claude-flow__agent_list",
+      "Bash(DATABASE_URL=\"postgresql://localhost:5432/placeholder\" npx prisma generate)",
+      "mcp__claude-flow__agentdb_pattern-search",
+      "mcp__claude-flow__memory_search",
+      "mcp__claude-flow__swarm_init",
+      "Bash(DATABASE_URL=\"postgresql://localhost:5432/portalos\" npx prisma generate)",
+      "mcp__claude-flow__agentdb_session-start",
+      "mcp__claude-flow__agentdb_pattern-store",
+      "mcp__claude-flow__memory_store",
+      "Bash(npx vitest *)",
+      "mcp__claude-flow__agentdb_consolidate",
+      "mcp__claude-flow__agentdb_health",
+      "Bash(npm test *)",
+      "mcp__claude-flow__agentdb_session-end"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\musal\\OneDrive\\Desktop\\PortalOS"
     ]
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "claude-flow"
+  ]
 }

@@ -766,6 +766,13 @@ select:focus {
   transform: rotate(-15deg);
 }
 
+/* ─── Floating panels keyframe ─── */
+
+@keyframes panelFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
 /* ─── Reduced motion ─── */
 
 @media (prefers-reduced-motion: reduce) {

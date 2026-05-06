@@ -7,7 +7,6 @@ export function GET() {
     {
       status: "ok",
       timestamp: new Date().toISOString(),
-      uptime: process.uptime()
     },
     { status: 200 }
   );

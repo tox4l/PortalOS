@@ -153,6 +153,18 @@ const authConfig = {
         return url;
       }
 
+      // Fallback for external callback URLs — check if user needs onboarding.
+      // (The login page already passes redirectTo:"/onboarding" for new users,
+      //  so this is a safety net for unexpected flows.)
+      try {
+        const session = await auth();
+        if (session?.user && !session.user.agencyId) {
+          return `${cleanBase}/onboarding`;
+        }
+      } catch {
+        // If reading the session fails, fall through to the default dashboard.
+      }
+
       return `${cleanBase}/app/dashboard`;
     }
   }

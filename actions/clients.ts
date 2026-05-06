@@ -72,10 +72,14 @@ export async function createClientAction(
 
     const agency = await prisma.agency.findUniqueOrThrow({
       where: { id: session.user.agencyId },
-      include: { _count: { select: { clients: { where: { status: "ACTIVE" } } } } },
+      select: { plan: true, slug: true, name: true, id: true },
     });
 
-    const seatCheck = checkClientSeatAvailable(agency.plan, agency._count.clients);
+    const activeClientCount = await prisma.client.count({
+      where: { agencyId: session.user.agencyId, status: "ACTIVE" },
+    });
+
+    const seatCheck = checkClientSeatAvailable(agency.plan, activeClientCount);
     if (!seatCheck.allowed) throw new Error(seatCheck.reason);
 
     const existing = await prisma.client.findUnique({
@@ -83,6 +87,23 @@ export async function createClientAction(
       select: { id: true },
     });
     if (existing) throw new Error("A client with that portal URL already exists. Choose a different slug.");
+
+    // Slug conflict check: agency slugs are used as subdomains on Growth plan.
+    // We query only the slug field to avoid pulling unrelated agency data.
+    const agencySlugConflict = await prisma.agency.findUnique({
+      where: { slug: input.portalSlug },
+      select: { id: true },
+    });
+    if (agencySlugConflict) {
+      if (agency.plan === "GROWTH" && agencySlugConflict.id === agency.id) {
+        throw new Error(
+          "This portal URL conflicts with your agency's subdomain. " +
+          "On the Growth plan, your agency slug is used as a subdomain " +
+          `(${agency.slug}.portalos.tech), so it cannot be used for a client portal slug.`
+        );
+      }
+      throw new Error("This slug is reserved by another agency. Choose a different portal URL.");
+    }
 
     const client = await prisma.client.create({
       data: {
@@ -129,10 +150,15 @@ export async function createClientAction(
         },
       });
 
-      const magicLinkUrl = buildClientAuthUrl(client.portalSlug, raw, input.contactEmail, {
-        plan: session.user.agencyPlan,
-        agencySlug: session.user.agencySlug,
-      });
+      const magicLinkUrl = buildClientAuthUrl(
+        client.portalSlug,
+        raw,
+        input.contactEmail,
+        {
+          plan: agency.plan,
+          agencySlug: agency.slug,
+        }
+      );
 
       await sendEmail(
         input.contactEmail,

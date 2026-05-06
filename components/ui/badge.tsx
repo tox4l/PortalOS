@@ -21,10 +21,29 @@ const badgeVariants = cva(
   }
 );
 
+const statusLabels: Record<string, string> = {
+  active: "Active",
+  review: "In Review",
+  draft: "Draft",
+  approved: "Approved",
+  overdue: "Overdue",
+  archived: "Archived",
+};
+
 type BadgeProps = React.HTMLAttributes<HTMLSpanElement> & VariantProps<typeof badgeVariants>;
 
-function Badge({ className, variant, ...props }: BadgeProps) {
-  return <span className={cn(badgeVariants({ variant }), className)} {...props} />;
+function Badge({ className, variant, children, ...props }: BadgeProps) {
+  const label = variant ? statusLabels[variant] : undefined;
+  return (
+    <span
+      role="status"
+      aria-label={label}
+      className={cn(badgeVariants({ variant }), className)}
+      {...props}
+    >
+      {children}
+    </span>
+  );
 }
 
 export { Badge, badgeVariants };

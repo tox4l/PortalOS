@@ -90,8 +90,12 @@ model Agency {
   brandColor        String             @default("#8C7340") @map("brand_color")
   brandFont         String             @default("Cormorant Garamond") @map("brand_font")
   customDomain      String?            @unique @map("custom_domain")
-  demoMode          Boolean            @default(false) @map("demo_mode")
-  plan              Plan               @default(STUDIO)
+  demoMode              Boolean            @default(false) @map("demo_mode")
+  plan                  Plan               @default(STUDIO)
+  stripeCustomerId      String?            @unique @map("stripe_customer_id")
+  stripeSubscriptionId  String?            @unique @map("stripe_subscription_id")
+  stripeSubscriptionStatus String?         @map("stripe_subscription_status")
+  stripeCurrentPeriodEnd DateTime?         @map("stripe_current_period_end")
   users             User[]
   clients           Client[]
   clientUsers       ClientUser[]

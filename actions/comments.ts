@@ -3,12 +3,14 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createSafeAction, type ActionResult } from "@/actions/safe-action";
-import { createNotification } from "@/actions/notifications";
 import { auth } from "@/lib/auth";
 import { getClientSession } from "@/lib/client-sessions";
 import { prisma } from "@/lib/db";
 import { isDevBypass } from "@/lib/dev-bypass";
 import { checkPermission } from "@/lib/permissions";
+import { createNotification } from "@/actions/notifications";
+import { domainEventBus } from "@/lib/domain/event-bus";
+import { CommentCreatedEvent } from "@/lib/domain/domain-event";
 
 const createCommentSchema = z.object({
   body: z.string().trim().min(1, "Comment cannot be empty."),
@@ -79,17 +81,22 @@ export async function createCommentAction(
 
     revalidatePath(`/app/projects/${input.projectId}`);
 
+    // Raise domain event instead of directly coupling to notification context.
+    // The notification context subscribes to CommentCreatedEvent via event bus.
     if (!input.isInternal) {
-      await createNotification({
-        type: "COMMENT",
-        title: "New team comment",
-        body: `${session.user.name ?? "Your agency"} commented on ${project.name}.`,
-        link: `/portal/${project.client.portalSlug}/projects/${project.id}`,
-        agencyId: project.agencyId,
-        clientId: project.clientId,
-        projectId: project.id,
-        audience: "client",
-        clientSlug: project.client.portalSlug
+      const event = new CommentCreatedEvent(
+        comment.id,
+        project.id,
+        project.name,
+        project.agencyId,
+        project.clientId,
+        project.client?.portalSlug ?? null,
+        input.isInternal,
+        comment.authorUser?.name ?? session.user.name ?? "Someone",
+      );
+      // Fire-and-forget: non-blocking cross-context notification
+      domainEventBus.publish(event).catch(() => {
+        /* Notification delivery is best-effort */
       });
     }
 
