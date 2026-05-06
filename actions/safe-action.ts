@@ -1,5 +1,3 @@
-"use server";
-
 import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { checkPermission, type PermissionAction } from "@/lib/permissions";

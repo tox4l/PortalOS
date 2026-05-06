@@ -1,9 +1,14 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { requireEnv } from "@/lib/env";
+import { getOptionalEnv } from "@/lib/env";
 
 const CLIENT_SESSION_COOKIE = "portalos-client-session";
-const secret = new TextEncoder().encode(requireEnv("AUTH_SECRET"));
+
+function getSecret(): Uint8Array {
+  const secret = getOptionalEnv("AUTH_SECRET");
+  if (!secret) throw new Error("Missing required environment variable: AUTH_SECRET");
+  return new TextEncoder().encode(secret);
+}
 
 export type ClientSessionPayload = {
   clientUserId: string;
@@ -31,7 +36,7 @@ export async function createClientSession(
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("30d")
     .setIssuedAt()
-    .sign(secret);
+    .sign(getSecret());
 
   const cookieStore = await cookies();
   cookieStore.set(CLIENT_SESSION_COOKIE, token, {
@@ -50,7 +55,7 @@ export async function getClientSession(): Promise<ClientSessionPayload | null> {
   if (!token) return null;
 
   try {
-    const { payload } = await jwtVerify(token, secret);
+    const { payload } = await jwtVerify(token, getSecret());
     return payload as unknown as ClientSessionPayload;
   } catch {
     return null;

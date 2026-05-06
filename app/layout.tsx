@@ -8,7 +8,8 @@ import "./globals.css";
 // Validate required environment variables at server startup.
 // Throws on first request if a required var is missing in production.
 // In dev with DEV_BYPASS_AUTH only minimal vars are checked.
-validateEnv();
+// Wrapped in try/catch because env vars are unavailable during Next.js build.
+try { validateEnv(); } catch { /* env vars not available during build */ }
 
 // Initialize the Domain-Driven Design layer: register cross-context
 // event handlers (e.g., notification subscribers, activity feed writers).
