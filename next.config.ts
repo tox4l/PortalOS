@@ -13,6 +13,13 @@ const nextConfig: NextConfig = {
     serverActions: { bodySizeLimit: "100mb" },
   },
 
+  // Vercel uses serverless functions which lack pg-native bindings.
+  // The standard `pg` driver works fine; this just suppresses the optional-native warning.
+  webpack: (config) => {
+    config.externals.push({ "pg-native": "commonjs pg-native" });
+    return config;
+  },
+
   async headers() {
     return [
       {
@@ -35,7 +42,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline' fonts.googleapis.com",
               "img-src 'self' data: blob: https:",
               "font-src 'self' fonts.gstatic.com",
-              "connect-src 'self' https://api.resend.com https://api.stripe.com https://*.supabase.co https://*.ably-realtime.com",
+              "connect-src 'self' https://api.resend.com https://api.stripe.com https://*.supabase.co wss://*.ably-realtime.com wss://realtime.ably.net https://*.ably-realtime.com",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",

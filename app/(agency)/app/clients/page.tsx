@@ -1,139 +1,104 @@
 import Link from "next/link";
-import { ArrowUpRight, Briefcase, Buildings, Clock, Plus } from "@phosphor-icons/react/dist/ssr";
+import { redirect } from "next/navigation";
+import { ArrowUpRight, Buildings, Plus, Briefcase } from "@phosphor-icons/react/dist/ssr";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-const clients = [
-  {
-    company: "Northstar Branding",
-    contact: "Iris Calloway",
-    email: "client@lumina-demo.com",
-    status: "Active",
-    projects: 2,
-    reviews: 3,
-    lastUpdate: "Today",
-    badge: "active" as const
-  },
-  {
-    company: "Forge Studio",
-    contact: "Theo Watanabe",
-    email: "theo@forge-demo.com",
-    status: "Active",
-    projects: 1,
-    reviews: 1,
-    lastUpdate: "3 days ago",
-    badge: "active" as const
-  },
-  {
-    company: "Vessel Co.",
-    contact: "Marin Sol",
-    email: "marin@vessel-demo.com",
-    status: "Archived",
-    projects: 1,
-    reviews: 0,
-    lastUpdate: "22 days ago",
-    badge: "archived" as const
-  }
-];
+export default async function ClientsPage() {
+  const session = await auth();
+  if (!session?.user?.agencyId) redirect("/onboarding");
 
-const metrics = [
-  ["Active clients", "2"],
-  ["Open projects", "4"],
-  ["Pending reviews", "4"]
-];
+  const clients = await prisma.client.findMany({
+    where: { agencyId: session.user.agencyId, status: "ACTIVE" },
+    orderBy: { updatedAt: "desc" },
+    include: {
+      _count: { select: { projects: true } },
+    },
+  });
 
-export default function ClientsPage() {
   return (
-    <div className="space-y-8">
-      <section className="surface-panel p-6 md:p-8" data-reveal>
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_420px]">
+    <div className="space-y-12">
+      <section data-reveal>
+        <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="section-label">Client rooms</p>
-            <h2 className="mt-7 max-w-[760px] font-display text-[clamp(3rem,5vw,5.5rem)] font-normal leading-[0.98] tracking-[-0.025em] text-[var(--ink-primary)] text-balance">
-              Relationships with a private entrance.
-            </h2>
-            <p className="mt-6 max-w-[620px] text-[0.9375rem] leading-7 text-[var(--ink-secondary)]">
-              Each client gets a branded room for projects, approvals, files, and the small decisions that keep work moving.
+            <p className="section-label">Clients</p>
+            <h1 className="mt-6 max-w-[720px] font-display text-[clamp(2.75rem,5vw,5rem)] font-normal leading-[0.95] tracking-[-0.03em] text-[var(--ink-primary)] text-balance">
+              Every brand you serve.
+            </h1>
+            <p className="mt-5 max-w-[600px] text-[18px] leading-[1.7] text-[var(--ink-secondary)]">
+              Manage client portals, project access, and team invitations from one place.
             </p>
           </div>
+          <Button asChild>
+            <Link href="/app/clients/new">
+              <Plus aria-hidden="true" className="size-4" weight="bold" />
+              New client
+            </Link>
+          </Button>
+        </div>
 
-          <div className="grid content-end gap-3">
-            {metrics.map(([label, value]) => (
-              <div
-                className="flex items-center justify-between gap-6 border-b border-[var(--border-hairline)] py-4 last:border-b-0"
-                key={label}
-              >
-                <p className="font-sans text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ink-tertiary)]">{label}</p>
-                <p className="font-display text-[1.5rem] font-normal leading-none text-[var(--ink-primary)]">{value}</p>
-              </div>
-            ))}
-            <Button asChild className="mt-4">
-              <Link href="/app/clients/new">
-                <Plus aria-hidden="true" className="size-4" />
-                New client
-              </Link>
-            </Button>
+        <div className="mt-8 flex flex-wrap items-center gap-6 font-sans">
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[20px] font-medium tabular-nums text-[var(--ink-primary)]">
+              {clients.length}
+            </span>
+            <span className="text-[13px] text-[var(--ink-tertiary)]">active clients</span>
+          </div>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[20px] font-medium tabular-nums text-[var(--ink-primary)]">
+              {clients.reduce((sum, c) => sum + c._count.projects, 0)}
+            </span>
+            <span className="text-[13px] text-[var(--ink-tertiary)]">total projects</span>
           </div>
         </div>
       </section>
 
-      <section className="surface-panel overflow-hidden" data-reveal>
-        <div className="grid grid-cols-[1.3fr_1fr_180px_92px] border-b border-[var(--border-hairline)] bg-[var(--bg-sunken)] px-5 py-3 font-sans text-[0.6875rem] font-medium uppercase tracking-[0.08em] text-[var(--ink-tertiary)] max-lg:hidden">
-          <span>Client</span>
-          <span>Engagement</span>
-          <span>Status</span>
-          <span className="text-right">Open</span>
-        </div>
-
-        <div className="divide-y divide-[var(--border-hairline)]">
-          {clients.map((client) => (
-            <article
-              className="workspace-row grid grid-cols-1 gap-5 p-5 lg:grid-cols-[1.3fr_1fr_180px_92px] lg:items-center"
-              key={client.company}
+      {clients.length === 0 ? (
+        <section className="surface-panel flex min-h-[320px] flex-col items-center justify-center p-12 text-center" data-reveal>
+          <Buildings aria-hidden="true" className="size-10 text-[var(--ink-tertiary)]" />
+          <p className="mt-4 font-display text-[28px] font-normal leading-[1.2] text-[var(--ink-primary)]">
+            No clients yet
+          </p>
+          <p className="mt-3 max-w-[440px] text-[15px] leading-[1.6] text-[var(--ink-secondary)]">
+            Add your first client to set up their portal, start projects, and collaborate.
+          </p>
+          <Button asChild className="mt-6">
+            <Link href="/app/clients/new">
+              <Plus aria-hidden="true" className="size-4" weight="bold" />
+              Add your first client
+            </Link>
+          </Button>
+        </section>
+      ) : (
+        <section className="surface-panel divide-y divide-[var(--border-hairline)]" data-reveal>
+          {clients.map((c) => (
+            <Link
+              key={c.id}
+              href={`/portal/${c.portalSlug}`}
+              className="flex flex-col gap-3 px-6 py-5 transition-colors hover:bg-[var(--neutral-bg)] no-underline sm:flex-row sm:items-center sm:justify-between"
             >
-              <div className="flex min-w-0 items-center gap-4">
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
-                  <Buildings aria-hidden="true" className="size-5 text-[var(--ink-tertiary)]" weight="duotone" />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="truncate font-display text-[1.5rem] font-normal leading-tight text-[var(--ink-primary)]">
-                    {client.company}
-                  </h3>
-                  <p className="mt-1 truncate text-[0.875rem] text-[var(--ink-secondary)]">
-                    {client.contact} &middot; {client.email}
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-3">
+                  <p className="text-[16px] font-medium leading-6 text-[var(--ink-primary)] truncate">
+                    {c.companyName}
                   </p>
+                  <Badge variant="active">Active</Badge>
+                </div>
+                <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-[var(--ink-tertiary)]">
+                  <span className="flex items-center gap-1.5">
+                    <Briefcase aria-hidden="true" className="size-3.5" />
+                    {c._count.projects} project{c._count.projects !== 1 ? "s" : ""}
+                  </span>
+                  <span>{c.portalSlug}.portalos.tech</span>
                 </div>
               </div>
-
-              <div className="flex flex-wrap gap-4 text-[0.8125rem] text-[var(--ink-secondary)]">
-                <span className="inline-flex items-center gap-2">
-                  <Briefcase aria-hidden="true" className="size-4 text-[var(--ink-tertiary)]" />
-                  {client.projects} projects
-                </span>
-                <span className="inline-flex items-center gap-2">
-                  <Clock aria-hidden="true" className="size-4 text-[var(--ink-tertiary)]" />
-                  {client.reviews > 0 ? `${client.reviews} reviews waiting` : "No pending reviews"}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <Badge variant={client.badge}>{client.status}</Badge>
-                <span className="font-mono text-[0.6875rem] uppercase tracking-[0.06em] text-[var(--ink-tertiary)]">
-                  {client.lastUpdate}
-                </span>
-              </div>
-
-              <div className="flex justify-start lg:justify-end">
-                <Button asChild aria-label={`Open projects for ${client.company}`} size="icon" variant="ghost">
-                  <Link href="/app/projects">
-                    <ArrowUpRight aria-hidden="true" className="size-5" />
-                  </Link>
-                </Button>
-              </div>
-            </article>
+              <ArrowUpRight aria-hidden="true" className="size-4 shrink-0 text-[var(--ink-tertiary)]" />
+            </Link>
           ))}
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }

@@ -13,10 +13,33 @@ import { isDevBypass } from "@/lib/dev-bypass";
 export async function getOnboardingSession(): Promise<{
   signedIn: boolean;
   hasAgency: boolean;
+  onboardingComplete: boolean;
 }> {
   const session = await auth();
-  if (!session?.user?.id) return { signedIn: false, hasAgency: false };
-  return { signedIn: true, hasAgency: !!session.user.agencyId };
+  if (!session?.user?.id) return { signedIn: false, hasAgency: false, onboardingComplete: false };
+
+  if (!session.user.agencyId) {
+    return { signedIn: true, hasAgency: false, onboardingComplete: false };
+  }
+
+  // User has an agency — check if onboarding was actually completed.
+  // A freshly created agency has the default brandColor "#8C7340".
+  // If brandColor was customized, onboarding at least reached step 2.
+  const agency = await prisma.agency.findUnique({
+    where: { id: session.user.agencyId },
+    select: { brandColor: true, _count: { select: { clients: true } } },
+  });
+
+  // Onboarding is only "complete" if branding was customized AND at least
+  // one client was created (steps 2 and 4). Otherwise the user still needs
+  // to finish the wizard.
+  const onboardingComplete = !!(
+    agency &&
+    agency.brandColor !== "#8C7340" &&
+    agency._count.clients > 0
+  );
+
+  return { signedIn: true, hasAgency: true, onboardingComplete };
 }
 
 // ─── Create Agency ───
