@@ -47,16 +47,8 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  async redirects() {
-    return [
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: "www.portalos.tech" }],
-        destination: "https://portalos.tech/:path*",
-        permanent: true,
-      },
-    ];
-  }
+  // www → bare domain redirect is handled in middleware.ts (307 temporary)
+  // to avoid permanent redirect caching issues in browsers.
 };
 
 export default withBundleAnalyzer(nextConfig);

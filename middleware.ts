@@ -77,6 +77,16 @@ export default async function middleware(request: NextRequest) {
   }
 
   const host = request.headers.get("host") ?? "";
+
+  // Redirect www to bare domain BEFORE any other logic.
+  // Uses 307 (temporary) to avoid browser caching issues that caused redirect loops.
+  if (host.startsWith("www.")) {
+    const bareHost = host.replace(/^www\./, "");
+    const bareUrl = new URL(request.url);
+    bareUrl.host = bareHost;
+    return NextResponse.redirect(bareUrl, 307);
+  }
+
   const agencySlug = getAgencySlugFromHost(host);
 
   if (agencySlug) {
