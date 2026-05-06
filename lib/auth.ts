@@ -153,19 +153,12 @@ const authConfig = {
         return url;
       }
 
-      // Fallback for external callback URLs — check if user needs onboarding.
-      // (The login page already passes redirectTo:"/onboarding" for new users,
-      //  so this is a safety net for unexpected flows.)
-      try {
-        const session = await auth();
-        if (session?.user && !session.user.agencyId) {
-          return `${cleanBase}/onboarding`;
-        }
-      } catch {
-        // If reading the session fails, fall through to the default dashboard.
-      }
-
-      return `${cleanBase}/app/dashboard`;
+      // Always route post-sign-in through /onboarding so the page can
+      // decide where to send the user. If onboarding is fully complete the
+      // page will redirect to /app/dashboard; otherwise the wizard resumes.
+      // This prevents users who only completed step 1 (created agency but
+      // never finished branding/clients) from landing on an empty dashboard.
+      return `${cleanBase}/onboarding`;
     }
   }
 } satisfies NextAuthConfig;
