@@ -91,7 +91,7 @@
     "@types/react-dom": "^19.2.0",
     "@types/three": "^0.184.0",
     "dotenv": "^17.4.2",
-    "eslint": "^9.25.1",
+    "eslint": "^10.3.0",
     "eslint-config-next": "15.5.15",
     "jsdom": "^29.1.1",
     "pino": "^10.3.1",
